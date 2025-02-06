@@ -1,0 +1,18 @@
+# Personnal files
+/src/shared/locals.h
+/src/shared/bFileLocals.h
+/assets-cg/base
+.DS_Store
+*-base.*
+*.xcf
+
+# Outputs
+/build-cg
+/build-cg-push
+/*.g3a*
+*.o
+/build
+
+# Common IDE files
+/linux
+.vscode
