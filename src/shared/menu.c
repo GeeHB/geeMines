@@ -12,7 +12,7 @@
 #include "locals.h"
 #else
 // Background image
-extern bopti_image_t g_menuImgs;
+extern bopti_image_t g_menu;
 
 // Images index in the image
 enum MENU_IMG_INDEX{
