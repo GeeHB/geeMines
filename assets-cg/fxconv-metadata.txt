@@ -1,3 +1,11 @@
 example.png:
   type: bopti-image
   name: img_example
+  
+pause.png:
+  type: bopti-image
+  name: g_pause
+
+menu.png:
+  type: bopti-image
+  name: g_menu
