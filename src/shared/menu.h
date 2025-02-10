@@ -64,11 +64,9 @@
 
 // Checkbox state
 //
-enum CHECKBOX_STATE{
-    ITEM_ERROR = -1,     // Unknown state or not a checkbox
-    ITEM_UNCHECKED = 0,
-    ITEM_CHECKED = 1
-};
+#define ITEM_ERROR          -1      // Unknown state or not a checkbox
+#define ITEM_UNCHECKED      0
+#define ITEM_CHECKED        1
 
 // A few helpers ...
 
@@ -92,15 +90,14 @@ enum CHECKBOX_STATE{
 
 // ID of colours (for {set/get}Colour methods
 //
-enum MENU_COLOURS_ID{
-    TXT_SELECTED = 0,
-    TXT_UNSELECTED = 1,
-    TXT_INACTIVE = 2,
-    ITEM_BACKGROUND = 3,
-    ITEM_BACKGROUND_SELECTED = 4,       // for future use
-    ITEM_BORDER = 5,
-    COL_COUNT = 6
-};
+
+#define COLOUR_TXT_SELECTED             0
+#define COLOUR_TXT_UNSELECTED           1
+#define COLOUR_TXT_INACTIVE             2
+#define COLOUR_ITEM_BACKGROUND          3
+#define COLOUR_ITEM_BACKGROUND_SELECTED 4   // for future use
+#define COLOUR_ITEM_BORDER              5
+#define COLOUR_COUNT                    6
 
 // Default colours
 //
@@ -129,7 +126,7 @@ typedef struct _menuBar{
     _menuBar* parent;
     void* pDrawing;    // Pointer to ownerdraw callback
     PMENUITEM items[MENU_MAX_ITEM_COUNT];
-    int colours[COL_COUNT];
+    int colours[COLOUR_COUNT];
 } MENUBAR, * PMENUBAR;
 
 // Action to perform
@@ -143,10 +140,8 @@ typedef struct _menuAction{
 
 // Types of actions
 //
-enum MENU_ACTION{
-    ACTION_MENU = 0,    // value is a menu ID
-    ACTION_KEYBOARD = 1 // value is a keycode
-};
+#define ACTION_MENU         0   // value is a menu ID
+#define ACTION_KEYBOARD     1   // value is a keycode
 
 // Ownerdraw's function prototype
 //
@@ -159,10 +154,8 @@ typedef BOOL (*MENUDRAWINGCALLBACK)(
 
 // Types of search modes
 //
-enum MENU_SEARCH_MODE{
-    SEARCH_BY_ID = 0,
-    SEARCH_BY_INDEX = 1
-};
+#define SEARCH_BY_ID        0
+#define SEARCH_BY_INDEX     1
 
 // A menu
 //

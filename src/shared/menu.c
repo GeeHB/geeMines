@@ -15,11 +15,11 @@
 extern bopti_image_t g_menu;
 
 // Images index in the image
-enum MENU_IMG_INDEX{
-    MENU_IMG_BACK_ID = 0,
-    MENU_IMG_CHECKED_ID = 1,
-    MENU_IMG_UNCHECKED_ID = 2
-};
+//
+#define MENU_IMG_BACK_ID        0
+#define MENU_IMG_CHECKED_ID     1
+#define MENU_IMG_UNCHECKED_ID   2
+
 #endif // #ifndef DEST_CASIO_CALC
 
 #include <stdlib.h>
