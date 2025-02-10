@@ -22,51 +22,26 @@ extern bopti_image_t g_menu;
 
 #endif // #ifndef DEST_CASIO_CALC
 
-#include <stdlib.h>
 
-//
-// Internal functions definition
-//
 
-// menu
-//
-BOOL menu_drawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anchor);
 
-// Menubar handling
-//
-void menubar_clear(PMENUBAR bar);
-PMENUBAR menubar_copy(PMENUBAR const source, int noBackButton);
-void menubar_free(PMENUBAR bar, int freeAll);
-BOOL menubar_defDrawItem(PMENUBAR const bar, PMENUITEM const item, RECT* const anchor, int style);
-PMENUITEM menubar_findItem(PMENUBAR const bar, int searchedID, int searchMode, PMENUBAR* containerBar, int* pIndex);
-BOOL menubar_removeItem(PMENUBAR const bar, int searchedID, int searchMode);
 
-// Items
-//
-PMENUITEM item_create(int id, const char* text, int state, int status);
-PMENUITEM item_add(PMENUBAR const bar, int index, int id, const char* text, int state, int status);
-PMENUITEM item_copy(PMENUBAR const bar, PMENUITEM const source);
 BOOL item_selectByIndex(int index, BOOL selected, BOOL redraw);
 
-//
-// Functions
-//
 
 // menu_create() : Create a new menu
 //
 // @return : pointer to menu or NULL on error
 //
 POWNMENU menu_create(){
-    int size = sizeof(OWNMENU);
-    POWNMENU menu =(POWNMENU)malloc(size);
-
+    POWNMENU menu =(POWNMENU)kmalloc(sizeof(OWNMENU), NULL);
     if (NULL == menu){
         return NULL;
     }
 
     menubar_clear(&menu->current_);
     menu->visible_ = &menu->current_; // show current bar
-    menu_setHeight(MENUBAR_DEF_HEIGHT, false);
+    menu_setHeight(menu, MENUBAR_DEF_HEIGHT, FALSE);
 }
 
 // menu_free() : Free a menu
@@ -77,10 +52,185 @@ POWNMENU menu_create(){
 //
 int menu_free(POWNMENU menu){
     if (menu){
-
+        kfree(menu);
     }
 }
 
+//  menu_getHeight() : Get menu height
+//
+//  @menu : Pointer to the menu
+//
+//  @return : Height of menu bar in pixels
+//
+int menu_getHeight(POWNMENU menu){
+    if (menu){
+        return menu->rect_.h;
+    }
+
+    return 0;
+}
+
+//  setHeight() : change menu bar height
+//
+//  @barHeight : New height in pixels
+//  @updateBar : Update the menubar ?
+//
+//  @return : true if hieght has changed
+//
+BOOL menu_setHeight(POWNMENU menu, int barHeight, BOOL update){
+    if (!menu){
+        return FALSE;
+    }
+
+    return menubar_setHeight(&menu->current_, barHeight, update);
+
+    rect_ = {0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight};
+    if (update){
+        menu_update(menu);
+    }
+    return TRUE;
+}
+
+//  menu_getRect() : Get bounding rect of current menu bar
+//
+//  @menu : Pointer to the menu
+//  @barRect : Pointer to a RECT struct. This struct. will contin the menu's dimensions and position
+//
+//  @return : TRUE if done
+//
+BOOL menu_getRect(POWNMENU menu, RECT* barRect){
+    if (!menu || !barRect){
+        return FALSE;
+    }
+
+    (*barRect) = {menu->rect_.x, menu->rect_.y, menu->rect_.w, menu->rect_.h};
+    return TRUE;
+}
+
+//  menu_update() : Update the menu bar
+//
+//  All items will be drawn according to their state et status
+//
+//  @menu : Pointer to the menu
+//
+void menu_update(POWNMENU menu){
+    if (menu){
+        menubar_update(menu->visible_);
+    }
+}
+
+// menu_setMenuDrawingCallBack() : Set function for ownerdraw drawings
+//
+// When an item has the ITEM_STATUS_OWNERDRAWN status bit set, the
+// ownerdraw callback function will be called each time the menubar
+// needs to redraw the item
+//
+//  @menu : Pointer to the menu
+//  @pF : Pointer to the callback function or NULL if no ownerdraw
+//
+//  @return : pointer to the default drawing function or NULL if not set
+//
+MENUDRAWINGCALLBACK menu_setMenuDrawingCallBack(POWNMENU menu, MENUDRAWINGCALLBACK pF){
+    if (!menu){
+        return NULL;
+    }
+
+    menu->visible_->pDrawing = (void*)pF;
+    return (MENUDRAWINGCALLBACK)menubar_defDrawItem;   // Def. function if needed by calling function
+}
+
+// menu_getColour() : Get the colour used for item's drawings in the
+//              active menu bar
+//
+//  @menu : Pointer to the menu
+//  @index : index of the colour to retreive
+//
+//  @return : colour or -1 if error
+//
+int menu_getColour(POWNMENU menu, int index){
+    return (menu?((index>=COL_COUNT)?-1:menu->visible_->colours[index]):-1);
+}
+
+// menu_setColour() : Change the colour used for item's drawings in the
+//              active menu bar
+//
+//  @menu : Pointer to the menu
+//  @index : index of the colour to change
+//  @colour : new colour value
+//
+//  @return : previous colour or -1 if error
+//
+int menu_setColour(POWNMENU menu, int index, int colour){
+    if (!menu || index>=COL_COUNT){
+        return -1;
+    }
+
+    // Change the colour
+    int actual = menu->visible_->colours[index];
+    menu->visible_->colours[index] = colour;
+    return actual;
+}
+
+//  menu_selectByIndex() : Select an item by index in the current bar
+//
+//  @menu : pointer to the menu
+//  @index : index of menu item to select or unselect
+//  @selected : TRUE if item is to be selected
+//  @redraw : when TRUE, item and previously (un)selected
+//              item are drawn in their new states
+//
+//  @return : TRUE if item is selected
+//
+BOOL menu_selectByIndex(POWNMENU menu, int index, BOOL selected, BOOL redraw){
+    int sel;
+    if (index >= MENU_MAX_ITEM_COUNT ||
+        index == (sel = menu_getSelectedIndex())){
+        return FALSE;   // Nothing to do
+    }
+
+    if (-1 == index){
+        index = sel;
+        selected = FALSE;
+    }
+
+    // Select or unselect an item
+    if (index >= 0){
+        // Item
+        PMENUITEM item = visible_->items[index];
+        if (NULL == item){
+            return FALSE;
+        }
+
+        if (selected){
+            // unselect prev.
+            menu_unSelectItems(visible_);
+
+            setBit(item->state, ITEM_STATE_SELECTED);
+            visible_->selIndex = index;
+        }
+        else{
+            removeBit(item->state, ITEM_STATE_SELECTED);
+            visible_->selIndex = -1;
+        }
+    }
+
+    // Update item ?
+    if (redraw){
+        RECT anchor = {rect_.x, rect_.y, MENUBAR_DEF_ITEM_WIDTH, rect_.h};
+        if (-1 != sel){
+            anchor.x+=(sel * anchor.w);
+            item_draw(visible_->items[sel], &anchor);
+        }
+
+        if (-1 != index){
+            anchor.x=(index * anchor.w + rect_.x);
+            item_draw(visible_->items[index], &anchor);
+        }
+    }
+
+    // Done
+    return TRUE;
+}
 
 // Construction
 //
@@ -91,68 +241,6 @@ menuBar::menuBar(){
     _clearMenuBar(&current_);
 }
 
-//
-// Ownerdraw function
-//
-
-// setMenuDrawingCallBack() : Set function for ownerdraw drawings
-//
-// When an item has the ITEM_STATUS_OWNERDRAWN status bit set, the
-// ownerdraw callback function will be called each time the menubar
-// needs to redraw the item
-//
-// @pF : Pointer to the callback function or NULL if no ownerdraw
-//
-// @return : pointer to the default drawing function
-//
-MENUDRAWINGCALLBACK menuBar::setMenuDrawingCallBack(MENUDRAWINGCALLBACK pF){
-    visible_->pDrawing = (void*)pF;
-    return (MENUDRAWINGCALLBACK)defDrawItem;   // Def. function if needed by calling function
-}
-
-// setColour() : Change the colour used for item's drawings in the
-//              active menu bar
-//
-//  @index : index of the colour to change
-//  @colour : new colour value
-//
-//  @return : previous colour or -1 if error
-//
-int menuBar::setColour(uint8_t index, int colour){
-    if (index>=COL_COUNT){
-        return -1;
-    }
-
-    // Change the colour
-    int actual = visible_->colours[index];
-    visible_->colours[index] = colour;
-    return actual;
-}
-
-//
-// Dimensions
-//
-
-//  getRect() : Get bounding rect of current menu bar
-//
-void menuBar::getRect(RECT& barRect){
-    barRect = {rect_.x, rect_.y, rect_.w, rect_.h};
-}
-
-//  setHeight() : change menu bar height
-//
-//  @barHeight : New height in pixels
-//  @updateBar : Update the menubar ?
-//
-//  @return : true if hieght has changed
-//
-bool menuBar::setHeight(uint16_t barHeight, bool updateBar){
-    rect_ = {0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight};
-    if (updateBar){
-        update();
-    }
-    return true;
-}
 
 // Drawings
 //
@@ -237,21 +325,6 @@ bool menuBar::activateItem(int searchedID, int searchMode, bool activated){
 bool menuBar::isMenuItemActivated(int id, int searchMode){
     PMENUITEM item(_findItem(&current_, id, searchMode));
     return (item && !isBitSet(item->state, ITEM_STATE_INACTIVE));
-}
-
-//  freeMenuItem() : Free memory used by a menu item
-//
-//  @item : Pointer to the menu item to be released
-//
-void menuBar::freeMenuItem(PMENUITEM item){
-    if (item){
-        // A submenu ?
-        if (isBitSet(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
-            _freeMenuBar((PMENUBAR)item->subMenu, true);
-        }
-
-        free(item); // free the item
-    }
 }
 
 // handleKeyboard() : Handle keyboard events
@@ -341,21 +414,6 @@ MENUACTION menuBar::handleKeyboard(){
     // Return keyboard event
     ret.modifier = kb.modifier();
     return ret;
-}
-
-// showParentBar() : Return to parent menubar if exists
-//
-//  @updateBar : update the menu ?
-//
-void menuBar::showParentBar(bool updateBar){
-    if (visible_ && visible_->parent){
-        visible_ = visible_->parent;
-        _selectByIndex(-1, false, false);
-
-        if (updateBar){
-            update();
-        }
-    }
 }
 
 // isMenuItemChecked() : Check wether a checkbox is in the checked state
@@ -475,69 +533,30 @@ void menuBar::_unSelectItems(PMENUBAR bar){
     }
 }
 
-//
-// Menu items
-//
-
-//  _drawItem() : Draw an item
-//
-//  @item : Pointer to a MENUITEM strcut containing informations
-//          concerning the item to draw
-//  @anchor : Position of the item in screen coordinates
-//
-//  @return : False on error(s)
-//
-bool menuBar::_drawItem(PMENUITEM const item, RECT* const anchor){
-    if (NULL == anchor){
-        return false;
-    }
-
-    MENUDRAWINGCALLBACK ownerFunction;
-    if (item && isBitSet(item->status, ITEM_STATUS_OWNERDRAWN) &&
-        NULL != (ownerFunction = ((MENUDRAWINGCALLBACK)visible_->pDrawing))){
-        return ownerFunction(visible_, item, anchor, MENU_DRAW_ALL); // Call ownerdraw func.
-    }
-
-    // Call default method
-    return defDrawItem(visible_, item, anchor, MENU_DRAW_ALL);
-}
-
-//
-// Internal functions
-//
 
 //
 // menu functions
 //
 
-//  menu_drawItem() : Draw an item
-//
-//  @menu : Pointer to the MENU
-//  @item : Pointer to a MENUITEM strcut containing informations
-//          concerning the item to draw
-//  @anchor : Position of the item in screen coordinates
-//
-//  @return : FALSE on error(s)
-//
-BOOL menu_drawItem((POWNMENU const menu, PMENUITEM const item, RECT* const anchor){
-    if (NULL == anchor){
-        return FALSE;
-    }
-
-    MENUDRAWINGCALLBACK ownerFunction;
-    if (item && isBitSet(item->status, ITEM_STATUS_OWNERDRAWN) &&
-        NULL != (ownerFunction = ((MENUDRAWINGCALLBACK)visible_->pDrawing))){
-        return ownerFunction(menu->visible_, item, anchor, MENU_DRAW_ALL); // Call ownerdraw func.
-    }
-
-    // Call default method
-    return item_defDrawFunction(menu->visible_, item, anchor, MENU_DRAW_ALL);
-}
-
-
 //
 // menuBar management
 //
+
+//  menubar_create() : Create an empty menubar
+//
+//  @return : Pointer to the new menubar or NULL
+//
+PMENUBAR menubar_create(){
+    PMENUBAR bar =(POWNMENU)kmalloc(sizeof(MENUBAR), NULL);
+
+    if (NULL == bar){
+        return NULL;
+    }
+
+    menubar_clear(bar); // Initialize
+    menubar_setHeight(MENUBAR_DEF_HEIGHT, FALSE);
+    return bar;
+}
 
 //  menubar_clear() : Clear content of a menubar
 //
@@ -605,11 +624,141 @@ PMENUBAR menubar_copy(PMENUBAR const source, int noBackButton){
 void menubar_free(PMENUBAR bar, int freeAll){
     if (bar){
         for (uint8_t index(0); index < MENU_MAX_ITEM_COUNT; index++){
-            freeMenuItem(bar->items[index]);
+            menubar_freeMenuItem(bar->items[index]);
         }
 
         if (freeAll){
             free(bar);  // free the bar
+        }
+    }
+}
+
+//  menubar_freeMenuItem() : Free memory used by a menu item
+//
+//  @bar : Pointer to the menu bar
+//  @item : Pointer to the menu item to be released
+//
+void menubar_freeMenuItem(PMENUBAR bar, PMENUITEM item){
+    if (bar && item){
+        // A submenu ?
+        if (IS_BIT_SET(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
+            menubar_free((PMENUBAR)item->subMenu, TRUE);
+        }
+
+        kfree(item); // free the item
+    }
+}
+
+//  menubar_drawItem() : Draw an item
+//
+//  @item : Pointer to a MENUITEM strcut containing informations
+//          concerning the item to draw
+//  @anchor : Position of the item in screen coordinates
+//
+//  @return : FALSE on error(s)
+//
+BOOL menubar_drawItem(PMENUBAR bar, PMENUITEM const item, RECT* const anchor){
+    if (NULL == bar || NULL == item || NULL == anchor){
+        return FALSE;
+    }
+
+    MENUDRAWINGCALLBACK ownerFunction;
+    if (item && isBitSet(item->status, ITEM_STATUS_OWNERDRAWN) &&
+        NULL != (ownerFunction = ((MENUDRAWINGCALLBACK)bar->pDrawing))){
+        return ownerFunction(bar, item, anchor, MENU_DRAW_ALL); // Call ownerdraw func.
+    }
+
+    // Call default method
+    return menubar_defDrawItem(bar, item, anchor, MENU_DRAW_ALL);
+}
+
+//  menubar_getHeight() : Get menu height
+//
+//  @menu : Pointer to the menu
+//
+//  @return : Height of menu bar in pixels
+//
+int menubar_getHeight(POWNMENU menu){
+    if (menu){
+        return menu->rect_.h;
+    }
+
+    return 0;
+}
+
+//  menubar_setHeight() : change menu bar height
+//
+//  @bar : Pointer to the bar
+//  @barHeight : New height in pixels
+//  @updateBar : Update the menubar ?
+//
+//  @return : TRUE if hieght has changed
+//
+BOOL menubar_setHeight(PMENUBAR bar, int barHeight, BOOL update){
+    if (!bar){
+        return FALSE;
+    }
+
+    (*(bar->rect_)) = {0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight};
+    if (updateBar){
+        menubar_update(bar);
+    }
+    return TRUE;
+}
+
+//  menubar_getRect() : Get bounding rect of current menu bar
+//
+//  @bar : Pointer to the menu bar
+//  @barRect : Pointer to a RECT struct. This struct. will contin the menu's dimensions and position
+//
+//  @return : TRUE if done
+//
+BOOL menubar_getRect(PMENUBAR bar, RECT* barRect){
+    if (!bar || !barRect){
+        return FALSE;
+    }
+
+    (*barRect) = {menu->rect_.x, menu->rect_.y, menu->rect_.w, menu->rect_.h};
+    return TRUE;
+}
+
+//  menubar_update() : Update the given menu bar
+//
+//  @bar : Pointer to the menu bar
+//
+void menubar_update(PMENUBAR bar){
+    if (!bar || NULL == bar->visible_){
+        return;
+    }
+
+    // First item's rect
+    RECT anchor = {bar->rect_.x, bar->rect_.y, MENUBAR_DEF_ITEM_WIDTH, rect_.h};
+
+    //  Draw all items (even empty ones)
+    for (uint8_t index(0); index < MENU_MAX_ITEM_COUNT; index++){
+        menubar__drawItem(bar, bar->items[index], &anchor);
+        anchor.x += anchor.w;   // Next item's position
+    } // for
+
+#ifdef DEST_CASIO_CALC
+    dupdate();
+#else
+    cout << endl;
+#endif // #ifdef DEST_CASIO_CALC
+}
+
+// menubar_showParentBar() : Return to parent menubar if exists
+//
+//  @bar : Pointer to the current bar
+//  @updateBar : update the menu ?
+//
+void menubar_showParentBar(PMENUBAR bar, BOOL updateBar){
+    if (bar && bar->visible_ && bar->visible_->parent){
+        bar->visible_ = bar->visible_->parent;
+        menubar_selectByIndex(bar, -1, FALSE, FALSE);
+
+        if (updateBar){
+            menubar_update(bar);
         }
     }
 }
@@ -667,6 +816,78 @@ PMENUITEM menubar_findItem(PMENUBAR const bar, int searchedID, int searchMode, P
     }
 
     return foundItem;
+}
+
+//  menubar_addItem() : Add an item to a menu bar
+//
+//  @bar : Pointer to the container bar
+//  @index : Index (position) in the menu bar
+//  @id : Item ID
+//  @text : Item text
+//  @state : Item's initial state
+//  @status : Item's status
+//
+//  @return : pointer the created item or NULL
+//
+PMENUITEM menubar_addItem(PMENUBAR const bar, uint8_t index, int id, const char* text, int state, int status){
+    if (!bar ||
+        index >= MENU_MAX_ITEM_COUNT ||
+        NULL != bar->items[index] ||
+        item_find(bar, id, SEARCH_BY_ID) ||    // already handled
+        current_.itemCount >= MENU_MAX_ITEM_COUNT /*||
+        !text || !(len = strlen(text))*/){
+        return NULL;
+    }
+
+    PMENUITEM item = item_create(id, text, state, status);
+    if (item){
+        // Add to the menu
+        if (IDM_RESERVED_BACK == id){
+            bar->items[MENU_MAX_ITEM_COUNT-1] = item;
+        }
+        else{
+            bar->items[index] = item;
+            bar->itemCount++;
+        }
+
+        // Successfully added
+        return item;
+    }
+
+    return NULL;
+}
+
+//  menubar_copyItem() : Make a copy of an item
+//
+//  @bar : Destination menu bar container
+//  @source : Pointer to the source item
+//
+//  @return : pointer to the copied item or NULL
+//
+PMENUITEM menubar_copyItem(PMENUBAR const bar, PMENUITEM const source){
+    PMENUITEM item = NULL;
+    if (source && (item = (PMENUITEM)malloc(sizeof(MENUITEM)))){
+        item->id = source->id;
+        item->state = source->state;
+        item->status = source->status;
+        item->ownerData = source->ownerData;
+        if (isBitSet(source->status, ITEM_STATUS_TEXT)){
+            strcpy(item->text, source->text);
+        }
+        else{
+            item->text[0] = '\0';
+        }
+
+        if (isBitSet(source->status, ITEM_STATUS_SUBMENU)){
+            item->subMenu = menubar_copy((PMENUBAR)source->subMenu,
+                        isBitSet(item->state, ITEM_STATE_NO_BACK_BUTTON));
+            ((PMENUBAR)(item->subMenu))->parent = bar;
+        }
+        else{
+            item->subMenu = NULL;
+        }
+    }
+    return item;
 }
 
 //  menubar_removeItem() : Remove an item from the current menu bar
@@ -861,7 +1082,7 @@ BOOL menubar_defDrawItem(PMENUBAR const bar, PMENUITEM const item, RECT* const a
 }
 
 //
-// menu items management
+// items
 //
 
 //  item_create() : creae a new menu item
@@ -892,7 +1113,7 @@ PMENUITEM item_create(int id, const char* text, int state, int status){
             }
             else{
                 item->text[0]='\0';
-                removeBit(item->status, ITEM_STATUS_TEXT);
+                item->status = REMOVE_BIT(item->status, ITEM_STATUS_TEXT);
             }
         }
     }
@@ -900,136 +1121,17 @@ PMENUITEM item_create(int id, const char* text, int state, int status){
     return item;
 }
 
-//  item_add() : Add an item to a menu bar
+//  item_free() : creae a new menu item
 //
-//  @bar : Pointer to the container bar
-//  @index : Index (position) in the menu bar
-//  @id : Item ID
-//  @text : Item text
-//  @state : Item's initial state
-//  @status : Item's status
+//  @item : pointer to item
 //
-//  @return : pointer the created item or NULL
+//  @return : NULL
 //
-PMENUITEM item_add(PMENUBAR const bar, uint8_t index, int id, const char* text, int state, int status){
-    if (!bar ||
-        index >= MENU_MAX_ITEM_COUNT ||
-        NULL != bar->items[index] ||
-        item_find(bar, id, SEARCH_BY_ID) ||    // already handled
-        current_.itemCount >= MENU_MAX_ITEM_COUNT /*||
-        !text || !(len = strlen(text))*/){
-        return NULL;
-    }
-
-    PMENUITEM item = item_create(id, text, state, status);
+PMENUITEM item_free(PMENUITEM item){
     if (item){
-        // Add to the menu
-        if (IDM_RESERVED_BACK == id){
-            bar->items[MENU_MAX_ITEM_COUNT-1] = item;
-        }
-        else{
-            bar->items[index] = item;
-            bar->itemCount++;
-        }
-
-        // Successfully added
-        return item;
+        kfree(item);
     }
-
     return NULL;
-}
-
-//  _copyItem() : Make a copy of an item
-//
-//  @bar : Destination menu bar container
-//  @source : Pointer to the source item
-//
-//  @return : pointer to the copied item or NULL
-//
-PMENUITEM item_copy(PMENUBAR const bar, PMENUITEM const source){
-    PMENUITEM item = NULL;
-    if (source && (item = (PMENUITEM)malloc(sizeof(MENUITEM)))){
-        item->id = source->id;
-        item->state = source->state;
-        item->status = source->status;
-        item->ownerData = source->ownerData;
-        if (isBitSet(source->status, ITEM_STATUS_TEXT)){
-            strcpy(item->text, source->text);
-        }
-        else{
-            item->text[0] = '\0';
-        }
-
-        if (isBitSet(source->status, ITEM_STATUS_SUBMENU)){
-            item->subMenu = menubar_copy((PMENUBAR)source->subMenu,
-                        isBitSet(item->state, ITEM_STATE_NO_BACK_BUTTON));
-            ((PMENUBAR)(item->subMenu))->parent = bar;
-        }
-        else{
-            item->subMenu = NULL;
-        }
-    }
-    return item;
-}
-
-//  item_selectByIndex() : Select an item by index in the current bar
-//
-//  @index : index of menu item to select or unselect
-//  @selected : TRUE if item is to be selected
-//  @redraw : when TRUE, item and previously (un)selected
-//              item are drawn in their new states
-//
-//  @return : TRUE if item is selected
-//
-BOOL item_selectByIndex(int index, BOOL selected, BOOL redraw){
-    int sel;
-    if (index >= MENU_MAX_ITEM_COUNT ||
-        index == (sel = getSelectedIndex())){
-        return FALSE;   // Nothing to do
-    }
-
-    if (-1 == index){
-        index = sel;
-        selected = FALSE;
-    }
-
-    // Select or unselect an item
-    if (index >= 0){
-        // Item
-        PMENUITEM item = visible_->items[index];
-        if (NULL == item){
-            return FALSE;
-        }
-
-        if (selected){
-            // unselect prev.
-            _unSelectItems(visible_);
-
-             setBit(item->state, ITEM_STATE_SELECTED);
-            visible_->selIndex = index;
-        }
-        else{
-            removeBit(item->state, ITEM_STATE_SELECTED);
-            visible_->selIndex = -1;
-        }
-    }
-
-    // Update item ?
-    if (redraw){
-        RECT anchor = {rect_.x, rect_.y, MENUBAR_DEF_ITEM_WIDTH, rect_.h};
-        if (-1 != sel){
-            anchor.x+=(sel * anchor.w);
-            item_draw(visible_->items[sel], &anchor);
-        }
-
-        if (-1 != index){
-            anchor.x=(index * anchor.w + rect_.x);
-            item_draw(visible_->items[index], &anchor);
-        }
-    }
-
-    // Done
-    return TRUE;
 }
 
 // EOF
