@@ -23,7 +23,7 @@
 #define CASIO_HEIGHT    192
 #endif // #ifdef DEST_CASIO_CALC
 
-#include <cstdint>
+#include <stdint.h>
 
 // A few basic colours
 //

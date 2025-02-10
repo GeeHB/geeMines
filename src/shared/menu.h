@@ -28,7 +28,7 @@ extern "C" {
 #define REMOVE_BIT(value, bit)  (value & ~bit)
 
 
-#define MENU_MAX_ITEM_COUNT     6   // ie. "F" buttons count
+#define MENUBAR_MAX_ITEM_COUNT  6   // ie. "F" buttons count
 
 //
 // Dimensions in pixels
@@ -48,7 +48,7 @@ extern "C" {
 // Item pos is a menu bar
 //
 #define MENU_POS_LEFT           0
-#define MENU_POS_RIGHT          (MENU_MAX_ITEM_COUNT-1)
+#define MENU_POS_RIGHT          (MENUBAR_MAX_ITEM_COUNT-1)
 
 //
 // Item state - could be any combination of :
@@ -151,8 +151,6 @@ PMENUITEM item_create(int id, const char* text, int state, int status);
 //
 //  @item : pointer to item
 //
-//  @return : NULL
-//
 PMENUITEM item_free(PMENUITEM item);
 
 //
@@ -166,7 +164,7 @@ typedef struct _menuBar{
     int selIndex;
     _menuBar* parent;
     void* pDrawing;    // Pointer to ownerdraw callback
-    PMENUITEM items[MENU_MAX_ITEM_COUNT];
+    PMENUITEM items[MENUBAR_MAX_ITEM_COUNT];
     int colours[COLOUR_COUNT];
 } MENUBAR, * PMENUBAR;
 
@@ -209,6 +207,26 @@ typedef BOOL (*MENUDRAWINGCALLBACK)(
 //
 #define SEARCH_BY_ID        0
 #define SEARCH_BY_INDEX     1
+
+//  menubar_create() : Create an empty menubar
+//
+//  @return : Pointer to the new menubar or NULL
+//
+PMENUBAR menubar_create();
+
+//  menubar_size() : count of items or sub menus in the bar
+//
+//  @bar : Pointer to the bar
+//
+//  @return : The count of items or sub menus
+//
+uint8_t menubar_size(PMENUBAR bar);
+
+//  menubar_clear() : Clear content of a menubar
+//
+//  @bar : Pointer to the menubar
+//
+void menubar_clear(PMENUBAR bar);
 
 //  menubar_free() : Free memory used by a bar
 //
@@ -461,14 +479,6 @@ public:
     //
     // Items & subBars
     //
-
-    //  size() : count of items or sub menus in the bar
-    //
-    //  @return : The count of items or sub menus
-    //
-    uint8_t size(){
-        return current_.itemCount;
-    }
 
     //  addSubMenu() : Add a sub menu
     //
