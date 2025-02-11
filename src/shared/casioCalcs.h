@@ -25,6 +25,7 @@
 
 #include <stdint.h>
 
+//
 // A few basic colours
 //
 
@@ -34,39 +35,35 @@
 #endif // #ifndef DEST_CASIO_CALC
 
 #ifdef FX9860G
-enum DEF_COLOUR{
-    COLOUR_BLACK   = C_BLACK,
-    COLOUR_WHITE   = C_WHITE,
-    COLOUR_RED     = C_DARK,
-    COLOUR_GREEN   = C_BLACK,
-    COLOUR_YELLOW  = C_BLACK,
-    COLOUR_BLUE    = C_DARK,
-    COLOUR_LT_BLUE = C_BLACK,
-    COLOUR_PURPLE  = C_DARK,
-    COLOUR_CYAN    = C_BLACK,
-    COLOUR_ORANGE  = C_DARK,
-    COLOUR_LT_GREY = C_LIGHT,
-    COLOUR_GREY    = C_WHITE,
-    COLOUR_DK_GREY = C_DARK,
-    NO_COLOR       = -1
-};
+#define COLOUR_BLACK    C_BLACK
+#define COLOUR_WHITE    C_WHITE
+#define COLOUR_RED      C_DARK
+#define COLOUR_GREEN    C_BLACK
+#define COLOUR_YELLOW   C_BLACK
+#define COLOUR_BLUE     C_DARK
+#define COLOUR_LT_BLUE  C_BLACK
+#define COLOUR_PURPLE   C_DARK
+#define COLOUR_CYAN     C_BLACK
+#define COLOUR_ORANGE   C_DARK
+#define COLOUR_LT_GREY  C_LIGHT
+#define COLOUR_GREY     C_WHITE
+#define COLOUR_DK_GREY  C_DARK
+#define NO_COLOR        -1
 #else
-enum DEF_COLOUR{
-    COLOUR_BLACK   = C_RGB(0, 0, 0),
-    COLOUR_WHITE   = C_RGB(31, 31, 31),
-    COLOUR_RED     = C_RGB(31, 0, 0),
-    COLOUR_GREEN   = C_RGB(0, 31, 0),
-    COLOUR_YELLOW  = C_RGB(31, 31, 0),
-    COLOUR_BLUE    = C_RGB(0, 0, 31),
-    COLOUR_LT_BLUE = C_RGB(6, 6, 31),
-    COLOUR_PURPLE  = C_RGB(31, 0, 31),
-    COLOUR_CYAN    = C_RGB(0, 31, 31),
-    COLOUR_ORANGE  = C_RGB(31, 16, 0),
-    COLOUR_LT_GREY = C_RGB(29, 29, 29),
-    COLOUR_GREY    = C_RGB(16, 16, 16),
-    COLOUR_DK_GREY = C_RGB(8, 8, 8),
-    NO_COLOR       = -1
-};
+#define COLOUR_BLACK    C_RGB(0, 0, 0)
+#define COLOUR_WHITE    C_RGB(31, 31, 31)
+#define COLOUR_RED      C_RGB(31, 0, 0)
+#define COLOUR_GREEN    C_RGB(0, 31, 0)
+#define COLOUR_YELLOW   C_RGB(31, 31, 0)
+#define COLOUR_BLUE     C_RGB(0, 0, 31)
+#define COLOUR_LT_BLUE  C_RGB(6, 6, 31)
+#define COLOUR_PURPLE   C_RGB(31, 0, 31)
+#define COLOUR_CYAN     C_RGB(0, 31, 31)
+#define COLOUR_ORANGE   C_RGB(31, 16, 0)
+#define COLOUR_LT_GREY  C_RGB(29, 29, 29)
+#define COLOUR_GREY     C_RGB(16, 16, 16)
+#define COLOUR_DK_GREY  C_RGB(8, 8, 8)
+#define NO_COLOR        -1
 #endif // #ifdef FX9860G
 
 // BOOLEANS
@@ -101,6 +98,14 @@ typedef struct __rect{
     int    x,y;    // top left
     int    w, h;   // width and height
 } RECT;
+
+#define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
+
+// State & status - bitwise manips
+//
+#define IS_BIT_SET(value, bit)  (bit == (value & bit))
+#define SET_BIT(value, bit)     (value |= bit)
+#define REMOVE_BIT(value, bit)  (value & ~bit)
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
