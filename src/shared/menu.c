@@ -27,13 +27,12 @@ extern bopti_image_t g_menu;
 //
 POWNMENU menu_create(){
     POWNMENU menu =(POWNMENU)malloc(sizeof(OWNMENU));
-    if (NULL == menu){
-        return NULL;
+    if (menu){
+        menubar_clear(&menu->current_);
+        menu->visible_ = &menu->current_; // show current bar
+        menu_setHeight(menu, MENUBAR_DEF_HEIGHT, FALSE);
     }
-
-    menubar_clear(&menu->current_);
-    menu->visible_ = &menu->current_; // show current bar
-    menu_setHeight(menu, MENUBAR_DEF_HEIGHT, FALSE);
+    return menu;
 }
 
 // menu_free() : Free a menu
@@ -44,6 +43,16 @@ void menu_free(POWNMENU menu){
     if (menu){
         free(menu);
     }
+}
+
+// menu_getMainBar() : Get a pointer to the default menubar
+//
+//  @menu : pointer to the menu
+//
+//  @return : A pointer to the bar or NULL on error
+//
+PMENUBAR menu_getMainBar(POWNMENU menu){
+    return (menu?&menu->current_:NULL);
 }
 
 //  menu_getHeight() : Get menu height
@@ -115,7 +124,7 @@ void menu_update(POWNMENU menu){
 #ifdef DEST_CASIO_CALC
         dupdate();
 #else
-        cout << endl;
+        printf("\n");
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
@@ -155,7 +164,7 @@ BOOL menu_drawItem(POWNMENU menu, PMENUITEM const item, RECT* const anchor){
     }
 
     MENUDRAWINGCALLBACK ownerFunction;
-    if (item && IS_BIT_SET(item->status, ITEM_STATUS_OWNERDRAWN) &&
+    if (item && isBitSet(item->status, ITEM_STATUS_OWNERDRAWN) &&
         NULL != (ownerFunction = ((MENUDRAWINGCALLBACK)menu->drawingFunc))){
         return ownerFunction(menu, item, anchor, MENU_DRAW_ALL); // Call ownerdraw func.
     }
@@ -183,7 +192,7 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
     bool selected(false);
 
     // Draw background
-    if (IS_BIT_SET(style, MENU_DRAW_BACKGROUND)){
+    if (isBitSet(style, MENU_DRAW_BACKGROUND)){
         drect(anchor->x, anchor->y, anchor->x + anchor->w - 1,
                 anchor->y + anchor->h - 1,
                 bar->colours[ITEM_BACKGROUND]);
@@ -192,12 +201,12 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
     if (item){
         int colour;
 
-        selected = IS_BIT_SET(item->state, ITEM_STATE_SELECTED);
+        selected = isBitSet(item->state, ITEM_STATE_SELECTED);
         int imgID(-1);  // No image
 
         // Text
         int x, w, h(0);
-        if (IS_BIT_SET(item->status, ITEM_STATUS_TEXT)){
+        if (isBitSet(item->status, ITEM_STATUS_TEXT)){
             dsize(item->text, NULL, &w, &h);
         }
 
@@ -207,8 +216,8 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
         }
         else{
             // Is the item a checkbox ?
-            if (IS_BIT_SET(item->status, ITEM_STATUS_CHECKBOX)){
-                imgID = (IS_BIT_SET(item->state, ITEM_STATE_CHECKED)?
+            if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+                imgID = (isBitSet(item->state, ITEM_STATE_CHECKED)?
                             MENU_IMG_CHECKED_ID:MENU_IMG_UNCHECKED_ID);
             }
         }
@@ -218,7 +227,7 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
             x = anchor->x + 2;
 
             // Draw the image on left of text
-            if (IS_BIT_SET(style, MENU_DRAW_IMAGE)){
+            if (isBitSet(style, MENU_DRAW_IMAGE)){
                 dsubimage(x, anchor->y + (anchor->h - MENU_IMG_HEIGHT) / 2,
                         &g_menuImgs, imgID * MENU_IMG_WIDTH,
                         0, MENU_IMG_WIDTH, MENU_IMG_HEIGHT, DIMAGE_NOCLIP);
@@ -229,15 +238,15 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
             x = anchor->x + (anchor->w - w) / 2;
         }
 
-       if (IS_BIT_SET(style, MENU_DRAW_TEXT) &&
-            IS_BIT_SET(item->status, ITEM_STATUS_TEXT)){
+       if (isBitSet(style, MENU_DRAW_TEXT) &&
+            isBitSet(item->status, ITEM_STATUS_TEXT)){
 
             // text too large ?
 
             // text colour ID
             colour = (selected?
                         TXT_SELECTED:
-                        (IS_BIT_SET(item->state, ITEM_STATE_INACTIVE)?
+                        (isBitSet(item->state, ITEM_STATE_INACTIVE)?
                         TXT_INACTIVE:TXT_UNSELECTED));
 
             // draw the text
@@ -249,7 +258,7 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
         }
 
         // Borders
-        if (IS_BIT_SET(style, MENU_DRAW_BORDERS) && selected){
+        if (isBitSet(style, MENU_DRAW_BORDERS) && selected){
             colour = bar->colours[ITEM_BORDER];
             dline(anchor->x, anchor->y,
                 anchor->x, anchor->y + anchor->h - 2, colour); // Left
@@ -266,37 +275,37 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
         }
     } // if (item)
 
-    if (IS_BIT_SET(style, MENU_DRAW_BORDERS) && !selected){
+    if (isBitSet(style, MENU_DRAW_BORDERS) && !selected){
         dline(anchor->x, anchor->y,
                 anchor->x + anchor->w -1, anchor->y,
                 bar->colours[ITEM_BORDER]);
     }
 #else
     if (item){
-        cout << "|" <<
-            (IS_BIT_SET(item->state, ITEM_STATE_SELECTED)?">" : " ");
-        if (IS_BIT_SET(item->status, ITEM_STATUS_CHECKBOX)){
-            cout <<
-                (IS_BIT_SET(item->state, ITEM_STATE_CHECKED)?"[x] ":"[ ] ");
+        printf("|");
+        printf(isBitSet(item->state, ITEM_STATE_SELECTED)?">" : " ");
+        if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+            printf(isBitSet(item->state, ITEM_STATE_CHECKED)?"[x] ":"[ ] ");
         }
 
-        if (IS_BIT_SET(item->status, ITEM_STATUS_TEXT)){
-            if (IS_BIT_SET(item->state,ITEM_STATE_INACTIVE)){
-                cout << "_" << (item->text+1);
+        if (isBitSet(item->status, ITEM_STATUS_TEXT)){
+            if (isBitSet(item->state,ITEM_STATE_INACTIVE)){
+                printf("_");
+                printf(item->text+1);
             }
             else {
-                cout << item->text;
+                printf(item->text);
             }
         }
         else{
-            cout << "[no text]";
+            printf("[no text]");
         }
 
-        cout << (IS_BIT_SET(item->state,ITEM_STATE_SELECTED)?"<" : " ");
-        cout << "|";
+        printf(isBitSet(item->state,ITEM_STATE_SELECTED)?"<" : " ");
+        printf("|");
     }
     else{
-        cout << "| [empty] |";
+        printf("| [empty] |");
     }
 #endif // #ifdef DEST_CASIO_CALC
     return TRUE;    // Done
@@ -338,90 +347,112 @@ int menu_setColour(POWNMENU menu, int index, int colour){
 // menu_handleKeyboard() : Handle keyboard events
 //
 //  @menu : Pointer to the menu
+//  @action : pointer a MENUACTION struct. It will ba filled with
+//              infor!mation about item smected by the user
 //
-//  @return : MENUACTION struct containing info
-//          about item selected by user
+//  @return : FALSE on error
 //
-MENUACTION menu_handleKeyboard(POWNMENU menu){
-    MENUACTION ret = {0, ITEM_STATE_DEFAULT, MOD_NONE, ACTION_KEYBOARD};
+BOOL menu_handleKeyboard(POWNMENU menu, PMENUACTION action){
+    if (!action || !menu){
+        return FALSE;
+    }
+
     uint modifier = MOD_NONE;
-    if (menu){
-        uint key = KEY_NONE;
-        uint8_t kID = 0;
-        PMENUITEM item = NULL;
-        BOOL readKeyboard = TRUE;
+    uint key = KEY_NONE;
+    uint8_t kID = 0;
+    PMENUITEM item = NULL;
+    BOOL readKeyboard = TRUE;
 
-        if (readKeyboard){
-            key = getKeyEx(&modifier);
+    menu_clearAction(action);
 
-            // a menu key pressed ?
-            if (key >= KEY_F1 && key <= KEY_F6){
-                kID = (key - KEY_F1);
+    if (readKeyboard){
+        key = getKeyEx(&modifier);
 
-                // Associated item
-                if (kID < MENUBAR_MAX_ITEM_COUNT &&
-                    (item = menu->visible_->items[kID]) &&
-                    !IS_BIT_SET(item->state, ITEM_STATE_INACTIVE)){
-                    // A sub menu ?
-                    if (IS_BIT_SET(item->status, ITEM_STATUS_SUBMENU)){
-                        if (item->subMenu){
-                            menu->visible_ = (MENUBAR*)item->subMenu; // "visible" menu
-                            menubar_selectByIndex(menu->visible_, -1, FALSE);
-                            menu_update(menu);
-                        }
+        // a menu key pressed ?
+        if (key >= KEY_F1 && key <= KEY_F6){
+            kID = (key - KEY_F1);
+
+            // Associated item
+            if (kID < MENUBAR_MAX_ITEM_COUNT &&
+                (item = menu->visible_->items[kID]) &&
+                !isBitSet(item->state, ITEM_STATE_INACTIVE)){
+                // A sub menu ?
+                if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
+                    if (item->subMenu){
+                        menu->visible_ = (MENUBAR*)item->subMenu; // "visible" menu
+                        menubar_selectByIndex(menu->visible_, -1, FALSE);
+                        menu_update(menu);
+                    }
+                }
+                else{
+                    if (IDM_RESERVED_BACK == item->id){
+                        menu_showParentBar(menu, TRUE);
                     }
                     else{
-                        if (IDM_RESERVED_BACK == item->id){
-                            menu_showParentBar(menu, TRUE);
+                        // select the item
+                        if (kID != menu->visible_->selIndex){
+                            menubar_selectByIndex(menu->visible_, kID, TRUE);
                         }
-                        else{
-                            // select the item
-                            if (kID != menu->visible_->selIndex){
-                                menubar_selectByIndex(menu->visible_, kID, TRUE);
-                            }
 
-                            // A checkbox ?
-                            if (IS_BIT_SET(item->status, ITEM_STATUS_CHECKBOX)){
-                                if (IS_BIT_SET(item->state, ITEM_STATE_CHECKED)){
-                                    item->state = REMOVE_BIT(item->state, ITEM_STATE_CHECKED);
-                                }
-                                else{
-                                    item->state = SET_BIT(item->state, ITEM_STATE_CHECKED);
-                                }
+                        // A checkbox ?
+                        if (isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+                            if (isBitSet(item->state, ITEM_STATE_CHECKED)){
+                                item->state = removeBit(item->state, ITEM_STATE_CHECKED);
                             }
-
-                            // a selectable item ...
-                            ret.value = item->id;
-                            ret.type = ACTION_MENU;
-                            ret.state = item->state;
-                            readKeyboard = FALSE;
+                            else{
+                                item->state = setBit(item->state, ITEM_STATE_CHECKED);
+                            }
                         }
+
+                        // a selectable item ...
+                        action->value = item->id;
+                        action->type = ACTION_MENU;
+                        action->state = item->state;
+                        readKeyboard = FALSE;
                     }
                 }
+            }
 
-                menu_update(menu);
-            } // if in [KEY_F1, KEY_F6]
-            else{
-                switch (key){
-                    // Back to prev. menu (if exists)
-                    case KEY_EXIT:
-                        menu_showParentBar(menu, TRUE);
-                        break;
+            menu_update(menu);
+        } // if in [KEY_F1, KEY_F6]
+        else{
+            switch (key){
+                // Back to prev. menu (if exists)
+                case KEY_EXIT:
+                    menu_showParentBar(menu, TRUE);
+                    break;
 
-                    default :
-                        ret.value = key;
-                        ret.type = ACTION_KEYBOARD;
-                        ret.modifier = modifier;
-                        readKeyboard = FALSE;
-                        break;
-                }
+                default :
+                    action->value = key;
+                    action->type = ACTION_KEYBOARD;
+                    action->modifier = modifier;
+                    readKeyboard = FALSE;
+                    break;
             }
         }
     }
 
-    // Return keyboard event
-    ret.modifier = modifier;
-    return ret;
+    action->modifier = modifier;
+
+    return TRUE;
+}
+
+// menu_clearAction() : Clear the menu action struct.
+//
+//  @action : pointer a MENUACTION struct.
+//
+//  @return : TRUE if done
+//
+BOOL menu_clearAction(PMENUACTION action){
+    if (action){
+        action->value = 0;
+        action->state = ITEM_STATE_DEFAULT;
+        action->modifier = MOD_NONE;
+        action->type = ACTION_KEYBOARD;
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 // menu_showParentBar() : Return to parent menubar if exists
@@ -550,7 +581,7 @@ void menubar_free(PMENUBAR bar, int freeAll){
 void menubar_freeMenuItem(PMENUBAR bar, PMENUITEM item){
     if (bar && item){
         // A submenu ?
-        if (IS_BIT_SET(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
+        if (isBitSet(item->status, ITEM_STATUS_SUBMENU) && item->subMenu){
             menubar_free((PMENUBAR)item->subMenu, TRUE);
         }
 
@@ -582,7 +613,7 @@ PMENUITEM menubar_addSubMenu(PMENUBAR const container, uint8_t index, PMENUBAR s
     }
 
     // Create a copy of the menu bar
-    PMENUBAR sub = menubar_copy(subMenu, IS_BIT_SET(itemState, ITEM_STATE_NO_BACK_BUTTON));
+    PMENUBAR sub = menubar_copy(subMenu, isBitSet(itemState, ITEM_STATE_NO_BACK_BUTTON));
     if (NULL == sub){
         return NULL;
     }
@@ -594,7 +625,7 @@ PMENUITEM menubar_addSubMenu(PMENUBAR const container, uint8_t index, PMENUBAR s
         return NULL;
     }
 
-    item->status = SET_BIT(item->status, ITEM_STATUS_SUBMENU);
+    item->status = setBit(item->status, ITEM_STATUS_SUBMENU);
     item->subMenu = sub;
     sub->parent = container;
 
@@ -647,7 +678,7 @@ PMENUITEM menubar_findItem(PMENUBAR const bar, int searchedID, int searchMode, P
                         foundItem = item;
                     }
                     else{
-                        if (IS_BIT_SET(item->status, ITEM_STATUS_SUBMENU)){
+                        if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
                             // search in the sub-menu ?
                             if ((sItem = menubar_findItem((PMENUBAR)item->subMenu, searchedID, searchMode, containerBar, pIndex))){
                                 foundItem = sItem;   // Found in a sub-menu
@@ -757,17 +788,17 @@ PMENUITEM menubar_copyItem(PMENUBAR const bar, PMENUITEM const source){
         item->state = source->state;
         item->status = source->status;
         item->ownerData = source->ownerData;
-        if (IS_BIT_SET(source->status, ITEM_STATUS_TEXT)){
+        if (isBitSet(source->status, ITEM_STATUS_TEXT)){
             strcpy(item->text, source->text);
         }
         else{
             item->text[0] = '\0';
         }
 
-        if (IS_BIT_SET(source->status, ITEM_STATUS_SUBMENU)){
+        if (isBitSet(source->status, ITEM_STATUS_SUBMENU)){
             item->subMenu = menubar_copy((PMENUBAR)source->subMenu,
-                        IS_BIT_SET(item->state, ITEM_STATE_NO_BACK_BUTTON));
-            ((PMENUBAR)(item->subMenu))->parent = bar;
+                        isBitSet(item->state, ITEM_STATE_NO_BACK_BUTTON));
+            ((PMENUBAR)(item->subMenu))->parent = (void*)bar;
         }
         else{
             item->subMenu = NULL;
@@ -797,7 +828,7 @@ BOOL menubar_removeItem(PMENUBAR const bar, int searchedID, int searchMode){
                 bar->items[searchedID] = NULL;
 
                 // A sub menu ?
-                if (IS_BIT_SET(item->status, ITEM_STATUS_SUBMENU)){
+                if (isBitSet(item->status, ITEM_STATUS_SUBMENU)){
                     menubar_free((PMENUBAR)item->subMenu, TRUE);
                 }
 
@@ -862,11 +893,11 @@ BOOL menubar_selectByIndex(PMENUBAR bar, int index, BOOL selected){
             // unselect prev.
             menubar_unSelectItems(bar);
 
-            item->state = SET_BIT(item->state, ITEM_STATE_SELECTED);
+            item->state = setBit(item->state, ITEM_STATE_SELECTED);
             bar->selIndex = index;
         }
         else{
-            item->state = REMOVE_BIT(item->state, ITEM_STATE_SELECTED);
+            item->state = removeBit(item->state, ITEM_STATE_SELECTED);
             bar->selIndex = -1;
         }
     }
@@ -884,7 +915,7 @@ void menubar_unSelectItems(PMENUBAR bar){
         PMENUITEM item;
         for (uint8_t index = 0; index < MENUBAR_MAX_ITEM_COUNT; index++){
             if ((item = bar->items[index])){
-                item->state = REMOVE_BIT(item->state, ITEM_STATE_SELECTED);
+                item->state = removeBit(item->state, ITEM_STATE_SELECTED);
             }
         }
     }
@@ -934,17 +965,17 @@ BOOL menubar_activateItem(PMENUBAR bar, int searchedID, int searchMode, BOOL act
         PMENUITEM item = menubar_findItem(bar, searchedID, searchMode, &container, NULL);
         if (item){
             // Found an item with this ID
-            BOOL active = !IS_BIT_SET(item->state, ITEM_STATE_INACTIVE);
+            BOOL active = !isBitSet(item->state, ITEM_STATE_INACTIVE);
             if (active != activated){
                 // change item's state
                 if (activated){
-                    item->state = REMOVE_BIT(item->state, ITEM_STATE_INACTIVE);
+                    item->state = removeBit(item->state, ITEM_STATE_INACTIVE);
                 }
                 else{
-                    item->state = SET_BIT(item->state, ITEM_STATE_INACTIVE);
+                    item->state = setBit(item->state, ITEM_STATE_INACTIVE);
 
                     // an inactivate item can't be selected !
-                    item->state = REMOVE_BIT(item->state, ITEM_STATE_SELECTED);
+                    item->state = removeBit(item->state, ITEM_STATE_SELECTED);
                     if (container){
                         container->selIndex = -1;
                     }
@@ -973,7 +1004,7 @@ BOOL menubar_activate(PMENUBAR bar, int searchedID, int searchMode, BOOL activat
 BOOL menubar_isMenuItemActivated(PMENUBAR bar, int id, int searchMode){
     if (bar){
         PMENUITEM item = menubar_findItem(bar, id, searchMode, NULL, NULL);
-        return ((item && !IS_BIT_SET(item->state, ITEM_STATE_INACTIVE))?TRUE:FALSE);
+        return ((item && !isBitSet(item->state, ITEM_STATE_INACTIVE))?TRUE:FALSE);
     }
 
     return FALSE;
@@ -1022,8 +1053,8 @@ PMENUITEM menubar_appendCheckbox(PMENUBAR bar, int id, const char* text, int sta
 int menubar_isMenuItemChecked(PMENUBAR bar, int id, int searchMode){
     if (bar){
         PMENUITEM item = menubar_findItem(bar, id, searchMode, NULL, NULL);
-        if (item && IS_BIT_SET(item->status, ITEM_STATUS_CHECKBOX)){
-            return (IS_BIT_SET(item->state,
+        if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
+            return (isBitSet(item->state,
                     ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
         }
     }
@@ -1045,16 +1076,16 @@ int menubar_isMenuItemChecked(PMENUBAR bar, int id, int searchMode){
 int menubar_checkMenuItem(PMENUBAR bar, int id, int searchMode, int checkState){
     if (bar){
         PMENUITEM item = menubar_findItem(bar, id, searchMode, NULL, NULL);
-        if (item && IS_BIT_SET(item->status, ITEM_STATUS_CHECKBOX)){
+        if (item && isBitSet(item->status, ITEM_STATUS_CHECKBOX)){
             if (ITEM_CHECKED == checkState){
-                item->state = SET_BIT(item->state, ITEM_STATE_CHECKED);
+                item->state = setBit(item->state, ITEM_STATE_CHECKED);
             }
             else{
-                item->state = REMOVE_BIT(item->state, ITEM_STATE_CHECKED);
+                item->state = removeBit(item->state, ITEM_STATE_CHECKED);
             }
 
             // return tatus of bit
-            return (IS_BIT_SET(item->state,
+            return (isBitSet(item->state,
                     ITEM_STATE_CHECKED)?ITEM_CHECKED:ITEM_UNCHECKED);
         }
     }
@@ -1085,7 +1116,7 @@ PMENUITEM item_create(int id, const char* text, int state, int status){
         item->id = id;
         item->state = state;
         item->status = status;
-        item->status = SET_BIT(item->status, ITEM_STATUS_TEXT);
+        item->status = setBit(item->status, ITEM_STATUS_TEXT);
         if (len > ITEM_NAME_LEN){
             strncpy(item->text, text, ITEM_NAME_LEN);
             item->text[ITEM_NAME_LEN] = '\0';
@@ -1096,7 +1127,7 @@ PMENUITEM item_create(int id, const char* text, int state, int status){
             }
             else{
                 item->text[0]='\0';
-                item->status = REMOVE_BIT(item->status, ITEM_STATUS_TEXT);
+                item->status = removeBit(item->status, ITEM_STATUS_TEXT);
             }
         }
     }
@@ -1108,10 +1139,9 @@ PMENUITEM item_create(int id, const char* text, int state, int status){
 //
 //  @item : pointer to item
 //
-PMENUITEM item_free(PMENUITEM item){
+void item_free(PMENUITEM item){
     if (item){
         free(item);
     }
 }
-
 // EOF

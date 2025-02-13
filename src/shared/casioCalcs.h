@@ -78,16 +78,6 @@ typedef int BOOL;
 // Point coordinates
 //
 typedef struct __point {
-    // Construction
-    __point(){
-        x = y = 0;
-    }
-
-    __point(int px, int py){
-        x = px;
-        y = py;
-    }
-
     int16_t    x;
     int16_t    y;
 } POINT;
@@ -100,12 +90,6 @@ typedef struct __rect{
 } RECT;
 
 #define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
-
-// State & status - bitwise manips
-//
-#define IS_BIT_SET(value, bit)  (bit == (value & bit))
-#define SET_BIT(value, bit)     (value |= bit)
-#define REMOVE_BIT(value, bit)  (value & ~bit)
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 

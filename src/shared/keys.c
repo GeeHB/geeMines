@@ -16,9 +16,8 @@
 //
 uint getKeyEx(uint* mod){
     uint key = KEY_NONE;
-    uint rmod = MOD_NONE;
-
 #ifdef DEST_CASIO_CALC
+    uint modifier = MOD_NONE;
     key_event_t evt;
     evt = pollevent();
     if (evt.type == KEYEV_DOWN){
@@ -28,13 +27,13 @@ uint getKeyEx(uint* mod){
         //
         if (key == KEY_SHIFT){
             if (!_isSet(MOD_SHIFT)){
-                rmod = SET_BIT(rmod, MOD_SHIFT);
+                modifier = SET_BIT(modifier, MOD_SHIFT);
             }
         }
         else{
             if (key == KEY_ALPHA){
                 if (!_isSet(MOD_ALPHA)){
-                    rmod = SET_BIT(rmod, MOD_ALPHA);
+                    modifier = SET_BIT(modifier, MOD_ALPHA);
                 }
             }
         }
@@ -46,18 +45,18 @@ uint getKeyEx(uint* mod){
             // Modifiers
             //
             if (key == KEY_SHIFT){
-                rmod = REMOVE_BIT(rmod, MOD_SHIFT);
+                modifier = REMOVE_BIT(modifier, MOD_SHIFT);
             }
             else{
                 if (key == KEY_ALPHA){
-                    rmod = REMOVE_BIT(rmod, MOD_ALPHA);
+                    modifier = REMOVE_BIT(modifier, MOD_ALPHA);
                 }
             }
         }
 
         key = KEY_NONE;
         if (mod){
-            *mod = rmod;
+            *mod = modifier;
         }
     }
 #else
@@ -74,6 +73,18 @@ uint getKeyEx(uint* mod){
 
 uint getKey(){
     return getKeyEx(NULL);
+}
+
+// State & status - bitwise manips
+//
+BOOL isBitSet(int value, int bit){
+    return (bit == (value & bit));
+ }
+int setBit(int value, int bit){
+    return (value |= bit);
+}
+int removeBit(int value, int bit){
+    return (value & ~bit);
 }
 
 // EOF

@@ -42,6 +42,12 @@ extern "C" {
 uint getKeyEx(uint* mod);
 uint getKey();
 
+// State & status - bitwise manips
+//
+BOOL isBitSet(int value, int bit);
+int setBit(int value, int bit);
+int removeBit(int value, int bit);
+
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus

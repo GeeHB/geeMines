@@ -37,12 +37,6 @@ extern "C" {
 #define ITEM_ROUNDED_DIM        4
 
 //
-// Item pos is a menu bar
-//
-#define MENU_POS_LEFT           0
-#define MENU_POS_RIGHT          (MENUBAR_MAX_ITEM_COUNT-1)
-
-//
 // Item state - could be any combination of :
 //
 #define ITEM_STATE_DEFAULT          0
@@ -141,7 +135,7 @@ PMENUITEM item_create(int id, const char* text, int state, int status);
 //
 //  @item : pointer to item
 //
-PMENUITEM item_free(PMENUITEM item);
+void item_free(PMENUITEM item);
 
 //
 // menubar
@@ -152,24 +146,10 @@ PMENUITEM item_free(PMENUITEM item);
 typedef struct _menuBar{
     int itemCount;
     int selIndex;
-    _menuBar* parent;
+    void* parent;   // Pointer to the parent MENUBAR
     PMENUITEM items[MENUBAR_MAX_ITEM_COUNT];
     int colours[COLOUR_COUNT];
 } MENUBAR, * PMENUBAR;
-
-// Action to perform
-//
-typedef struct _menuAction{
-    int value;
-    int state;
-    int modifier;
-    int type;
-} MENUACTION;
-
-// Types of actions
-//
-#define ACTION_MENU         0   // value is a menu ID
-#define ACTION_KEYBOARD     1   // value is a keycode
 
 // Drawing styles for ownerdraw function
 //
@@ -188,6 +168,12 @@ typedef struct _menuAction{
 //
 #define SEARCH_BY_ID        0
 #define SEARCH_BY_INDEX     1
+
+//
+// Item pos is a menu bar
+//
+#define MENU_POS_LEFT       0
+#define MENU_POS_RIGHT      (MENUBAR_MAX_ITEM_COUNT-1)
 
 //  menubar_create() : Create an empty menubar
 //
@@ -438,6 +424,20 @@ int menubar_checkMenuItem(PMENUBAR, int id, int searchMode, int checkState);
 // menu
 //
 
+// Action to perform
+//
+typedef struct _menuAction{
+    int value;
+    int state;
+    int modifier;
+    int type;
+} MENUACTION, * PMENUACTION;
+
+// Types of actions
+//
+#define ACTION_MENU         0   // value is a menu ID
+#define ACTION_KEYBOARD     1   // value is a keycode
+
 typedef struct _ownMenu{
     MENUBAR     current_;       // Active bar
     RECT        rect_;          // Bar position and dims
@@ -464,6 +464,14 @@ POWNMENU menu_create();
 //  @menu : pointer to the menu
 //
 void menu_free(POWNMENU menu);
+
+// menu_getMainBar() : Get a pointer to the default menubar
+//
+//  @menu : pointer to the menu
+//
+//  @return : A pointer to the bar or NULL on error
+//
+PMENUBAR menu_getMainBar(POWNMENU menu);
 
 //  getHeight() : Get menu bar height
 //
@@ -515,7 +523,7 @@ MENUDRAWINGCALLBACK menu_setMenuDrawingCallBack(POWNMENU menu, MENUDRAWINGCALLBA
 //
 //  @return : FALSE on error(s)
 //
-static BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anchor, int style);
+BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anchor, int style);
 
 //  menu_drawItem() : Draw an item
 //
@@ -561,15 +569,23 @@ void menu_showParentBar(POWNMENU menu, BOOL updateBar);
     #define KEY_EXIT       'q'
 #endif // #ifdef DEST_CASIO_CALC
 
-
 // menu_handleKeyboard() : Handle keyboard events
 //
 //  @menu : Pointer to the menu
+//  @action : pointer a MENUACTION struct. It will ba filled with
+//              infor!mation about item smected by the user
 //
-//  @return : MENUACTION struct containing info
-//          about item selected by user
+//  @return : FALSE on error
 //
-MENUACTION menu_handleKeyboard(POWNMENU menu);
+BOOL menu_handleKeyboard(POWNMENU menu, PMENUACTION action);
+
+// menu_clearAction() : Clear the menu action struct.
+//
+//  @action : pointer a MENUACTION struct.
+//
+//  @return : TRUE if done
+//
+BOOL menu_clearAction(PMENUACTION action);
 
 #ifdef __cplusplus
 }
