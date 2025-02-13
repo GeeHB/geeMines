@@ -77,7 +77,7 @@ typedef int BOOL;
 
 // Point coordinates
 //
-typedef struct __point {
+typedef struct __point{
     int16_t    x;
     int16_t    y;
 } POINT;

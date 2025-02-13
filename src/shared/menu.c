@@ -45,13 +45,13 @@ void menu_free(POWNMENU menu){
     }
 }
 
-// menu_getMainBar() : Get a pointer to the default menubar
+// menu_getMenuBar() : Get a pointer to the default menubar
 //
 //  @menu : pointer to the menu
 //
 //  @return : A pointer to the bar or NULL on error
 //
-PMENUBAR menu_getMainBar(POWNMENU menu){
+PMENUBAR menu_getMenuBar(POWNMENU menu){
     return (menu?&menu->current_:NULL);
 }
 
@@ -159,7 +159,7 @@ MENUDRAWINGCALLBACK menu_setMenuDrawingCallBack(POWNMENU menu, MENUDRAWINGCALLBA
 //  @return : FALSE on error(s)
 //
 BOOL menu_drawItem(POWNMENU menu, PMENUITEM const item, RECT* const anchor){
-    if (NULL == menu || NULL == item || NULL == anchor){
+    if (NULL == menu || NULL == anchor){
         return FALSE;
     }
 

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "../src/shared/menu.h"
 
@@ -36,7 +35,7 @@ int main_basic()
     }
 
     // Une première barre ...
-    PMENUBAR bar = menu_getMainBar(menu);
+    PMENUBAR bar = menu_getMenuBar(menu);
     if (bar){
         BOOL end = FALSE;
         MENUACTION action;
@@ -92,52 +91,54 @@ int main()
     // Premier sous menu
     PMENUBAR sub = menubar_create();
     if (sub){
-        BOOL end = FALSE;
+        BOOL validKey, end = FALSE;
         MENUACTION action;
         PMENUBAR bar;
 
-        menubar_appendItem(sub, IDM_GAME_BEGINNER, IDS_GAME_BEGINNER, ITEM_STATUS_DEFAULT, ITEM_STATUS_DEFAULT);
-        menubar_appendItem(sub, IDM_GAME_MEDIUM, IDS_GAME_MEDIUM, ITEM_STATUS_DEFAULT, ITEM_STATUS_DEFAULT);
-        menubar_appendItem(sub, IDM_GAME_EXPERT, IDS_GAME_EXPERT, ITEM_STATUS_DEFAULT, ITEM_STATUS_DEFAULT);
+        menubar_appendItem(sub, IDM_GAME_BEGINNER, IDS_GAME_BEGINNER, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
+        menubar_appendItem(sub, IDM_GAME_MEDIUM, IDS_GAME_MEDIUM, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
+        menubar_appendItem(sub, IDM_GAME_EXPERT, IDS_GAME_EXPERT, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
 
-        bar = menu_getMainBar(menu);
+        bar = menu_getMenuBar(menu);
 
         menubar_appendSubMenu(bar, sub, IDM_NEW_GAME, IDS_NEW_GAME, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         menubar_appendItem(bar, IDM_CHECK, IDS_CHECK, ITEM_STATE_CHECKED, ITEM_STATUS_CHECKBOX);
-        menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
+        menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
 
         // Affichage du menu
         menu_update(menu);
 
         while (!end){
-            menu_handleKeyboard(menu, &action);
+            validKey = menu_handleKeyboard(menu, &action);
 
-            switch (action.value){
-                case IDM_GAME_BEGINNER :
-                    printf("Débutant\n");
-                    menu_showParentBar(menu, TRUE);
-                    break;
+            if (validKey){
+                switch (action.value){
+                    case IDM_GAME_BEGINNER :
+                        printf("Débutant\n");
+                        menu_showParentBar(menu, TRUE);
+                        break;
 
-                case IDM_GAME_MEDIUM :
-                    printf("Moyen\n");
-                    menu_showParentBar(menu, TRUE);
-                    break;
+                    case IDM_GAME_MEDIUM :
+                        printf("Moyen\n");
+                        menu_showParentBar(menu, TRUE);
+                        break;
 
-                case IDM_GAME_EXPERT:
-                    printf("Expert\n");
-                    menu_showParentBar(menu, TRUE);
-                    break;
+                    case IDM_GAME_EXPERT:
+                        printf("Expert\n");
+                        menu_showParentBar(menu, TRUE);
+                        break;
 
-                case IDM_CHECK :
-                    printf("check\n");
-                    break;
+                    case IDM_CHECK :
+                        printf("check\n");
+                        break;
 
-                case IDM_QUIT :
-                    end = TRUE;
-                    break;
+                    case IDM_QUIT :
+                        end = TRUE;
+                        break;
 
-                default :
-                    break;
+                    default :
+                        break;
+                }
             }
         }
 

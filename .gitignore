@@ -5,7 +5,7 @@
 .DS_Store
 *-base.*
 *.xcf
-*.depand
+*.depend
 
 # Outputs
 /build-cg
@@ -13,8 +13,8 @@
 /*.g3a*
 *.o
 /build
-/bin
-/obj
+linuxMines/bin/Debug
+
 
 # Common IDE files
 /linux

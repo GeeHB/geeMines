@@ -465,13 +465,13 @@ POWNMENU menu_create();
 //
 void menu_free(POWNMENU menu);
 
-// menu_getMainBar() : Get a pointer to the default menubar
+// menu_getMenuBar() : Get a pointer to the default menubar
 //
 //  @menu : pointer to the menu
 //
 //  @return : A pointer to the bar or NULL on error
 //
-PMENUBAR menu_getMainBar(POWNMENU menu);
+PMENUBAR menu_getMenuBar(POWNMENU menu);
 
 //  getHeight() : Get menu bar height
 //
