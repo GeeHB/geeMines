@@ -26,14 +26,14 @@ uint getKeyEx(uint* mod){
         // Modifiers
         //
         if (key == KEY_SHIFT){
-            if (!_isSet(MOD_SHIFT)){
-                modifier = SET_BIT(modifier, MOD_SHIFT);
+            if (!isBitSet(modifier, MOD_SHIFT)){
+                modifier = setBit(modifier, MOD_SHIFT);
             }
         }
         else{
             if (key == KEY_ALPHA){
-                if (!_isSet(MOD_ALPHA)){
-                    modifier = SET_BIT(modifier, MOD_ALPHA);
+                if (!isBitSet(modifier, MOD_ALPHA)){
+                    modifier = setBit(modifier, MOD_ALPHA);
                 }
             }
         }
@@ -45,11 +45,11 @@ uint getKeyEx(uint* mod){
             // Modifiers
             //
             if (key == KEY_SHIFT){
-                modifier = REMOVE_BIT(modifier, MOD_SHIFT);
+                modifier = removeBit(modifier, MOD_SHIFT);
             }
             else{
                 if (key == KEY_ALPHA){
-                    modifier = REMOVE_BIT(modifier, MOD_ALPHA);
+                    modifier = removeBit(modifier, MOD_ALPHA);
                 }
             }
         }

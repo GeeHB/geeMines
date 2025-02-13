@@ -31,6 +31,14 @@ POWNMENU menu_create(){
         menubar_clear(&menu->current_);
         menu->visible_ = &menu->current_; // show current bar
         menu_setHeight(menu, MENUBAR_DEF_HEIGHT, FALSE);
+
+        // Default colours
+        menu->colours_[COLOUR_TXT_SELECTED] = ITEM_COLOUR_SELECTED;
+        menu->colours_[COLOUR_TXT_UNSELECTED] = ITEM_COLOUR_UNSELECTED;
+        menu->colours_[COLOUR_TXT_INACTIVE] = ITEM_COLOUR_INACTIVE;
+        menu->colours_[COLOUR_ITEM_BACKGROUND] = ITEM_COLOUR_BACKGROUND;
+        menu->colours_[COLOUR_ITEM_BACKGROUND_SELECTED] = ITEM_COLOUR_BACKGROUND;
+        menu->colours_[COLOUR_ITEM_BORDER] = ITEM_COLOUR_BORDER;
     }
     return menu;
 }
@@ -189,23 +197,23 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
     }
 
 #ifdef DEST_CASIO_CALC
-    bool selected(false);
+    BOOL selected = FALSE;
 
     // Draw background
     if (isBitSet(style, MENU_DRAW_BACKGROUND)){
         drect(anchor->x, anchor->y, anchor->x + anchor->w - 1,
                 anchor->y + anchor->h - 1,
-                bar->colours[ITEM_BACKGROUND]);
+                menu->colours_[COLOUR_ITEM_BACKGROUND]);
     }
 
     if (item){
         int colour;
+        int x, w, h;
+        int imgID = -1;  // No image
 
         selected = isBitSet(item->state, ITEM_STATE_SELECTED);
-        int imgID(-1);  // No image
 
         // Text
-        int x, w, h(0);
         if (isBitSet(item->status, ITEM_STATUS_TEXT)){
             dsize(item->text, NULL, &w, &h);
         }
@@ -229,7 +237,7 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
             // Draw the image on left of text
             if (isBitSet(style, MENU_DRAW_IMAGE)){
                 dsubimage(x, anchor->y + (anchor->h - MENU_IMG_HEIGHT) / 2,
-                        &g_menuImgs, imgID * MENU_IMG_WIDTH,
+                        &g_menu, imgID * MENU_IMG_WIDTH,
                         0, MENU_IMG_WIDTH, MENU_IMG_HEIGHT, DIMAGE_NOCLIP);
             }
             x+=(MENU_IMG_WIDTH + 2);
@@ -245,21 +253,21 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
 
             // text colour ID
             colour = (selected?
-                        TXT_SELECTED:
+                        COLOUR_TXT_SELECTED:
                         (isBitSet(item->state, ITEM_STATE_INACTIVE)?
-                        TXT_INACTIVE:TXT_UNSELECTED));
+                        COLOUR_TXT_INACTIVE:COLOUR_TXT_UNSELECTED));
 
             // draw the text
             dtext_opt(x, anchor->y + (anchor->h - h) / 2,
-                    bar->colours[colour],
-                    bar->colours[ITEM_BACKGROUND],
+                    menu->colours_[colour],
+                    menu->colours_[COLOUR_ITEM_BACKGROUND],
                     DTEXT_LEFT, DTEXT_TOP,
                      item->text, -1);
         }
 
         // Borders
         if (isBitSet(style, MENU_DRAW_BORDERS) && selected){
-            colour = bar->colours[ITEM_BORDER];
+            colour = menu->colours_[COLOUR_ITEM_BORDER];
             dline(anchor->x, anchor->y,
                 anchor->x, anchor->y + anchor->h - 2, colour); // Left
             dline(anchor->x+1, anchor->y + anchor->h - 1,
@@ -278,7 +286,7 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
     if (isBitSet(style, MENU_DRAW_BORDERS) && !selected){
         dline(anchor->x, anchor->y,
                 anchor->x + anchor->w -1, anchor->y,
-                bar->colours[ITEM_BORDER]);
+                menu->colours_[COLOUR_ITEM_BORDER]);
     }
 #else
     if (item){
@@ -320,8 +328,8 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
 //
 //  @return : colour or -1 if error
 //
-int menu_getColour(POWNMENU menu, int index){
-    return (menu?((index>=COLOUR_COUNT)?-1:menu->visible_->colours[index]):-1);
+int menu_getColour(POWNMENU menu, uint8_t index){
+    return (menu?((index>=COLOUR_COUNT)?-1:menu->colours_[index]):-1);
 }
 
 // menu_setColour() : Change the colour used for item's drawings in the
@@ -333,14 +341,14 @@ int menu_getColour(POWNMENU menu, int index){
 //
 //  @return : previous colour or -1 if error
 //
-int menu_setColour(POWNMENU menu, int index, int colour){
+int menu_setColour(POWNMENU menu, uint8_t index, int colour){
     if (!menu || index>=COLOUR_COUNT){
         return -1;
     }
 
     // Change the colour
-    int actual = menu->visible_->colours[index];
-    menu->visible_->colours[index] = colour;
+    uint8_t actual = menu->colours_[index];
+    menu->colours_[index] = colour;
     return actual;
 }
 
@@ -509,14 +517,6 @@ void menubar_clear(PMENUBAR bar){
         memset(bar, 0x00, sizeof(MENUBAR));
         bar->selIndex = -1;     // No item is selected
         memset(bar->items, 0x00, sizeof(PMENUITEM) * MENUBAR_MAX_ITEM_COUNT);
-
-        // Default colours
-        bar->colours[COLOUR_TXT_SELECTED] = ITEM_COLOUR_SELECTED;
-        bar->colours[COLOUR_TXT_UNSELECTED] = ITEM_COLOUR_UNSELECTED;
-        bar->colours[COLOUR_TXT_INACTIVE] = ITEM_COLOUR_INACTIVE;
-        bar->colours[COLOUR_ITEM_BACKGROUND] = ITEM_COLOUR_BACKGROUND;
-        bar->colours[COLOUR_ITEM_BACKGROUND_SELECTED] = ITEM_COLOUR_BACKGROUND;
-        bar->colours[COLOUR_ITEM_BORDER] = ITEM_COLOUR_BORDER;
     }
 }
 
@@ -549,9 +549,6 @@ PMENUBAR menubar_copy(PMENUBAR const source, BOOL noBackButton){
                     item_create(IDM_RESERVED_BACK, STR_RESERVED_BACK,
                                 ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
-
-        // Copy choosen colours
-        memcpy(bar->colours, source->colours, COLOUR_COUNT * sizeof(int));
     }
     return bar;
 }

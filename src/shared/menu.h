@@ -83,28 +83,6 @@ extern "C" {
 #define STR_RESERVED_BACK       "back"
 
 //
-// Menu colours
-//
-
-// ID of colours (for {set/get}Colour methods
-//
-#define COLOUR_TXT_SELECTED             0
-#define COLOUR_TXT_UNSELECTED           1
-#define COLOUR_TXT_INACTIVE             2
-#define COLOUR_ITEM_BACKGROUND          3
-#define COLOUR_ITEM_BACKGROUND_SELECTED 4   // for future use
-#define COLOUR_ITEM_BORDER              5
-#define COLOUR_COUNT                    6
-
-// Default colours
-//
-#define ITEM_COLOUR_SELECTED    COLOUR_BLUE
-#define ITEM_COLOUR_UNSELECTED  COLOUR_DK_GREY
-#define ITEM_COLOUR_INACTIVE    COLOUR_LT_GREY
-#define ITEM_COLOUR_BACKGROUND  COLOUR_WHITE
-#define ITEM_COLOUR_BORDER      COLOUR_BLACK
-
-//
 // items
 //
 
@@ -148,7 +126,6 @@ typedef struct _menuBar{
     int selIndex;
     void* parent;   // Pointer to the parent MENUBAR
     PMENUITEM items[MENUBAR_MAX_ITEM_COUNT];
-    int colours[COLOUR_COUNT];
 } MENUBAR, * PMENUBAR;
 
 // Drawing styles for ownerdraw function
@@ -424,24 +401,33 @@ int menubar_checkMenuItem(PMENUBAR, int id, int searchMode, int checkState);
 // menu
 //
 
-// Action to perform
 //
-typedef struct _menuAction{
-    int value;
-    int state;
-    int modifier;
-    int type;
-} MENUACTION, * PMENUACTION;
+// Menu colours
+//
 
-// Types of actions
+// ID of colours (for {set/get}Colour methods
 //
-#define ACTION_MENU         0   // value is a menu ID
-#define ACTION_KEYBOARD     1   // value is a keycode
+#define COLOUR_TXT_SELECTED             0
+#define COLOUR_TXT_UNSELECTED           1
+#define COLOUR_TXT_INACTIVE             2
+#define COLOUR_ITEM_BACKGROUND          3
+#define COLOUR_ITEM_BACKGROUND_SELECTED 4   // for future use
+#define COLOUR_ITEM_BORDER              5
+#define COLOUR_COUNT                    6
+
+// Default colours
+//
+#define ITEM_COLOUR_SELECTED    COLOUR_BLUE
+#define ITEM_COLOUR_UNSELECTED  COLOUR_DK_GREY
+#define ITEM_COLOUR_INACTIVE    COLOUR_LT_GREY
+#define ITEM_COLOUR_BACKGROUND  COLOUR_WHITE
+#define ITEM_COLOUR_BORDER      COLOUR_BLACK
 
 typedef struct _ownMenu{
     MENUBAR     current_;       // Active bar
     RECT        rect_;          // Bar position and dims
     PMENUBAR    visible_;       // Visible menu bar
+    int         colours_[COLOUR_COUNT]; // Colours used for drawings
     void*       drawingFunc;    // Pointer to ownerdraw callback
 } OWNMENU, * POWNMENU;
 
@@ -536,15 +522,6 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
 //
 BOOL menu_drawItem(POWNMENU menu, PMENUITEM const item, RECT* const anchor);
 
-// menu_getColour() : Get the colour used for item's drawings in the
-//              active menu bar
-//
-//  @menu : Pointer to the menu
-//  @index : index of the colour to retreive
-//
-//  @return : colour or -1 if error
-//
-int menu_getColour(POWNMENU menu, int index);
 
 //  menu_update() : Update the menu bar
 //
@@ -554,12 +531,51 @@ int menu_getColour(POWNMENU menu, int index);
 //
 void menu_update(POWNMENU menu);
 
+// menu_getColour() : Get the colour used for item's drawings in the
+//              active menu bar
+//
+//  @menu : Pointer to the menu
+//  @index : index of the colour to retreive
+//
+//  @return : colour or -1 if error
+//
+int menu_getColour(POWNMENU menu, uint8_t index);
+
+// menu_setColour() : Change the colour used for item's drawings in the
+//              active menu bar
+//
+//  @menu : Pointer to the menu
+//  @index : index of the colour to change
+//  @colour : new colour value
+//
+//  @return : previous colour or -1 if error
+//
+int menu_setColour(POWNMENU menu, uint8_t index, int colour);
+
 // menu_showParentBar() : Return to parent menubar if exists
 //
 //  @menu : Pointer to the menu
 //  @updateBar : update the menu ?
 //
 void menu_showParentBar(POWNMENU menu, BOOL updateBar);
+
+//
+// Keyboard management
+//
+
+// Action to perform
+//
+typedef struct _menuAction{
+    int value;
+    int state;
+    int modifier;
+    int type;
+} MENUACTION, * PMENUACTION;
+
+// Types of actions
+//
+#define ACTION_MENU         0   // value is a menu ID
+#define ACTION_KEYBOARD     1   // value is a keycode
 
 // Keys used by menu
 //

@@ -16,7 +16,7 @@ set(ASSETS
   # ...
 )
 set(ASSETS_cg
-  assets-cg/example.png
+  assets-cg/menu.png
   # ...
 )
 
