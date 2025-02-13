@@ -291,10 +291,10 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
         if (isBitSet(item->status, ITEM_STATUS_TEXT)){
             if (isBitSet(item->state,ITEM_STATE_INACTIVE)){
                 printf("_");
-                printf(item->text+1);
+                printf("%s", item->text+1);
             }
             else {
-                printf(item->text);
+                printf("%s", item->text);
             }
         }
         else{
