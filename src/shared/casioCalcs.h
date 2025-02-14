@@ -24,6 +24,7 @@
 #endif // #ifdef DEST_CASIO_CALC
 
 #include <stdint.h>
+#include <stdlib.h>
 
 //
 // A few basic colours

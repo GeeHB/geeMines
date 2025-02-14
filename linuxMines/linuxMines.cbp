@@ -31,6 +31,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../src/consts.h" />
+		<Unit filename="../src/grid.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/grid.h" />
 		<Unit filename="../src/shared/casioCalcs.h" />
 		<Unit filename="../src/shared/keys.c">
 			<Option compilerVar="CC" />

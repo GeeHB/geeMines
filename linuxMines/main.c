@@ -1,6 +1,8 @@
-#include <stdio.h>
-
+#include "../src/shared/casioCalcs.h"
 #include "../src/shared/menu.h"
+#include "../src/consts.h"
+
+#include "../src/grid.h"
 
 // Menu de test
 //
@@ -113,10 +115,19 @@ int main()
 
             if (validKey){
                 switch (action.value){
-                    case IDM_GAME_BEGINNER :
+                    case IDM_GAME_BEGINNER :{
+                        GRID grid;
+                        grid_create(&grid, BEGINNER);
+                        grid_layMines(&grid);
+
                         printf("Débutant\n");
+
+                        grid_display(&grid);
+                        grid_free(&grid);
+
                         menu_showParentBar(menu, TRUE);
                         break;
+                    }
 
                     case IDM_GAME_MEDIUM :
                         printf("Moyen\n");

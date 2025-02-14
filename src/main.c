@@ -1,11 +1,15 @@
-#include <gint/display.h>
-#include <gint/keyboard.h>
-#include <stdlib.h>
+#include "shared/casioCalcs.h"
+#include "consts.h"
+
+#ifdef DEST_CASIO_CALC
+#include "shared/keys.h"
 #include <math.h>
+#endif // #ifdef DEST_CASIO_CALC
 
 int main(void)
 {
-	int i;
+#ifdef DEST_CASIO_CALC
+    int i;
 	dclear(C_WHITE);
 	dtext(1, 1, C_BLACK, "Sample fxSDK add-in.");
 	dupdate();
@@ -19,5 +23,6 @@ int main(void)
 	b+=1.0;
 
 	getkey();
+#endif // #ifdef DEST_CASIO_CALC
 	return 1;
 }

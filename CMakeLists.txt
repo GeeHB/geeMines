@@ -7,6 +7,7 @@ find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
   src/main.c
+  src/grid.c
   src/shared/keys.c
   src/shared/menu.c
   # ...

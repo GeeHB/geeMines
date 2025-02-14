@@ -12,8 +12,6 @@
 #include "casioCalcs.h"
 #include "keys.h"
 
-#include <stdlib.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
