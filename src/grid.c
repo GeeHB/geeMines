@@ -75,7 +75,7 @@ BOOL grid_create(PGRID const grid, GAME_DIFFICULTY level){
                 PBOX box;
                 for (r = 0; r < grid->rows_; r++){
                     for (c = 0; c < grid->cols_; c++){
-                        box = BOX_AT(grid, grid->cols_,r, c);
+                        box = GRID_AT(grid, r, c);
                         box->mine_ = FALSE;
                         box->state_ = BS_INITIAL;
                     }
@@ -110,7 +110,7 @@ uint8_t grid_layMines(PGRID const grid){
         while (mines < grid->minesCount_){
             r = (uint8_t)(rand() % grid->rows_);
             c = (uint8_t)(rand() % grid->cols_);
-            box = BOX_AT(grid, grid->cols_, r, c);
+            box = GRID_AT(grid, r, c);
 
             if (!box->mine_){
                 box->mine_ = TRUE;     // A new mine in a new pos.
@@ -139,8 +139,8 @@ void grid_display(PGRID const grid){
 
     for (r=0; r<grid->rows_; r++){
         for (c=0; c<grid->cols_; c++){
-            box = BOX_AT(grid, grid->cols_, r, c);
-            printf("| %c ", box->mine_?'x':' ');
+            box = GRID_AT(grid, r, c);
+            printf("| %c ", box->mine_?'x':'0' + grid_countMines(grid, r, c));
         }
         printf("|\n");       // EOL
     }
@@ -148,6 +148,29 @@ void grid_display(PGRID const grid){
     printf("\n%d mines\n", grid->minesCount_);
 }
 #endif // #ifndef DEST_CASIO_CALC
+
+//  grid_countMines() : Count the mines surrounding the box
+//
+//  @grid : Pointer to the grid
+//  @row, @col : Position of the box
+//
+//  @return : count of mines surrounding
+//
+uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col){
+    uint8_t sMines = 0;
+    int8_t r, c;
+
+    for (r = row-1; r <= row+1; r++){
+        for (c = col-1; c <= col+1; c++){
+            if (GRID_IS_VALID_POS(grid, r, c) && (r != row || c != col) &&
+                GRID_AT(grid, r, c)->mine_){
+                sMines++;
+            }
+        }
+    }
+
+    return sMines;
+}
 
 //  grid_free() : Free memory allocated for a grid
 //
@@ -160,3 +183,4 @@ void grid_free(PGRID const grid){
     }
 }
 
+// EOF

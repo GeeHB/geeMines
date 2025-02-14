@@ -24,12 +24,16 @@ typedef enum{
     BS_NUM3, BS_NUM2, BS_NUM1, BS_DOWN
 } BOX_STATE;
 
-// A box ...
+// A single box ...
 //
 typedef struct __box{
     BOOL mine_ : 1;
     BOX_STATE state_ : 5;
 } BOX, * PBOX;
+
+//
+// Game grid
+//
 
 // Game difficulties
 //
@@ -47,9 +51,10 @@ typedef struct __grid{
     PBOX            boxes_;
 } GRID, * PGRID;
 
-// Helper for grid access
+// Helpers for box access in the grid
 //
-#define BOX_AT(grid, colMax, row, col) (&grid->boxes_[row*colMax + col])
+#define GRID_AT(grid, row, col) (&grid->boxes_[row * grid->cols_ + col])
+#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->cols_ && c < (int8_t)grid->cols_)
 
 //  grid_create() : Intialize a new grid
 //
@@ -76,6 +81,15 @@ uint8_t grid_layMines(PGRID const grid);
 //
 void grid_display(PGRID const grid);
 #endif // #ifndef DEST_CASIO_CALC
+
+//  grid_countMines() : Count the mines surrounding the box
+//
+//  @grid : Pointer to the grid
+//  @row, @col : Position of the box
+//
+//  @return : count of mines surrounding
+//
+uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col);
 
 //  grid_free() : Free memory allocated for a grid
 //
