@@ -18,7 +18,7 @@
 // States of a single box
 //
 typedef enum{
-    BS_INITIAL, BS_FLAG, BS_DICEY, BS_BLAST,
+    BS_INITIAL, BS_FLAG, BS_QUESTION, BS_BLAST,
     BS_WRONG, BS_MINE, BS_DICEY_DOWN, BS_NUM8,
     BS_NUM7, BS_NUM6, BS_NUM5, BS_NUM4,
     BS_NUM3, BS_NUM2, BS_NUM1, BS_DOWN
@@ -27,8 +27,8 @@ typedef enum{
 // A single box ...
 //
 typedef struct __box{
-    BOOL mine_ : 1;
-    BOX_STATE state_ : 5;
+    uint8_t mine_       : 1;    // BOOL
+    BOX_STATE state_    : 5;
 } BOX, * PBOX;
 
 //
@@ -38,7 +38,7 @@ typedef struct __box{
 // Game difficulties
 //
 typedef enum {
-    BEGINNER = 0, INTERMEDIATE, EXPERT
+    BEGINNER = 0, MEDIUM, EXPERT
 } GAME_DIFFICULTY;
 
 // Information about a game grid
@@ -89,7 +89,16 @@ void grid_display(PGRID const grid);
 //
 //  @return : count of mines surrounding
 //
-uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col);
+uint8_t grid_countMines(PGRID const grid, uint8_t row, uint8_t col);
+
+//  grid_stepBox : steps on a box
+//
+//  @grid : Pointer to the grid
+//  @row, @col : Position of the box
+//
+//  @return : TRUE if pos is safe and FALSE if stepped on a bomb
+//
+BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
 
 //  grid_free() : Free memory allocated for a grid
 //
@@ -98,4 +107,3 @@ uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col);
 void grid_free(PGRID const grid);
 
 #endif // #ifndef __GEE_MINES_GRID_h__
-

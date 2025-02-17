@@ -25,9 +25,9 @@
 #define BEGINNER_ROWS       9
 
 
-#define INTERMEDIATE_MINES  40
-#define INTERMEDIATE_COLS   16
-#define INTERMEDIATE_ROWS   16
+#define MEDIUM_MINES        40
+#define MEDIUM_COLS         16
+#define MEDIUM_ROWS         16
 
 #define EXPERT_MINES        99
 #define EXPERT_COLS         30
@@ -46,10 +46,10 @@ BOOL grid_create(PGRID const grid, GAME_DIFFICULTY level){
 
         switch (level) {
 
-            case INTERMEDIATE:
-                grid->minesCount_ = INTERMEDIATE_MINES;
-                grid->cols_ = INTERMEDIATE_COLS;
-                grid->rows_ = INTERMEDIATE_ROWS;
+            case MEDIUM:
+                grid->minesCount_ = MEDIUM_MINES;
+                grid->cols_ = MEDIUM_COLS;
+                grid->rows_ = MEDIUM_ROWS;
                 break;
 
             case EXPERT:
@@ -156,12 +156,12 @@ void grid_display(PGRID const grid){
 //
 //  @return : count of mines surrounding
 //
-uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col){
+uint8_t grid_countMines(PGRID const grid, uint8_t row, uint8_t col){
     uint8_t sMines = 0;
     int8_t r, c;
 
-    for (r = row-1; r <= row+1; r++){
-        for (c = col-1; c <= col+1; c++){
+    for (r = (int8_t)row-1; r <= row+1; r++){
+        for (c = (uint8_t)col-1; c <= col+1; c++){
             if (GRID_IS_VALID_POS(grid, r, c) && (r != row || c != col) &&
                 GRID_AT(grid, r, c)->mine_){
                 sMines++;
@@ -170,6 +170,61 @@ uint8_t grid_countMines(PGRID const grid, int8_t row, int8_t col){
     }
 
     return sMines;
+}
+
+//  grid_stepBox : steps on a box
+//
+//  @grid : Pointer to the grid
+//  @row, @col : Position of the box
+//
+//  @return : TRUE if pos is safe and FALSE if stepped on a bomb
+//
+BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col){
+    if (grid){
+
+        uint8_t surroundingMines = 0;
+        PBOX box = GRID_AT(grid, col, row);
+
+        /*
+        if (redraw){
+            *redraw = TRUE;
+        }
+
+        if (box->state_ != BS_INITIAL &&
+            box->state_ != BS_DICEY){
+            // previously stepped, must be safe, and no need to step second time
+            if (redraw){
+                *redraw = FALSE;
+            }
+            return TRUE;
+        }
+        */
+
+        surroundingMines = grid_countMines(grid, row, col);
+
+        if (box->mine_){
+            // stepped on a mine!
+            return FALSE;
+        }
+
+        //board.uSteps++;
+        box->state_ =  BS_DOWN - surroundingMines;
+
+        // Auto step surrounding boxes
+        if (!surroundingMines){
+            int r, c;
+            for (r = row-1; r <= row+1; r++){
+                for (c = col-1; c <= col+1; c++){
+                    if (GRID_IS_VALID_POS(grid, r, c) && (r != row || c != col)){
+                        grid_stepBox(grid, r, c);
+                    }
+                }
+            }
+        }
+    }
+
+    // Valid step
+    return TRUE;
 }
 
 //  grid_free() : Free memory allocated for a grid
