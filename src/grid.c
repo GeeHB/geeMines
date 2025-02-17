@@ -24,7 +24,6 @@
 #define BEGINNER_COLS       9
 #define BEGINNER_ROWS       9
 
-
 #define MEDIUM_MINES        40
 #define MEDIUM_COLS         16
 #define MEDIUM_ROWS         16
@@ -185,29 +184,14 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col){
         uint8_t surroundingMines = 0;
         PBOX box = GRID_AT(grid, col, row);
 
-        /*
-        if (redraw){
-            *redraw = TRUE;
-        }
-
-        if (box->state_ != BS_INITIAL &&
-            box->state_ != BS_DICEY){
-            // previously stepped, must be safe, and no need to step second time
-            if (redraw){
-                *redraw = FALSE;
-            }
-            return TRUE;
-        }
-        */
-
         surroundingMines = grid_countMines(grid, row, col);
 
         if (box->mine_){
             // stepped on a mine!
+            box->state_ =  BS_BLAST;
             return FALSE;
         }
 
-        //board.uSteps++;
         box->state_ =  BS_DOWN - surroundingMines;
 
         // Auto step surrounding boxes

@@ -6,7 +6,7 @@ include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
-  src/main.c
+  src/geeMines.c
   src/grid.c
   src/shared/keys.c
   src/shared/menu.c
@@ -17,8 +17,9 @@ set(ASSETS
   # ...
 )
 set(ASSETS_cg
+  assets-cg/about.png
   assets-cg/menu.png
-  # ...
+  assets-cg/pause.png
 )
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)

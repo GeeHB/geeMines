@@ -20,8 +20,6 @@
 
 // Menu
 //
-#include "shared/menu.h"
-
 #define IDS_NEW             "New"
 #define IDM_NEW             1
 
@@ -45,7 +43,6 @@
 
 #define IDS_NEW_EXPERT      "Expert"
 #define IDM_NEW_EXPERT      13
-
 
 
 // mine defines
