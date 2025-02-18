@@ -74,7 +74,7 @@
     #define TRUE    !FALSE
 #endif // #ifndef FALSE
 
-typedef int BOOL;
+typedef uint8_t BOOL;
 
 // Point coordinates
 //

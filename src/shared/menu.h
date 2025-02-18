@@ -41,6 +41,7 @@ extern "C" {
 #define ITEM_STATE_SELECTED         1
 #define ITEM_STATE_INACTIVE         2
 #define ITEM_STATE_CHECKED          4
+#define ITEM_STATE_UNCHECKED        ITEM_STATE_DEFAULT
 #define ITEM_STATE_NO_BACK_BUTTON   8
 
 //

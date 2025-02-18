@@ -35,7 +35,7 @@
 #define IDS_QUIT            "Quit"
 #define IDM_QUIT            6
 
-#define IDS_NEW_BEGINNNER   "Beginner"      // sub-menu
+#define IDS_NEW_BEGINNER    "Beginner"      // sub-menu
 #define IDM_NEW_BEGINNER    11
 
 #define IDS_NEW_MEDIUM      "Medium"
@@ -44,6 +44,13 @@
 #define IDS_NEW_EXPERT      "Expert"
 #define IDM_NEW_EXPERT      13
 
+// "pause" image
+#ifdef DEST_CASIO_CALC
+    #define IMG_PAUSE_W         CASIO_WIDTH
+    #define IMG_PAUSE_H         70
+    #define IMG_PAUSE_COPY_Y    46
+    #define IMG_PAUSE_LINES     (CASIO_HEIGHT - IMG_PAUSE_H)
+#endif // #ifdef DEST_CASIO_CALC
 
 // mine defines
 #define LED_WIDTH           13
@@ -63,6 +70,32 @@ typedef enum {
     FACE_DOWN, FACE_WIN, FACE_LOSE, FACE_CAUTION, FACE_HAPPY
     } FACE_STATE;
 
+// Key codes
+//
+#ifdef DEST_CASIO_CALC
+enum GAME_KEY{
+    KEY_CODE_F1 = KEY_F1,     // !!!
+    KEY_CODE_F6 = KEY_F6,
+    KEY_CODE_UP = KEY_UP,
+    KEY_CODE_DOWN = KEY_DOWN,
+    KEY_CODE_LEFT = KEY_LEFT,
+    KEY_CODE_RIGHT = KEY_RIGHT,
+    KEY_CODE_0 = KEY_0,
+    KEY_CODE_1 = KEY_1,
+    KEY_CODE_2 = KEY_2,
+    KEY_CODE_3 = KEY_3,
+    KEY_CODE_4 = KEY_4,
+    KEY_CODE_5 = KEY_5,
+    KEY_CODE_6 = KEY_6,
+    KEY_CODE_7 = KEY_7,
+    KEY_CODE_8 = KEY_8,
+    KEY_CODE_9 = KEY_9,
+    KEY_CODE_CAPTURE = KEY_7,
+    KEY_CODE_PAUSE = KEY_OPTN,
+    KEY_CODE_EXIT = KEY_EXIT,
+    KEY_CODE_EXE = KEY_EXE
+};
+#endif // #ifdef DEST_CASIO_CALC
 
 /*
 typedef struct

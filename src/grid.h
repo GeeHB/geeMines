@@ -27,7 +27,7 @@ typedef enum{
 // A single box ...
 //
 typedef struct __box{
-    uint8_t mine_       : 1;    // BOOL
+    BOOL mine_          : 1;
     BOX_STATE state_    : 5;
 } BOX, * PBOX;
 
@@ -107,3 +107,5 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
 void grid_free(PGRID const grid);
 
 #endif // #ifndef __GEE_MINES_GRID_h__
+
+// EOF
