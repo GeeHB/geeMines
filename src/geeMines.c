@@ -6,15 +6,12 @@
 //--
 //----------------------------------------------------------------------
 
-#include "shared/casioCalcs.h"
-#include <gint/keyboard.h>
-
 #include "consts.h"
-
 #include "shared/menu.h"
 
 #ifdef DEST_CASIO_CALC
-    #include "shared/keys.h"
+    //#include "shared/casioCalcs.h"
+
     #include <string.h>
 
     extern bopti_image_t g_about;   // "about" image

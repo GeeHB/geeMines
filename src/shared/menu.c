@@ -7,7 +7,6 @@
 //----------------------------------------------------------------------
 
 #include "menu.h"
-#include "keys.h"
 #include <string.h>
 
 #ifdef DEST_CASIO_CALC

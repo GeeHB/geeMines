@@ -73,6 +73,8 @@ typedef enum {
 // Key codes
 //
 #ifdef DEST_CASIO_CALC
+#include "shared/keys.h"
+
 enum GAME_KEY{
     KEY_CODE_F1 = KEY_F1,     // !!!
     KEY_CODE_F6 = KEY_F6,
