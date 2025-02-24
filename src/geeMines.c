@@ -123,10 +123,37 @@ int main(void){
     POWNMENU menu = _createMenu();
 
     if (menu){
+        BOOL end = FALSE;
+        MENUACTION action;
+
         _about();
         menu_update(menu);
 
-        //game_start(menu);
+        while (!end){
+            if (menu_handleKeyboard(menu, &action)){
+                switch (action.value){
+                    case IDM_NEW_BEGINNER :{
+
+                        menu_showParentBar(menu, TRUE);
+                        break;
+                    }
+
+                    // Pause
+                    case KEY_CODE_PAUSE:
+                        _onPause();
+                        //game_.display();
+                        menu_update(menu);
+                        break;
+
+                    case IDM_QUIT :
+                        end = TRUE;
+                        break;
+
+                    default :
+                        break;
+                } // swicth
+            }
+        } // while (!end)
 
         // Quit app.
         //

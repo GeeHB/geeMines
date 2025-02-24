@@ -12,6 +12,10 @@
 #include "shared/casioCalcs.h"
 #include "grid.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplusplus
+
 // Mine dimensions
 //
 #define BOX_WIDTH           16
@@ -54,6 +58,10 @@
 #define GRID_RECT_LEFT      (LEFT_MARGIN + LEFT_SPACE + GRID_BORDER)
 #define GRID_RECT_TOP       (STAT_RECT_BOTTOM + STAT_BORDER \
                             + VCENTER_SPACE + GRID_BORDER)
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplusplus
 
 #endif // #ifndef __GEE_MINES_BOARD_h__
 

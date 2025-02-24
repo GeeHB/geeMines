@@ -11,6 +11,10 @@
 
 #include "shared/casioCalcs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplusplus
+
 //
 // Boxes
 //
@@ -105,6 +109,10 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
 //  @grid : Pointer to the grid
 //
 void grid_free(PGRID const grid);
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplusplus
 
 #endif // #ifndef __GEE_MINES_GRID_h__
 
