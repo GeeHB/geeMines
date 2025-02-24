@@ -52,24 +52,6 @@
     #define IMG_PAUSE_LINES     (CASIO_HEIGHT - IMG_PAUSE_H)
 #endif // #ifdef DEST_CASIO_CALC
 
-// mine defines
-#define LED_WIDTH           13
-#define LED_HEIGHT          23
-#define FACE_WIDTH          24
-#define FACE_HEIGHT         24
-
-// Game state
-//
-typedef enum {
-    WAITING, PLAYING, GAMEWON, GAMELOST
-    } GAME_STATE;
-
-// Smiley state
-//
-typedef enum {
-    FACE_DOWN, FACE_WIN, FACE_LOSE, FACE_CAUTION, FACE_HAPPY
-    } FACE_STATE;
-
 // Key codes
 //
 #ifdef DEST_CASIO_CALC
