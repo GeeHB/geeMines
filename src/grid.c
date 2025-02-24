@@ -15,6 +15,7 @@
 #include <stdio.h>
 #endif // #ifdef DEST_CASIO_CALC
 
+#include <string.h>
 #include <time.h>
 
 // Internal consts
@@ -32,17 +33,38 @@
 #define EXPERT_COLS         30
 #define EXPERT_ROWS         16
 
-//  grid_create() : Intialize a new grid
+//  grid_create() :Create a grid
+//
+//  @return : pointer to the new created grid
+//
+PGRID grid_create(){
+    size_t size = sizeof(GRID);
+    PGRID grid = (PGRID)malloc(size);
+    if (grid){
+        /*
+        grid->level_ = NONE;
+        grid->minesCount_ = 0;     // count of mines at startup
+        grid->cols_ = 0;           // Grid dimensions
+        grid->rows_ = 0;
+        grid->boxes_ = NULL;
+        */
+        memset(grid, 0, size);
+    }
+    return grid;
+}
+
+//  grid_init() : Intialize an existing grid
 //
 //  @grid : Pointer to the grid
 //  @level : Difficulty of the new grid
 //
 //  @return : TRUE if done
 //
-BOOL grid_create(PGRID const grid, GAME_DIFFICULTY level){
+BOOL grid_init(PGRID const grid, GAME_DIFFICULTY level){
     if (grid){
-        grid->level_ = level;
+        grid_free(grid, FALSE); // Clear previous if any
 
+        grid->level_ = level;
         switch (level) {
 
             case MEDIUM:
@@ -214,12 +236,25 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col){
 //  grid_free() : Free memory allocated for a grid
 //
 //  @grid : Pointer to the grid
+//  @freeAll : if FALSE only boxes are freed. If TRUE boxes and grid memory will*
+//              be freed
 //
-void grid_free(PGRID const grid){
-    if (grid && grid->boxes_){
-        free(grid->boxes_);
-        grid->boxes_ = NULL;
+//  @return : pointer to grid or NULL if freed
+//
+PGRID grid_free(PGRID const grid, BOOL freeALL){
+    if (grid){
+        if (grid->boxes_){
+            free(grid->boxes_);
+            grid->boxes_ = NULL;
+        }
+
+        if (freeALL){
+            free(grid);
+            return NULL;
+        }
     }
+
+    return grid;
 }
 
 // EOF

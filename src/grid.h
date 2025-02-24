@@ -42,7 +42,7 @@ typedef struct __box{
 // Game difficulties
 //
 typedef enum {
-    BEGINNER = 0, MEDIUM, EXPERT
+    NONE = 0, BEGINNER, MEDIUM, EXPERT
 } GAME_DIFFICULTY;
 
 // Information about a game grid
@@ -60,14 +60,20 @@ typedef struct __grid{
 #define GRID_AT(grid, row, col) (&grid->boxes_[row * grid->cols_ + col])
 #define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->cols_ && c < (int8_t)grid->cols_)
 
-//  grid_create() : Intialize a new grid
+//  grid_create() :Create a grid
+//
+//  @return : pointer to the new created grid
+//
+PGRID grid_create();
+
+//  grid_init() : Intialize an existing grid
 //
 //  @grid : Pointer to the grid
 //  @level : Difficulty of the new grid
 //
 //  @return : TRUE if done
 //
-BOOL grid_create(PGRID const grid, GAME_DIFFICULTY level);
+BOOL grid_init(PGRID const grid, GAME_DIFFICULTY level);
 
 //  grid_layMines() : Put mines in the grid
 //
@@ -107,8 +113,12 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
 //  grid_free() : Free memory allocated for a grid
 //
 //  @grid : Pointer to the grid
+//  @freeAll : if FALSE only boxes are freed. If TRUE boxes and grid memory will*
+//              be freed
 //
-void grid_free(PGRID const grid);
+//  @return : pointer to grid or NULL if freed
+//
+PGRID grid_free(PGRID const grid, BOOL freeAll);
 
 #ifdef __cplusplus
 }

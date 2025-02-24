@@ -22,7 +22,7 @@
 #define IDS_CHECK      "Yes"
 #define IDM_CHECK      2
 
-#define IDS_QUIT       "Quitter"
+//#define IDS_QUIT       "Quitter"
 #define IDM_QUIT       6
 
 // Premier test
@@ -117,13 +117,14 @@ int main()
                 switch (action.value){
                     case IDM_GAME_BEGINNER :{
                         GRID grid;
-                        grid_create(&grid, BEGINNER);
+                        grid.boxes_ = NULL;
+                        grid_init(&grid, BEGINNER);
                         grid_layMines(&grid);
 
                         printf("Débutant\n");
 
                         grid_display(&grid);
-                        grid_free(&grid);
+                        grid_free(&grid, FALSE);
 
                         menu_showParentBar(menu, TRUE);
                         break;

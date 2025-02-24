@@ -59,6 +59,14 @@ extern "C" {
 #define GRID_RECT_TOP       (STAT_RECT_BOTTOM + STAT_BORDER \
                             + VCENTER_SPACE + GRID_BORDER)
 
+
+//  board_display() : Display the whole board (grid & stats)
+//
+//  @board : Pointer to the board
+//
+void board_display(PBOARD const board);
+
+
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus
