@@ -117,7 +117,7 @@ int main()
                 switch (action.value){
                     case IDM_GAME_BEGINNER :{
                         GRID grid;
-                        grid.boxes_ = NULL;
+                        grid.boxes = NULL;
                         grid_init(&grid, LEVEL_BEGINNER);
                         grid_layMines(&grid);
 

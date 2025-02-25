@@ -11,7 +11,6 @@
 
 #ifdef DEST_CASIO_CALC
     //#include "shared/casioCalcs.h"
-
     #include <string.h>
 
     extern bopti_image_t g_about;   // "about" image
@@ -27,12 +26,13 @@
 void _about(){
 #ifdef DEST_CASIO_CALC
     int w, h;
+    char copyright[255];    // Should be enough !
+
     drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
 
     // Draw the image and copyright
     dimage(0, 0, &g_about);
 
-    char copyright[255];    // Should be enough !
     strcpy(copyright, APP_NAME);
     strcat(copyright, " par ");
     strcat(copyright, APP_AUTHOR);
@@ -53,13 +53,13 @@ void _about(){
 void _onPause(){
 #ifdef DEST_CASIO_CALC
     uint car = KEY_NONE;
+    uint16_t y;
 
     // Top of image
     dsubimage(0, 0, &g_pause,
             0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
 
     // "middle"
-    uint16_t y;
     for (y = IMG_PAUSE_COPY_Y;
         y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
         dsubimage(0, y, &g_pause,
@@ -158,10 +158,10 @@ int main(void){
         // Quit app.
         //
         menu_free(menu);
-    }
+    }   // if (menu)
 
-//gint_setrestart(0);
-gint_osmenu();
+    //gint_setrestart(0);
+    gint_osmenu();
 
 #endif // #ifdef DEST_CASIO_CALC
 	return 1;

@@ -31,8 +31,8 @@ typedef enum{
 // A single box ...
 //
 typedef struct __box{
-    BOOL mine_          : 1;
-    BOX_STATE state_    : 5;
+    BOOL mine          : 1;
+    BOX_STATE state    : 5;
 } BOX, * PBOX;
 
 // Types of grids
@@ -62,17 +62,17 @@ typedef enum {
 // Information about a game grid
 //
 typedef struct __grid{
-    GAME_LEVEL  level_;
-    uint8_t     minesCount_;     // count of mines at startup
-    uint8_t     cols_;           // Grid dimensions
-    uint8_t     rows_;
-    PBOX        boxes_;
+    GAME_LEVEL  level;
+    uint8_t     minesCount;     // count of mines at startup
+    uint8_t     cols;           // Grid dimensions
+    uint8_t     rows;
+    PBOX        boxes;
 } GRID, * PGRID;
 
 // Helpers for box access in the grid
 //
-#define GRID_AT(grid, row, col) (&grid->boxes_[row * grid->cols_ + col])
-#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->cols_ && c < (int8_t)grid->cols_)
+#define GRID_AT(grid, row, col) (&grid->boxes[row * grid->cols + col])
+#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->cols && c < (int8_t)grid->cols)
 
 //  grid_create() :Create a grid
 //

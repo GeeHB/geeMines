@@ -55,8 +55,8 @@ typedef struct __srect{
 //
 //
 typedef struct __viewPort{
-    SPOINT dimensions;
-    SRECT visibleFrame;
+    SPOINT dimensions;      // max. position
+    SRECT visibleFrame;     // current visible window
 }VIEWPORT, * PVIEWPORT;
 
 // Game board

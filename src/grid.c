@@ -37,7 +37,7 @@ PGRID grid_create(){
         grid->boxes_ = NULL;
         */
         memset(grid, 0, size);
-        grid->level_ = LEVEL_BEGINNER;
+        grid->level = LEVEL_BEGINNER;
     }
     return grid;
 }
@@ -53,41 +53,41 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
     if (grid){
         grid_free(grid, FALSE); // Clear previous if any
 
-        grid->level_ = level;
+        grid->level = level;
         switch (level) {
 
             case LEVEL_MEDIUM:
-                grid->minesCount_ = MEDIUM_MINES;
-                grid->cols_ = MEDIUM_COLS;
-                grid->rows_ = MEDIUM_ROWS;
+                grid->minesCount = MEDIUM_MINES;
+                grid->cols = MEDIUM_COLS;
+                grid->rows = MEDIUM_ROWS;
                 break;
 
             case LEVEL_EXPERT:
-                grid->minesCount_ = EXPERT_MINES;
-                grid->cols_ = EXPERT_COLS;
-                grid->rows_ = EXPERT_ROWS;
+                grid->minesCount = EXPERT_MINES;
+                grid->cols = EXPERT_COLS;
+                grid->rows = EXPERT_ROWS;
                 break;
 
             // ???
             default:
             case LEVEL_BEGINNER:
-                grid->minesCount_ = BEGINNER_MINES;
-                grid->cols_ = BEGINNER_COLS;
-                grid->rows_ = BEGINNER_ROWS;
+                grid->minesCount = BEGINNER_MINES;
+                grid->cols = BEGINNER_COLS;
+                grid->rows = BEGINNER_ROWS;
                 break;
         }
 
         // Allocate memory for boxes
-        if (grid->cols_){
-            grid->boxes_ = (PBOX)malloc(grid->cols_ * grid->rows_ * sizeof(BOX));
-            if (grid->boxes_){
+        if (grid->cols){
+            grid->boxes = (PBOX)malloc(grid->cols * grid->rows * sizeof(BOX));
+            if (grid->boxes){
                 uint8_t r,c;
                 PBOX box;
-                for (r = 0; r < grid->rows_; r++){
-                    for (c = 0; c < grid->cols_; c++){
+                for (r = 0; r < grid->rows; r++){
+                    for (c = 0; c < grid->cols; c++){
                         box = GRID_AT(grid, r, c);
-                        box->mine_ = FALSE;
-                        box->state_ = BS_INITIAL;
+                        box->mine = FALSE;
+                        box->state = BS_INITIAL;
                     }
                 }
 
@@ -95,7 +95,7 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
             }
         }
 
-        grid->boxes_ = NULL;
+        grid->boxes = NULL;
     }
 
     // Error(s)
@@ -115,15 +115,15 @@ uint8_t grid_layMines(PGRID const grid){
     uint8_t r,c;
     PBOX box;
 
-    if (grid && grid->minesCount_){
+    if (grid && grid->minesCount){
         srand((unsigned int)clock());
-        while (mines < grid->minesCount_){
-            r = (uint8_t)(rand() % grid->rows_);
-            c = (uint8_t)(rand() % grid->cols_);
+        while (mines < grid->minesCount){
+            r = (uint8_t)(rand() % grid->rows);
+            c = (uint8_t)(rand() % grid->cols);
             box = GRID_AT(grid, r, c);
 
-            if (!box->mine_){
-                box->mine_ = TRUE;     // A new mine in a new pos.
+            if (!box->mine){
+                box->mine = TRUE;     // A new mine in a new pos.
                 mines++;
             }
         }
@@ -145,17 +145,17 @@ void grid_display(PGRID const grid){
     uint8_t r,c;
     PBOX box;
 
-    printf("\n\t%d x %d\n", grid->rows_, grid->cols_);
+    printf("\n\t%d x %d\n", grid->rows, grid->cols);
 
-    for (r=0; r<grid->rows_; r++){
-        for (c=0; c<grid->cols_; c++){
+    for (r=0; r<grid->rows; r++){
+        for (c=0; c<grid->cols; c++){
             box = GRID_AT(grid, r, c);
-            printf("| %c ", box->mine_?'x':'0' + grid_countMines(grid, r, c));
+            printf("| %c ", box->mine?'x':'0' + grid_countMines(grid, r, c));
         }
         printf("|\n");       // EOL
     }
 
-    printf("\n%d mines\n", grid->minesCount_);
+    printf("\n%d mines\n", grid->minesCount);
 }
 #endif // #ifndef DEST_CASIO_CALC
 
@@ -173,7 +173,7 @@ uint8_t grid_countMines(PGRID const grid, uint8_t row, uint8_t col){
     for (r = (int8_t)row-1; r <= row+1; r++){
         for (c = (uint8_t)col-1; c <= col+1; c++){
             if (GRID_IS_VALID_POS(grid, r, c) && (r != row || c != col) &&
-                GRID_AT(grid, r, c)->mine_){
+                GRID_AT(grid, r, c)->mine){
                 sMines++;
             }
         }
@@ -197,13 +197,13 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col){
 
         surroundingMines = grid_countMines(grid, row, col);
 
-        if (box->mine_){
+        if (box->mine){
             // stepped on a mine!
-            box->state_ =  BS_BLAST;
+            box->state =  BS_BLAST;
             return FALSE;
         }
 
-        box->state_ =  BS_DOWN - surroundingMines;
+        box->state =  BS_DOWN - surroundingMines;
 
         // Auto step surrounding boxes
         if (!surroundingMines){
@@ -232,9 +232,9 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col){
 //
 PGRID grid_free(PGRID const grid, BOOL freeAll){
     if (grid){
-        if (grid->boxes_){
-            free(grid->boxes_);
-            grid->boxes_ = NULL;
+        if (grid->boxes){
+            free(grid->boxes);
+            grid->boxes = NULL;
         }
 
         if (freeAll){
