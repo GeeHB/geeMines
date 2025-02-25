@@ -35,24 +35,38 @@ typedef struct __box{
     BOX_STATE state_    : 5;
 } BOX, * PBOX;
 
+// Types of grids
+//
+#define BEGINNER_MINES      10
+#define BEGINNER_COLS       9
+#define BEGINNER_ROWS       9
+
+#define MEDIUM_MINES        40
+#define MEDIUM_COLS         16
+#define MEDIUM_ROWS         16
+
+#define EXPERT_MINES        99
+#define EXPERT_COLS         30
+#define EXPERT_ROWS         16
+
 //
 // Game grid
 //
 
-// Game difficulties
+// Game level
 //
 typedef enum {
-    NONE = 0, BEGINNER, MEDIUM, EXPERT
-} GAME_DIFFICULTY;
+    LEVEL_BEGINNER, LEVEL_MEDIUM, LEVEL_EXPERT
+} GAME_LEVEL;
 
 // Information about a game grid
 //
 typedef struct __grid{
-    GAME_DIFFICULTY level_;
-    uint8_t         minesCount_;     // count of mines at startup
-    uint8_t         cols_;           // Grid dimensions
-    uint8_t         rows_;
-    PBOX            boxes_;
+    GAME_LEVEL  level_;
+    uint8_t     minesCount_;     // count of mines at startup
+    uint8_t     cols_;           // Grid dimensions
+    uint8_t     rows_;
+    PBOX        boxes_;
 } GRID, * PGRID;
 
 // Helpers for box access in the grid
@@ -73,7 +87,7 @@ PGRID grid_create();
 //
 //  @return : TRUE if done
 //
-BOOL grid_init(PGRID const grid, GAME_DIFFICULTY level);
+BOOL grid_init(PGRID const grid, GAME_LEVEL level);
 
 //  grid_layMines() : Put mines in the grid
 //

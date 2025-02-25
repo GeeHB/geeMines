@@ -30,27 +30,36 @@ extern "C" {
 // Game state
 //
 typedef enum {
-    WAITING, PLAYING, GAMEWON, GAMELOST
-    } GAME_STATE;
+    STATE_WAITING, STATE_PLAYING,
+    STATE_GAMEWON, STATE_GAMELOST
+} GAME_STATE;
 
 // Smiley state
 //
 typedef enum {
     FACE_DOWN, FACE_WIN, FACE_LOSE, FACE_CAUTION, FACE_HAPPY
-    } FACE_STATE;
+} FACE_STATE;
+
+// A viewport
+//
+//
+typedef struct __viewPort{
+    SPOINT dimensions;
+    SRECT visibleFrame;
+}VIEWPORT, * PVIEWPORT;
 
 // Game board
 //
 typedef struct
 {
     PGRID grid;
-    POINT viewPort;
+    VIEWPORT viewPort;
 
-    RECT StatRect;
-    RECT CounterRect;
-    RECT FaceRect;
-    RECT TimerRect;
-    RECT GridRect;
+    SRECT statRect;
+    SRECT counterRect;
+    SRECT faceRect;
+    SRECT timerRect;
+    SRECT gridRect;
 
     GAME_STATE gameState;
     FACE_STATE faceState;
@@ -59,7 +68,6 @@ typedef struct
     uint8_t uMines;
     uint16_t uTime;
 } BOARD, * PBOARD;
-
 
 //
 // Functions prototypes

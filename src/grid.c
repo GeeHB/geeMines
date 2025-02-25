@@ -21,17 +21,6 @@
 // Internal consts
 //
 
-#define BEGINNER_MINES      10
-#define BEGINNER_COLS       9
-#define BEGINNER_ROWS       9
-
-#define MEDIUM_MINES        40
-#define MEDIUM_COLS         16
-#define MEDIUM_ROWS         16
-
-#define EXPERT_MINES        99
-#define EXPERT_COLS         30
-#define EXPERT_ROWS         16
 
 //  grid_create() :Create a grid
 //
@@ -42,13 +31,13 @@ PGRID grid_create(){
     PGRID grid = (PGRID)malloc(size);
     if (grid){
         /*
-        grid->level_ = NONE;
         grid->minesCount_ = 0;     // count of mines at startup
         grid->cols_ = 0;           // Grid dimensions
         grid->rows_ = 0;
         grid->boxes_ = NULL;
         */
         memset(grid, 0, size);
+        grid->level_ = LEVEL_BEGINNER;
     }
     return grid;
 }
@@ -60,20 +49,20 @@ PGRID grid_create(){
 //
 //  @return : TRUE if done
 //
-BOOL grid_init(PGRID const grid, GAME_DIFFICULTY level){
+BOOL grid_init(PGRID const grid, GAME_LEVEL level){
     if (grid){
         grid_free(grid, FALSE); // Clear previous if any
 
         grid->level_ = level;
         switch (level) {
 
-            case MEDIUM:
+            case LEVEL_MEDIUM:
                 grid->minesCount_ = MEDIUM_MINES;
                 grid->cols_ = MEDIUM_COLS;
                 grid->rows_ = MEDIUM_ROWS;
                 break;
 
-            case EXPERT:
+            case LEVEL_EXPERT:
                 grid->minesCount_ = EXPERT_MINES;
                 grid->cols_ = EXPERT_COLS;
                 grid->rows_ = EXPERT_ROWS;
@@ -81,7 +70,7 @@ BOOL grid_init(PGRID const grid, GAME_DIFFICULTY level){
 
             // ???
             default:
-            case BEGINNER:
+            case LEVEL_BEGINNER:
                 grid->minesCount_ = BEGINNER_MINES;
                 grid->cols_ = BEGINNER_COLS;
                 grid->rows_ = BEGINNER_ROWS;

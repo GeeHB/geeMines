@@ -78,20 +78,22 @@ typedef uint8_t BOOL;
 
 // Point coordinates
 //
-typedef struct __point{
+typedef struct __spoint{
     int16_t    x;
     int16_t    y;
-} POINT;
+} SPOINT;
 
 // A simple rect. struct
 //
-typedef struct __rect{
-    int    x,y;    // top left
-    int    w, h;   // width and height
-} RECT;
+typedef struct __srect{
+    int    left, top;
+    int    right, bottom;
+} SRECT;
 
-#define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
+#define SET_RECT(rect, left,top,right,bottom) rect.left=left; rect.top=op; rect.right=right; rect.bottom=bottom
+#define SET_RECT_DIMS(rect, px,py,width,height) rect.left=px; rect.top=py; rect.right=px+width-1; rect.bottom=py+height-1
 
+#define OFFSET_RECT(rect, dx, dy)  rect.left+=dx; rect.top=dy; rect.right+=dx; rect.bottom+=dy
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
 // EOF
