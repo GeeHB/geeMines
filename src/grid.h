@@ -127,7 +127,7 @@ BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
 //  grid_free() : Free memory allocated for a grid
 //
 //  @grid : Pointer to the grid
-//  @freeAll : if FALSE only boxes are freed. If TRUE boxes and grid memory will*
+//  @freeAll : if FALSE only boxes are freed. If TRUE boxes and grid memory will
 //              be freed
 //
 //  @return : pointer to grid or NULL if freed

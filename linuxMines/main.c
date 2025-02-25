@@ -118,7 +118,7 @@ int main()
                     case IDM_GAME_BEGINNER :{
                         GRID grid;
                         grid.boxes_ = NULL;
-                        grid_init(&grid, BEGINNER);
+                        grid_init(&grid, LEVEL_BEGINNER);
                         grid_layMines(&grid);
 
                         printf("Débutant\n");

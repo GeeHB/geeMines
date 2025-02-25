@@ -8,6 +8,7 @@ find_package(Gint 2.9 REQUIRED)
 set(SOURCES
   src/geeMines.c
   src/grid.c
+  src/board.c
   src/shared/keys.c
   src/shared/menu.c
   # ...
