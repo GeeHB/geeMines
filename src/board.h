@@ -19,7 +19,7 @@ extern "C" {
 // Mine dimensions
 //
 #define BOX_WIDTH           16
-#define BOX_HEIGHT          16
+#define BOX_HEIGHT          BOX_WIDTH
 
 // mine defines
 #define LED_WIDTH           13
@@ -27,12 +27,24 @@ extern "C" {
 #define FACE_WIDTH          24
 #define FACE_HEIGHT         24
 
+// Positions
+//
+#define GRID_VIEWPORT_BUTTON_WIDTH  4
+#define GRID_VIEWPORT_LEFT          2
+#define GRID_VIEWPORT_TOP           2
+
 // Game state
 //
-typedef enum {
+typedef enum __gameState{
     STATE_WAITING, STATE_PLAYING,
     STATE_GAMEWON, STATE_GAMELOST
 } GAME_STATE;
+
+// Type of click (action)
+//
+typedef enum{
+    ACTION_STEP, ACTION_QUESTION, ACTION_FLAG
+} ACTION, * PACTION;
 
 // Smiley state
 //
@@ -40,7 +52,7 @@ typedef enum {
     FACE_DOWN, FACE_WIN, FACE_LOSE, FACE_CAUTION, FACE_HAPPY
 } FACE_STATE;
 
-// A rectangle
+// A "small" rectangle
 //
 typedef struct __srect{
     int    left, top;
@@ -51,12 +63,11 @@ typedef struct __srect{
 #define SET_SRECT_DIMS(rect, px,py,width,height) rect.left=px; rect.top=py; rect.right=px+width-1; rect.bottom=py+height-1
 #define OFFSET_SRECT(rect, dx, dy)  rect.left+=dx; rect.top=dy; rect.right+=dx; rect.bottom+=dy
 
-// A viewport
-//
+// A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
-    SPOINT dimensions;      // max. position
-    SRECT visibleFrame;     // current visible window
+    SPOINT dimensions;      // max. box count (w x h)
+    SRECT visibleFrame;     // current visible boxes window
 }VIEWPORT, * PVIEWPORT;
 
 // Game board
@@ -80,7 +91,7 @@ typedef struct __board{
 } BOARD, * PBOARD;
 
 //
-// Functions prototypes
+// Board management
 //
 
 //  board_create() : Create an empty board
@@ -94,27 +105,42 @@ PBOARD board_create();
 //  @board : Pointer to the board
 //  @level : Difficulty of the new board
 //
-void board_init(PBOARD const board, GAME_LEVEL level);
+//  @return : TRUE if done
+//
+BOOL board_init(PBOARD const board, GAME_LEVEL level);
 
-//  board_draw() : Draw the board
+//  board_draw() : Draw the whole board
 //
 //  @board : Pointer to the board
 //
 void board_draw(PBOARD const board);
 
-//  board_display() : Display the whole board (grid & stats)
+//  board_click() : User "clicks" on the a box
 //
 //  @board : Pointer to the board
+//  @row, @col : Box coordinates in the current viewPort
+//  @action : action type
 //
-void board_display(PBOARD const board);
+void board_click(PBOARD const board, uint8_t row, uint8_t col, ACTION action);
 
 //  board_free() : Free a board
 //
 //  @board : Pointer to the board
 //  @freeAll : if FALSE only boxes are freed. If TRUE boxes and grid memory will
-//              be freed
+//             be freed
 //
 void board_free(PBOARD const board, BOOL freeAll);
+
+//
+// Box management
+//
+
+//  board_drawBox() : Draw a single box
+//
+//  @board : Pointer to the board
+//  @row, @col : Box coordinates
+//
+void board_drawBox(PBOARD const board, uint8_t row, uint8_t col);
 
 #ifdef __cplusplus
 }

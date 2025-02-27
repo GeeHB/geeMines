@@ -55,7 +55,6 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
 
         grid->level = level;
         switch (level) {
-
             case LEVEL_MEDIUM:
                 grid->minesCount = MEDIUM_MINES;
                 grid->cols = MEDIUM_COLS;
