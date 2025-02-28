@@ -35,10 +35,16 @@ extern "C" {
 
 // Game state
 //
-typedef enum __gameState{
+typedef enum {
     STATE_WAITING, STATE_PLAYING,
     STATE_GAMEWON, STATE_GAMELOST
 } GAME_STATE;
+
+// Orientation
+//
+typedef enum {
+    DRAW_VERTICAL, DRAW_HORIZONTAL
+} ORIENTATION;
 
 // Type of click (action)
 //
@@ -75,6 +81,7 @@ typedef struct __viewPort{
 typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
+    ORIENTATION orientation;
 
     SRECT statRect;
     SRECT counterRect;
@@ -104,10 +111,11 @@ PBOARD board_create();
 //
 //  @board : Pointer to the board
 //  @level : Difficulty of the new board
+//  @orientation : Defines display orientation
 //
 //  @return : TRUE if done
 //
-BOOL board_init(PBOARD const board, GAME_LEVEL level);
+BOOL board_init(PBOARD const board, GAME_LEVEL level, ORIENTATION orientation);
 
 //  board_draw() : Draw the whole board
 //
@@ -132,15 +140,32 @@ void board_click(PBOARD const board, uint8_t row, uint8_t col, ACTION action);
 void board_free(PBOARD const board, BOOL freeAll);
 
 //
-// Box management
+// Drawings
 //
+
+//  board_drawGridEx() : Draw the visible grid
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will ba updated after drawing
+//
+void board_drawGridEx(PBOARD const board, BOOL update);
+#define board_drawGrid(board) board_drawGridEx(board, TRUE)
+
+//  board_drawTimeEx() : Draw time
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will ba updated after drawing
+//
+void board_drawTimeEx(PBOARD const board, BOOL update);
+#define board_drawTime(board) board_drawTimeEx(board, TRUE)
 
 //  board_drawBox() : Draw a single box
 //
 //  @board : Pointer to the board
 //  @row, @col : Box coordinates
+//  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBox(PBOARD const board, uint8_t row, uint8_t col);
+void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
 
 #ifdef __cplusplus
 }
