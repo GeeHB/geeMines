@@ -138,7 +138,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 void board_drawSmileyEx(PBOARD const board, BOOL update){
     if (board){
 #ifdef DEST_CASIO_CALC
-        dsubimage(board->smileyPos.x, board->smileyPos.y, g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
 
         if (update){
@@ -160,7 +160,7 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
         PBOX box = GRID_AT(board->grid, row, col);
 
 #ifdef DEST_CASIO_CALC
-        dsubimage(dx, dy, g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(dx, dy, &g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
