@@ -138,7 +138,7 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
         PBOX box = GRID_AT(board->grid, row, col);
 
 #ifdef DEST_CASIO_CALC
-        dimage(dx, dy, g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(dx, dy, g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
