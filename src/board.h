@@ -24,8 +24,8 @@ extern "C" {
 // mine defines
 #define LED_WIDTH           13
 #define LED_HEIGHT          23
-#define FACE_WIDTH          24
-#define FACE_HEIGHT         24
+#define SMILEY_WIDTH        24
+#define SMILEY_HEIGHT       24
 
 // Positions
 //
@@ -55,8 +55,8 @@ typedef enum{
 // Smiley state
 //
 typedef enum {
-    FACE_DOWN, FACE_WIN, FACE_LOSE, FACE_CAUTION, FACE_HAPPY
-} FACE_STATE;
+    SMILEY_DOWN, SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
+} SMILEY_STATE;
 
 // A "small" rectangle
 //
@@ -85,12 +85,12 @@ typedef struct __board{
 
     SRECT statRect;
     SRECT counterRect;
-    SRECT faceRect;
+    SPOINT smileyPos;
     SRECT timerRect;
     SRECT gridRect;
 
     GAME_STATE gameState;
-    FACE_STATE faceState;
+    SMILEY_STATE smileyState;
 
     uint8_t uMinesLeft;
     uint8_t uMines;
@@ -158,6 +158,14 @@ void board_drawGridEx(PBOARD const board, BOOL update);
 //
 void board_drawTimeEx(PBOARD const board, BOOL update);
 #define board_drawTime(board) board_drawTimeEx(board, TRUE)
+
+//  board_drawSmileyEx() : Draw the smiley
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will ba updated after drawing
+//
+void board_drawSmileyEx(PBOARD const board, BOOL update);
+#define board_drawSmiley(board) board_drawSmileyEx(board, TRUE)
 
 //  board_drawBox() : Draw a single box
 //

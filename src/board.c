@@ -10,8 +10,10 @@
 #include "grid.h"
 
 #ifdef DEST_CASIO_CALC
-    // Boxes images
+    // Images
     extern bopti_image_t g_boxes;
+    extern bopti_image_t g_smileys;
+    extern bopti_image_t g_leds;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_init() : Initializes the board
@@ -43,7 +45,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level, ORIENTATION orientation){
 
     // New game !
     board->gameState = STATE_WAITING;
-    board->faceState = FACE_HAPPY;
+    board->smileyState = SMILEY_HAPPY;
     board->uMinesLeft = board->grid->minesCount;
     board->uMines = 0;
     board->uTime = 0;
@@ -78,6 +80,7 @@ void board_free(PBOARD const board, BOOL freeAll){
 void board_draw(PBOARD const board){
     if (board){
         board_drawTime(board);
+        board_drawSmiley(board);
         board_drawGridEx(board, TRUE);  // + update
     }
 }
@@ -118,6 +121,25 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 //
 void board_drawTimeEx(PBOARD const board, BOOL update){
     if (board){
+
+        if (update){
+    #ifdef DEST_CASIO_CALC
+            dupdate();
+    #endif // #ifdef DEST_CASIO_CALC
+        }
+    }
+}
+
+//  board_drawSmileyEx() : Draw the smiley
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will ba updated after drawing
+//
+void board_drawSmileyEx(PBOARD const board, BOOL update){
+    if (board){
+#ifdef DEST_CASIO_CALC
+        dsubimage(board->smileyPos.x, board->smileyPos.y, g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+#endif // #ifdef DEST_CASIO_CALC
 
         if (update){
     #ifdef DEST_CASIO_CALC
