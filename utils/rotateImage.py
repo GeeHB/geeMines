@@ -11,20 +11,21 @@
 #				[Img2]
 #				...
 #				[Imgn]
-#				
+#
 #			The script create a new png file containg two rows : the first with original
-#			images and the second with the rotated images : 
+#			images and the second with the rotated images :
 #
 #				[Img1][rotImg1]
 #				[Img2][rotImg2]
 #				...
 #				[Imgn][rotImgn]
-#                   
+#
 #   Comment    :   Python 3.xx
 #
 #
 #   Parameters : ./rotateImage.py src={source file} dest={dest file} width={width of single image}
 #			height={height of a single image}
+#
 
 import sys
 from PIL import Image
@@ -33,56 +34,65 @@ from PIL import Image
 # App consts
 #
 
+"""
 # Filenames
-FILE_SRC = "../assets-cg/font_default.png"
-
-FILE_DEST_HORZ = "../assets-cg/font_horz.png"  # smaller than orginal ?
-FILE_DEST_VERT = "../assets-cg/font_vert.png"
+FILE_SRC = "./base_boxes.png"
+FILE_DEST = "./boxes.png"
 
 # "image" dimensions
-IMG_W = 7
-IMG_H = 9
+IMG_W = 16
+IMG_H = 16
+"""
 
-# Source file organisation
-HORZ_COUNT = 16
-VERT_COUNT = 6
+# Filenames
+FILE_SRC = "./base_smileys.png"
+FILE_DEST = "./smileys.png"
 
-C_WHITE = (255, 255, 255)
+# "image" dimensions
+IMG_W = 24
+IMG_H = 24
+
+C_BKCOLOUR = (192, 192, 192) # COCOCO
 
 #
 # Entry point
 #
 if "__main__" == __name__:
 
-    # Source image
+    # Ouverture de l'image'
     try:
-        src = Image.open(FILE_SRC)
+        base = Image.open(FILE_SRC)
     except FileNotFoundError:
-        print(f"Unable to find {FILE_SRC}")
+        print(f"Impossible d'ouvrir le fichier {FILE_SRC}")
         sys.exit(1)
 
-    # Check source file dimensions
+    src = base.convert('RGB')   # ???
+
+    # Petite verification des dimensions de l'image
     width, height = src.size
-    if width != (CHAR_W * HORZ_COUNT) or height != (CHAR_H * VERT_COUNT):
-        print("Image dimension are not valid")
+    if width != IMG_W or 0 != (height % IMG_H):
+        print("Les dimensions de l'image sont incorrectes")
         sys.exit(1)
 
-    # Create dest images
-    dest = Image.new('RGB', (HORZ_COUNT * CHAR_H, VERT_COUNT * CHAR_W), C_WHITE)
-    
-    # Rotate char pixels
-    for row in range(VERT_COUNT):
-        for y in range(CHAR_H):
-            for col in range(HORZ_COUNT):
-                for x in range(CHAR_W):
-                    
-                    pos = (col * CHAR_W + x, row * CHAR_H + y)  # tuple containing pixel position
-                    
-                    # put the same pixel in the dest vert. file
-                    dest.putpixel((col * CHAR_H + y, (row + 1) * CHAR_W - x -1), src.getpixel(pos))
+    # Creation de l'image destination
+    dest = Image.new('RGB', (2 * width,  height), C_BKCOLOUR)
+    imgCount = int(height / IMG_H)
+    # print(f"{imgCount} images à transformer")
 
+    # Rotation des "petites" images
+    for row in range(imgCount):
+        for y in range(IMG_H):
+            for x in range(IMG_W):
+                pos = (x, row * IMG_H + y)  # position du point
+                pixel = src.getpixel(pos)
 
-    # Save dest file
-    dest.save(FILE_DEST_VERT, 'png')
-    
+                # Copie du pixel
+                dest.putpixel(pos, pixel)
+
+                # Rotation dans la seconde colonne
+                dest.putpixel((y + IMG_W, (row + 1) * IMG_W - x -1), pixel)
+
+    # Sauvegarde du fichier
+    dest.save(FILE_DEST, 'png')
+
 # EOF
