@@ -22,6 +22,7 @@
 #
 #   Comment    :   Python 3.xx
 #
+#   TODO :
 #
 #   Parameters : ./rotateImage.py src={source file} dest={dest file} width={width of single image}
 #			height={height of a single image}
@@ -54,6 +55,18 @@ IMG_H = 24
 
 C_BKCOLOUR = (192, 192, 192) # COCOCO
 
+"""
+# Filenames
+FILE_SRC = "./base_leds.png"
+FILE_DEST = "./leds.png"
+
+# "image" dimensions
+IMG_W = 13
+IMG_H = 23
+
+C_BKCOLOUR = (0, 0, 0) # noir
+"""
+
 #
 # Entry point
 #
@@ -75,11 +88,11 @@ if "__main__" == __name__:
         sys.exit(1)
 
     # Creation de l'image destination
-    dest = Image.new('RGB', (2 * width,  height), C_BKCOLOUR)
+    dest = Image.new('RGB', (IMG_W + IMG_H,  height), C_BKCOLOUR)
     imgCount = int(height / IMG_H)
-    # print(f"{imgCount} images à transformer")
+    print(f"Le fichier '{FILE_SRC} contient {imgCount} vignettes")
 
-    # Rotation des "petites" images
+    # Rotation des vignettes
     for row in range(imgCount):
         for y in range(IMG_H):
             for x in range(IMG_W):
@@ -94,5 +107,7 @@ if "__main__" == __name__:
 
     # Sauvegarde du fichier
     dest.save(FILE_DEST, 'png')
+
+    print(f"Génération du fichier '{FILE_DEST}' terminée")
 
 # EOF
