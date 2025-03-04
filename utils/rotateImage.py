@@ -4,15 +4,15 @@
 #
 #   Author     :   GeeHB
 #
-#   Description :   	Simple script for 'rotating' images in a png file
-#			Images are stored in a single row in the source file :
+#   Description :   Simple script for 'rotating' images in a png file
+#			        Images are stored in a single col in the source file :
 #
 #				[Img1]
 #				[Img2]
 #				...
 #				[Imgn]
 #
-#			The script create a new png file containg two rows : the first with original
+#			The script create a new png file containg two cols : the first with original
 #			images and the second with the rotated images :
 #
 #				[Img1][rotImg1]
