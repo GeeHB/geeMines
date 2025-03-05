@@ -81,13 +81,14 @@ typedef struct __viewPort{
 typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
+    BOOL fullGrid;            // The whole grid is visible
     ORIENTATION orientation;
 
     SRECT statRect;
     SRECT counterRect;
-    SPOINT smileyPos;
-    SPOINT timerPos;
-    SPOINT gridPos;
+    POINT smileyPos;
+    POINT timerPos;
+    POINT gridPos;
 
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
@@ -183,10 +184,17 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
 //
 //  Draw a led digit at the given position (no rotation)
 //
-// @digit : value to draw
-// @pos : Position in screen coordinates
+//  @board : Pointer to the board
+//  @digit : value to draw
+//  @pos : Position in screen coordinates
 //
 void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
+
+// board_drawViewPortButtons() : Draw buttons for viewport scrolling
+//
+// @board : pointer to the board
+//
+void board_drawViewPortButtons(PBOARD board);
 
 //  board_setOrientation() : Set drawing orientation
 //

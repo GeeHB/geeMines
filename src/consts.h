@@ -82,6 +82,8 @@ enum GAME_KEY{
 };
 #endif // #ifdef DEST_CASIO_CALC
 
+#define COL_BKGROUND    C_RGB(192,192,192)
+
 /*
 typedef struct
 {

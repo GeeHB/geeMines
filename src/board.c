@@ -10,11 +10,35 @@
 #include "grid.h"
 
 #ifdef DEST_CASIO_CALC
+#include "consts.h"
+#include "shared/menu.h"
+#endif // #ifdef DEST_CASIO_CALC
+
+#include <string.h>
+
+#ifdef DEST_CASIO_CALC
     // Images
     extern bopti_image_t g_boxes;
     extern bopti_image_t g_smileys;
     extern bopti_image_t g_leds;
 #endif // #ifndef DEST_CASIO_CALC
+
+//  board_create() : Create an empty board
+//
+//  @return : Pointer to the board
+//
+PBOARD board_create(){
+    size_t size = sizeof(BOARD);
+    PBOARD board = (PBOARD)malloc(size);
+    if (!board){
+        return NULL;
+    }
+
+    // Board is empty !
+    memset(board, 0, size);
+    board->grid = grid_create();
+    return board;
+}
 
 //  board_init() : Initializes the board
 //
@@ -30,8 +54,9 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
 
     // Initial viewport
     SET_SRECT_DIMS(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
-    board->viewPort.dimensions.x = BEGINNER_COLS;   // Same size in all cases
-    board->viewPort.dimensions.y = BEGINNER_ROWS;
+    board->viewPort.dimensions.x = board->grid->cols;
+    board->viewPort.dimensions.y = board->grid->rows;
+    board->fullGrid = (LEVEL_BEGINNER == level);
 
     board_setOrientation(board, board->orientation);
 
@@ -71,6 +96,10 @@ void board_free(PBOARD const board, BOOL freeAll){
 //
 void board_draw(PBOARD const board){
     if (board){
+#ifdef DEST_CASIO_CALC
+        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
+#endif // #ifdef DEST_CASIO_CALC
+
         board_drawTime(board);
         board_drawSmiley(board);
         board_drawGridEx(board, TRUE);  // + update
@@ -83,20 +112,56 @@ void board_draw(PBOARD const board){
 //  @update : if TRUE screen will be updated after drawing
 //
 void board_drawGridEx(PBOARD const board, BOOL update){
-    uint16_t dx,dy;
+    uint16_t origin;
+    RECT rect;
+    POINT offsetCol, offsetRow;
 
     if (!board || !board->grid){
         return;
     }
 
-    dy = board->gridPos.y;
+    SET_RECT(rect, board->gridPos.x, board->gridPos.y, BOX_WIDTH, BOX_HEIGHT);
+
+    if (DRAW_HORIZONTAL == board->orientation){
+        rotateRect(&rect);
+
+        offsetCol.x = 0;
+        offsetCol.y = -1 * BOX_WIDTH;
+
+        offsetRow.x = BOX_WIDTH;
+        offsetRow.y = 0;
+
+        origin = rect.y;
+    }
+    else{
+        offsetCol.x = BOX_WIDTH;
+        offsetCol.y = 0;
+
+        offsetRow.x = 0;
+        offsetRow.y = BOX_WIDTH;
+
+        origin =rect.x;
+    }
+
     for (uint8_t r=0; r < board->viewPort.dimensions.y; r++){
-        dx = board->gridPos.x;
-        for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
-            board_drawBoxEx(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, dx, dy);
-            dx+=BOX_WIDTH;
+        // aligned with first "col"
+        if (DRAW_HORIZONTAL == board->orientation){
+            rect.y = origin;
         }
-        dy+=BOX_HEIGHT;
+        else{
+            rect.x = origin;
+        }
+
+        for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
+            board_drawBoxEx(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, rect.x, rect.y);
+            OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
+        }
+
+        OFFSET_RECT(rect, offsetRow.x, offsetRow.y);
+    }
+
+    if (!board->fullGrid){
+        board_drawViewPortButtons(board);
     }
 
     if (update){
@@ -129,6 +194,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
             oy = 0;
         }
 
+        // 3 digits - total in [0, 1000[
         board_drawLed(board, (uint8_t)(value/100), &rect);
         OFFSET_RECT(rect, ox, oy);
         board_drawLed(board, (value %= 100)/10, &rect);
@@ -206,12 +272,23 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
     }
 }
 
+// board_drawViewPortButtons() : Draw buttons for viewport scrolling
+//
+// @board : pointer to the board
+//
+void board_drawViewPortButtons(PBOARD board){
+    if (board){
+
+    }
+}
+
 // board_drawLed() : Draw a led digit
 //
 //  Draw a led digit at the given position (no rotation)
 //
-// @digit : value to draw
-// @pos : Position in screen coordinates
+//  @board : Pointer to the board
+//  @digit : value to draw
+//  @pos : Position in screen coordinates
 //
 void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 #ifdef DEST_CASIO_CALC
