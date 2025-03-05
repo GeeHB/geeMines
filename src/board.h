@@ -86,7 +86,7 @@ typedef struct __board{
     SRECT statRect;
     SRECT counterRect;
     SPOINT smileyPos;
-    SRECT timerRect;
+    SPOINT timerPos;
     SPOINT gridPos;
 
     GAME_STATE gameState;
@@ -145,7 +145,7 @@ void board_free(PBOARD const board, BOOL freeAll);
 //  board_drawGridEx() : Draw the visible grid
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawGridEx(PBOARD const board, BOOL update);
 #define board_drawGrid(board) board_drawGridEx(board, TRUE)
@@ -153,7 +153,7 @@ void board_drawGridEx(PBOARD const board, BOOL update);
 //  board_drawTimeEx() : Draw time
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawTimeEx(PBOARD const board, BOOL update);
 #define board_drawTime(board) board_drawTimeEx(board, TRUE)
@@ -161,7 +161,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update);
 //  board_drawSmileyEx() : Draw the smiley
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawSmileyEx(PBOARD const board, BOOL update);
 #define board_drawSmiley(board) board_drawSmileyEx(board, TRUE)
@@ -178,6 +178,15 @@ void board_drawSmileyEx(PBOARD const board, BOOL update);
 //
 void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
 void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
+
+// board_drawLed() : Draw a led digit
+//
+//  Draw a led digit at the given position (no rotation)
+//
+// @digit : value to draw
+// @pos : Position in screen coordinates
+//
+void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 
 //  board_setOrientation() : Set drawing orientation
 //

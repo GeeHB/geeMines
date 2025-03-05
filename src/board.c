@@ -80,7 +80,7 @@ void board_draw(PBOARD const board){
 //  board_drawGridEx() : Draw the visible grid
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawGridEx(PBOARD const board, BOOL update){
     uint16_t dx,dy;
@@ -109,15 +109,36 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 //  board_drawTimeEx() : Draw time
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawTimeEx(PBOARD const board, BOOL update){
     if (board){
+        uint16_t value = board->uTime;
+        RECT rect;
+        int8_t ox, oy;
+
+        SET_RECT(rect, board->timerPos.x, board->timerPos.y, LED_WIDTH, LED_HEIGHT);
+
+        if (DRAW_HORIZONTAL == board->orientation){
+            rotateRect(&rect);
+            ox = 0;
+            oy = -1 * LED_WIDTH;
+        }
+        else{
+            ox = LED_WIDTH;
+            oy = 0;
+        }
+
+        board_drawLed(board, (uint8_t)(value/100), &rect);
+        OFFSET_RECT(rect, ox, oy);
+        board_drawLed(board, (value %= 100)/10, &rect);
+        OFFSET_RECT(rect, ox, oy);
+        board_drawLed(board,value % 10, &rect);
 
         if (update){
-    #ifdef DEST_CASIO_CALC
+#ifdef DEST_CASIO_CALC
             dupdate();
-    #endif // #ifdef DEST_CASIO_CALC
+#endif // #ifdef DEST_CASIO_CALC
         }
     }
 }
@@ -125,18 +146,29 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 //  board_drawSmileyEx() : Draw the smiley
 //
 //  @board : Pointer to the board
-//  @update : if TRUE screen will ba updated after drawing
+//  @update : if TRUE screen will be updated after drawing
 //
 void board_drawSmileyEx(PBOARD const board, BOOL update){
     if (board){
+        if (DRAW_HORIZONTAL == board->orientation){
+            RECT rect;
+            SET_RECT(rect, board->smileyPos.x, board->smileyPos.y, SMILEY_WIDTH, SMILEY_WIDTH);
+            rotateRect(&rect);
+
 #ifdef DEST_CASIO_CALC
-        dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+            dsubimage(rect.x, rect.y, &g_smileys, SMILEY_WIDTH, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
+        }
+        else{
+#ifdef DEST_CASIO_CALC
+            dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+#endif // #ifdef DEST_CASIO_CALC
+        }
 
         if (update){
-    #ifdef DEST_CASIO_CALC
+#ifdef DEST_CASIO_CALC
             dupdate();
-    #endif // #ifdef DEST_CASIO_CALC
+#endif // #ifdef DEST_CASIO_CALC
         }
     }
 }
@@ -171,12 +203,23 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
         else{
             board_drawBox(board, row, col, dx, dy);
         }
-
     }
 }
 
-//  board_setOrientation() : Set drawing orient!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!5+
-// +-3.ation
+// board_drawLed() : Draw a led digit
+//
+//  Draw a led digit at the given position (no rotation)
+//
+// @digit : value to draw
+// @pos : Position in screen coordinates
+//
+void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
+#ifdef DEST_CASIO_CALC
+    dsubimage(pos->x, pos->y, &g_leds, board->orientation * LED_WIDTH, (11-digit)*pos->h, pos->w, pos->h, DIMAGE_NOCLIP);
+#endif // #ifdef DEST_CASIO_CALC
+}
+
+//  board_setOrientation() : Set drawing orientation
 //
 //  @board : Pointer to the board
 //  orientation : Drawing orientation
