@@ -81,14 +81,14 @@ typedef uint8_t BOOL;
 typedef struct __point{
     int16_t    x;
     int16_t    y;
-} POINT, SPOINT;
+} POINT, SPOINT, * PPOINT;
 
 // A simple rect. struct
 //
 typedef struct __rect{
     int    x,y;    // top left
     int    w, h;   // width and height
-} RECT;
+} RECT, * PRECT;
 
 #define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
 

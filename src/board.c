@@ -20,28 +20,20 @@
 //
 //  @board : Pointer to the board
 //  @level : Difficulty of the new board
-//  @orientation : Defines display orientation
 //
 //  @return : TRUE if done
 //
-BOOL board_init(PBOARD const board, GAME_LEVEL level, ORIENTATION orientation){
+BOOL board_init(PBOARD const board, GAME_LEVEL level){
     if (!board || !grid_init(board->grid, level)){
         return FALSE;
     }
-
-    board->orientation = orientation;
 
     // Initial viewport
     SET_SRECT_DIMS(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
     board->viewPort.dimensions.x = BEGINNER_COLS;   // Same size in all cases
     board->viewPort.dimensions.y = BEGINNER_ROWS;
 
-    // Grid rectangle (it's a square)
-    SET_SRECT_DIMS(board->gridRect,
-        GRID_VIEWPORT_LEFT + GRID_VIEWPORT_BUTTON_WIDTH,
-        GRID_VIEWPORT_TOP + GRID_VIEWPORT_BUTTON_WIDTH,
-        BOX_WIDTH * BEGINNER_COLS,
-        BOX_HEIGHT * BEGINNER_ROWS);
+    board_setOrientation(board, board->orientation);
 
     // New game !
     board->gameState = STATE_WAITING;
@@ -97,9 +89,9 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         return;
     }
 
-    dy = board->gridRect.top;
+    dy = board->gridPos.y;
     for (uint8_t r=0; r < board->viewPort.dimensions.y; r++){
-        dx = board->gridRect.left;
+        dx = board->gridPos.x;
         for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
             board_drawBox(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, dx, dy);
             dx+=BOX_WIDTH;
@@ -163,6 +155,55 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
         dsubimage(dx, dy, &g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
+}
+
+//  board_setOrientation() : Set drawing orientation
+//
+//  @board : Pointer to the board
+//  orientation : Drawing orientation
+//
+void board_setOrientation(PBOARD const board, ORIENTATION orientation){
+    if (board){
+        board->orientation = orientation;
+
+        // Grid position
+        board->gridPos.x = GRID_VIEWPORT_LEFT + GRID_VIEWPORT_BUTTON_WIDTH;
+        board->gridPos.y = GRID_VIEWPORT_TOP + GRID_VIEWPORT_BUTTON_WIDTH;
+    }
+}
+
+//
+// Tools
+//
+
+//  rotatePoint() : Rotate a single point (trig. 90°)
+//
+//  @pos : Pointer to point coordinates
+//
+void rotatePoint(PPOINT const pos){
+    int16_t ny = CASIO_HEIGHT - pos->x;
+    pos->x = pos->y;
+    pos->y = ny;
+}
+
+//  rotateRect() : Rotate a rectangle (trig. 90°)
+//
+//  @rect : Pointer to the rect
+//
+void rotateRect(PRECT const rect){
+    // rect is valid !!!!
+    // assert(rect)
+
+    POINT topLeft = {rect->x, rect->y};
+    POINT bottomRight = {rect->x + rect->w - 1, rect->y + rect->h - 1};
+
+    rotatePoint(&topLeft);
+    rotatePoint(&bottomRight);
+
+    rect->x = topLeft.x;
+    rect->y = bottomRight.y;
+    rect->w = bottomRight.x - rect->x + 1;
+    rect->h = topLeft.y - rect->y + 1;
 }
 
 // EOF

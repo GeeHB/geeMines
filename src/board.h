@@ -43,7 +43,7 @@ typedef enum {
 // Orientation
 //
 typedef enum {
-    DRAW_VERTICAL, DRAW_HORIZONTAL
+    DRAW_VERTICAL = 0, DRAW_HORIZONTAL
 } ORIENTATION;
 
 // Type of click (action)
@@ -87,7 +87,7 @@ typedef struct __board{
     SRECT counterRect;
     SPOINT smileyPos;
     SRECT timerRect;
-    SRECT gridRect;
+    SPOINT gridPos;
 
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
@@ -111,11 +111,10 @@ PBOARD board_create();
 //
 //  @board : Pointer to the board
 //  @level : Difficulty of the new board
-//  @orientation : Defines display orientation
 //
 //  @return : TRUE if done
 //
-BOOL board_init(PBOARD const board, GAME_LEVEL level, ORIENTATION orientation);
+BOOL board_init(PBOARD const board, GAME_LEVEL level);
 
 //  board_draw() : Draw the whole board
 //
@@ -174,6 +173,29 @@ void board_drawSmileyEx(PBOARD const board, BOOL update);
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
 void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
+
+//  board_setOrientation() : Set drawing orientation
+//
+//  @board : Pointer to the board
+//  orientation : Drawing orientation
+//
+void board_setOrientation(PBOARD const board, ORIENTATION orientation);
+
+//
+//  tools
+//
+
+//  rotatePoint() : Rotate a single point (trig. 90°)
+//
+//  @pos : Pointer to point coordinates
+//
+void rotatePoint(PPOINT const pos);
+
+//  rotateRect() : Rotate a rectangle (trig. 90°)
+//
+//  @rect : Pointer to the rect
+//
+void rotateRect(PRECT const rect);
 
 #ifdef __cplusplus
 }
