@@ -166,12 +166,17 @@ void board_drawTimeEx(PBOARD const board, BOOL update);
 void board_drawSmileyEx(PBOARD const board, BOOL update);
 #define board_drawSmiley(board) board_drawSmileyEx(board, TRUE)
 
-//  board_drawBox() : Draw a single box
+//  board_drawBoxEx() : Draw a single box
+//
+//      These 2 functions draw a given box.
+//      board_drawBox checks wether a rotation needs to be done
+//      whereas board_drawBoxEx assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
-//  @row, @col : Box coordinates
+//  @row, @col : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
+void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
 void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
 
 //  board_setOrientation() : Set drawing orientation

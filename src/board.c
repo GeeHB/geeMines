@@ -93,7 +93,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     for (uint8_t r=0; r < board->viewPort.dimensions.y; r++){
         dx = board->gridPos.x;
         for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
-            board_drawBox(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, dx, dy);
+            board_drawBoxEx(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, dx, dy);
             dx+=BOX_WIDTH;
         }
         dy+=BOX_HEIGHT;
@@ -141,23 +141,42 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
     }
 }
 
-//  board_drawBox() : Draw a single box
+//  board_drawBoxEx() : Draw a single box
+//
+//      These 2 functions draw a given box.
+//      board_drawBox checks wether a rotation needs to be done
+//      whereas board_drawBoxEx assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
-//  @row, @col : Box coordinates
+//  @row, @col : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
+void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
     if (board){
         PBOX box = GRID_AT(board->grid, row, col);
 
 #ifdef DEST_CASIO_CALC
-        dsubimage(dx, dy, &g_boxes, 0, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
 
-//  board_setOrientation() : Set drawing orientation
+void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
+    if (board){
+        if (DRAW_HORIZONTAL == board->orientation){
+            RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
+            rotateRect(&rect);
+            board_drawBox(board, row, col, rect.x, rect.y);
+        }
+        else{
+            board_drawBox(board, row, col, dx, dy);
+        }
+
+    }
+}
+
+//  board_setOrientation() : Set drawing orient!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!5+
+// +-3.ation
 //
 //  @board : Pointer to the board
 //  orientation : Drawing orientation
