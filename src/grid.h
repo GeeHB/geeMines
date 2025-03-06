@@ -49,6 +49,13 @@ typedef struct __box{
 #define EXPERT_COLS         30
 #define EXPERT_ROWS         16
 
+// Box coordinates (in the grid)
+//
+typedef struct __coord{
+    uint8_t col;
+    uint8_t row;
+} COORD, DIMS, * PCOORD, * PDIMS;
+
 //
 // Game grid
 //
@@ -64,15 +71,14 @@ typedef enum {
 typedef struct __grid{
     GAME_LEVEL  level;
     uint8_t     minesCount;     // count of mines at startup
-    uint8_t     cols;           // Grid dimensions
-    uint8_t     rows;
+    DIMS       size;
     PBOX        boxes;
 } GRID, * PGRID;
 
 // Helpers for box access in the grid
 //
-#define GRID_AT(grid, row, col) (&grid->boxes[row * grid->cols + col])
-#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->cols && c < (int8_t)grid->cols)
+#define GRID_AT(grid, r, c) (&grid->boxes[r * grid->size.col + c])
+#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->size.col && c < (int8_t)grid->size.col)
 
 //  grid_create() :Create a grid
 //
@@ -109,20 +115,20 @@ void grid_display(PGRID const grid);
 //  grid_countMines() : Count the mines surrounding the box
 //
 //  @grid : Pointer to the grid
-//  @row, @col : Position of the box
+//  @pos : Position of the box
 //
 //  @return : count of mines surrounding
 //
-uint8_t grid_countMines(PGRID const grid, uint8_t row, uint8_t col);
+uint8_t grid_countMines(PGRID const grid, PCOORD const pos);
 
 //  grid_stepBox : steps on a box
 //
 //  @grid : Pointer to the grid
-//  @row, @col : Position of the box
+//  @pos : Position of the box
 //
 //  @return : TRUE if pos is safe and FALSE if stepped on a bomb
 //
-BOOL grid_stepBox(PGRID const grid, uint8_t row, uint8_t col);
+BOOL grid_stepBox(PGRID const grid, PCOORD const pos);
 
 //  grid_free() : Free memory allocated for a grid
 //

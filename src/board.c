@@ -56,8 +56,8 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
 
     // Initial viewport
     SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
-    board->viewPort.dimensions.x = board->grid->cols;
-    board->viewPort.dimensions.y = board->grid->rows;
+    board->viewPort.dimensions.col = board->grid->size.col;
+    board->viewPort.dimensions.row = board->grid->size.row;
     board->fullGrid = (LEVEL_BEGINNER == level);
 
     board_setOrientation(board, board->orientation);
@@ -117,6 +117,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     uint16_t origin;
     RECT rect;
     POINT offsetCol, offsetRow;
+    COORD pos;
 
     if (!board || !board->grid){
         return;
@@ -145,7 +146,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         origin =rect.x;
     }
 
-    for (uint8_t r=0; r < board->viewPort.dimensions.y; r++){
+    for (uint8_t r=0; r < board->viewPort.dimensions.row; r++){
         // aligned with first "col"
         if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
@@ -154,8 +155,9 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             rect.x = origin;
         }
 
-        for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
-            board_drawBoxEx(board, r + board->viewPort.visibleFrame.y, c + board->viewPort.visibleFrame.x, rect.x, rect.y);
+        for (uint8_t c=0; c < board->viewPort.dimensions.col; c++){
+            pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
+            board_drawBoxEx(board, &pos, rect.x, rect.y);
             OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
         }
 
@@ -248,12 +250,12 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
 //      whereas board_drawBoxEx assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
-//  @row, @col : Box coordinates in the grid
+//  @pos : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
+void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
     if (board){
-        PBOX box = GRID_AT(board->grid, row, col);
+        PBOX box = GRID_AT(board->grid, pos->row, pos->col);
 
 #ifdef DEST_CASIO_CALC
         dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
@@ -261,15 +263,15 @@ void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, 
     }
 }
 
-void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
+void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
     if (board){
         if (CALC_HORIZONTAL == board->orientation){
             RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
             rotateRect(&rect);
-            board_drawBox(board, row, col, rect.x, rect.y);
+            board_drawBox(board, pos, rect.x, rect.y);
         }
         else{
-            board_drawBox(board, row, col, dx, dy);
+            board_drawBox(board, pos, dx, dy);
         }
     }
 }
@@ -300,12 +302,12 @@ void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight){
 
                 // right
                 case 1:
-                    showButton = ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) >= board->viewPort.dimensions.x);
+                    showButton = ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) >= board->viewPort.dimensions.col);
                     break;
 
                 // bottom
                 case 2:
-                    showButton = ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h) >= board->viewPort.dimensions.y);
+                    showButton = ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h) >= board->viewPort.dimensions.row);
                     break;
 
                 // left
@@ -445,5 +447,19 @@ void rotateRect(PRECT const rect){
     rect->w = bottomRight.x - rect->x + 1;
     rect->h = topLeft.y - rect->y + 1;
 }
+
+#ifdef DEST_CASIO_CALC
+// __callbackTick() : Call back function for timer
+// This function is used during edition to make selected item blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+int __callbackTick(volatile int *pTick){
+    *pTick = 1;
+    return TIMER_CONTINUE;
+}
+#endif // #ifdef DEST_CASIO_CALC
 
 // EOF

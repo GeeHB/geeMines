@@ -12,16 +12,23 @@
 #include "shared/casioCalcs.h"
 #include "grid.h"
 
+#ifdef DEST_CASIO_CALC
+#include <gint/timer.h>
+#endif // #ifdef DEST_CASIO_CALC
+
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
 
-// Mine dimensions
+// Blinking
+//
+#define BLINK_TICK_DURATION     100 //  in ms
+#define BLINK_TICKCOUNT         4   // "duration" of blinking in ticks
+
+// Images dims.
 //
 #define BOX_WIDTH           16
 #define BOX_HEIGHT          BOX_WIDTH
-
-// mine defines
 #define LED_WIDTH           13
 #define LED_HEIGHT          23
 #define SMILEY_WIDTH        24
@@ -62,7 +69,7 @@ typedef enum {
 // A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
-    POINT dimensions;      // max. box count (w x h)
+    DIMS dimensions;      // max. box count (w x h)
     RECT visibleFrame;      // current visible boxes window
     RECT navButtons[4];
 }VIEWPORT, * PVIEWPORT;
@@ -118,10 +125,10 @@ void board_draw(PBOARD const board);
 //  board_click() : User "clicks" on the a box
 //
 //  @board : Pointer to the board
-//  @row, @col : Box coordinates in the current viewPort
+//  @pos : Box coordinates in the current viewPort
 //  @action : action type
 //
-void board_click(PBOARD const board, uint8_t row, uint8_t col, ACTION action);
+void board_click(PBOARD const board, PCOORD const pos, ACTION action);
 
 //  board_free() : Free a board
 //
@@ -166,11 +173,11 @@ void board_drawSmileyEx(PBOARD const board, BOOL update);
 //      whereas board_drawBoxEx assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
-//  @row, @col : Box coordinates in the grid
+//  @pos : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
-void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy);
+void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
+void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 
 // board_drawLed() : Draw a led digit
 //
@@ -222,6 +229,17 @@ void rotatePoint(PPOINT const pos);
 //  @rect : Pointer to the rect
 //
 void rotateRect(PRECT const rect);
+
+#ifdef DEST_CASIO_CALC
+// __callbackTick() : Call back function for timer
+// This function is used during edition to make selected item blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+static int __callbackTick(volatile int *pTick);
+#endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 }
