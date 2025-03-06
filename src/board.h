@@ -30,6 +30,7 @@ extern "C" {
 // Positions
 //
 #define GRID_VIEWPORT_BUTTON_WIDTH  12
+#define GRID_VIEWPORT_BUTTON_HEIGHT GRID_VIEWPORT_BUTTON_WIDTH
 #define GRID_VIEWPORT_LEFT          2
 #define GRID_VIEWPORT_TOP           2
 
@@ -43,8 +44,8 @@ typedef enum {
 // Orientation
 //
 typedef enum {
-    DRAW_VERTICAL = 0, DRAW_HORIZONTAL
-} ORIENTATION;
+    CALC_VERTICAL = 0, CALC_HORIZONTAL
+} CALC_ORIENTATION;
 
 // Type of click (action)
 //
@@ -58,22 +59,12 @@ typedef enum {
     SMILEY_DOWN, SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
 } SMILEY_STATE;
 
-// A "small" rectangle
-//
-typedef struct __srect{
-    int    left, top;
-    int    right, bottom;
-} SRECT;
-
-#define SET_SRECT(rect, left,top,right,bottom) rect.left=left; rect.top=op; rect.right=right; rect.bottom=bottom
-#define SET_SRECT_DIMS(rect, px,py,width,height) rect.left=px; rect.top=py; rect.right=px+width-1; rect.bottom=py+height-1
-#define OFFSET_SRECT(rect, dx, dy)  rect.left+=dx; rect.top=dy; rect.right+=dx; rect.bottom+=dy
-
 // A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
-    SPOINT dimensions;      // max. box count (w x h)
-    SRECT visibleFrame;     // current visible boxes window
+    POINT dimensions;      // max. box count (w x h)
+    RECT visibleFrame;      // current visible boxes window
+    RECT navButtons[4];
 }VIEWPORT, * PVIEWPORT;
 
 // Game board
@@ -81,14 +72,14 @@ typedef struct __viewPort{
 typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
-    BOOL fullGrid;            // The whole grid is visible
-    ORIENTATION orientation;
+    BOOL fullGrid;            // Is the whole grid visible ?
+    CALC_ORIENTATION orientation;
 
-    SRECT statRect;
-    SRECT counterRect;
+    RECT statRect;
+    RECT counterRect;
     POINT smileyPos;
     POINT timerPos;
-    POINT gridPos;
+    RECT gridPos;
 
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
@@ -194,9 +185,9 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 // board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
-//  @hightlght : Draw buttons in hightlighted state
+//  @highLight : Draw buttons in hightlighted state
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL hightlight);
+void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight);
 #define board_drawViewPortButtons(board) board_drawViewPortButtonsEx(board, FALSE)
 
 //  board_changeOrientation() : Change drawing orientation
@@ -214,7 +205,7 @@ BOOL board_changeOrientation(PBOARD const board);
 //  @board : Pointer to the board
 //  @orientation : Drawing orientation
 //
-void board_setOrientation(PBOARD const board, ORIENTATION orientation);
+void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation);
 
 //
 //  tools

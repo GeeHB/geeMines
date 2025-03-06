@@ -55,7 +55,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     }
 
     // Initial viewport
-    SET_SRECT_DIMS(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
+    SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
     board->viewPort.dimensions.x = board->grid->cols;
     board->viewPort.dimensions.y = board->grid->rows;
     board->fullGrid = (LEVEL_BEGINNER == level);
@@ -124,7 +124,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 
     SET_RECT(rect, board->gridPos.x, board->gridPos.y, BOX_WIDTH, BOX_HEIGHT);
 
-    if (DRAW_HORIZONTAL == board->orientation){
+    if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
 
         offsetCol.x = 0;
@@ -147,7 +147,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 
     for (uint8_t r=0; r < board->viewPort.dimensions.y; r++){
         // aligned with first "col"
-        if (DRAW_HORIZONTAL == board->orientation){
+        if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
         }
         else{
@@ -155,7 +155,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         }
 
         for (uint8_t c=0; c < board->viewPort.dimensions.x; c++){
-            board_drawBoxEx(board, r + board->viewPort.visibleFrame.top, c + board->viewPort.visibleFrame.left, rect.x, rect.y);
+            board_drawBoxEx(board, r + board->viewPort.visibleFrame.y, c + board->viewPort.visibleFrame.x, rect.x, rect.y);
             OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
         }
 
@@ -186,7 +186,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 
         SET_RECT(rect, board->timerPos.x, board->timerPos.y, LED_WIDTH, LED_HEIGHT);
 
-        if (DRAW_HORIZONTAL == board->orientation){
+        if (CALC_HORIZONTAL == board->orientation){
             rotateRect(&rect);
             ox = 0;
             oy = -1 * LED_WIDTH;
@@ -218,7 +218,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 //
 void board_drawSmileyEx(PBOARD const board, BOOL update){
     if (board){
-        if (DRAW_HORIZONTAL == board->orientation){
+        if (CALC_HORIZONTAL == board->orientation){
             RECT rect;
             SET_RECT(rect, board->smileyPos.x, board->smileyPos.y, SMILEY_WIDTH, SMILEY_WIDTH);
             rotateRect(&rect);
@@ -263,7 +263,7 @@ void board_drawBoxEx(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, 
 
 void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, uint16_t dy){
     if (board){
-        if (DRAW_HORIZONTAL == board->orientation){
+        if (CALC_HORIZONTAL == board->orientation){
             RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
             rotateRect(&rect);
             board_drawBox(board, row, col, rect.x, rect.y);
@@ -277,21 +277,28 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
 // board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
-//  @hightlght : Draw buttons in hightlighted state
+//  @highLight : Draw buttons in hightlighted state
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL hightlight){
+void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight){
     if (board){
-        RECT buttons[4];
         uint8_t sequence[4];    // Img IDs
-
-        // Buttons' rects
-
-
-        if (DRAW_HORIZONTAL == board->orientation){
+        if (CALC_HORIZONTAL == board->orientation){
             memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
         }
         else{
             memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
+        }
+
+        // "top"
+        if (highLight){
+#ifdef DEST_CASIO_CALC
+            drect(
+                board->viewPort.navButtons[0].x, board->viewPort.navButtons[0].y,
+                board->viewPort.navButtons[0].x + board->viewPort.navButtons[0].w - 1,
+                board->viewPort.navButtons[0].y + board->viewPort.navButtons[0].h - 1,
+                board->viewPort.visibleFrame.x>0?C_INVERT:COL_BKGROUND
+            );
+#endif // #ifdef DEST_CASIO_CALC
         }
 
     }
@@ -321,7 +328,7 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 //
 BOOL board_changeOrientation(PBOARD const board){
     if (board){
-        board_setOrientation(board, (DRAW_VERTICAL == board->orientation)?DRAW_HORIZONTAL:DRAW_VERTICAL);
+        board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
         board_update(board);
         return TRUE;
     }
@@ -334,13 +341,41 @@ BOOL board_changeOrientation(PBOARD const board){
 //  @board : Pointer to the board
 //  @orientation : Drawing orientation
 //
-void board_setOrientation(PBOARD const board, ORIENTATION orientation){
+void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board){
         board->orientation = orientation;
 
         // Grid position
-        board->gridPos.x = GRID_VIEWPORT_LEFT + GRID_VIEWPORT_BUTTON_WIDTH;
-        board->gridPos.y = GRID_VIEWPORT_TOP + GRID_VIEWPORT_BUTTON_WIDTH;
+        SET_RECT(board->gridPos,
+            GRID_VIEWPORT_LEFT + GRID_VIEWPORT_BUTTON_WIDTH,
+            GRID_VIEWPORT_TOP + GRID_VIEWPORT_BUTTON_WIDTH,
+            BEGINNER_COLS * BOX_WIDTH,
+            BEGINNER_ROWS * BOX_HEIGHT);
+
+        // Viewport navigation buttons
+        // top button
+        SET_RECT(board->viewPort.navButtons[0],
+            board->gridPos.x + (board->gridPos.w - GRID_VIEWPORT_BUTTON_WIDTH) / 2,
+            board->gridPos.y - GRID_VIEWPORT_BUTTON_HEIGHT,
+            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+
+        // right btton
+        SET_RECT(board->viewPort.navButtons[1],
+            board->gridPos.x + board->gridPos.w,
+            board->gridPos.y + (board->gridPos.h - GRID_VIEWPORT_BUTTON_HEIGHT) / 2,
+            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+
+        // bottom button
+        SET_RECT(board->viewPort.navButtons[2],
+            board->viewPort.navButtons[0].x,
+            board->gridPos.y + board->gridPos.h,
+            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+
+        // left btton
+        SET_RECT(board->viewPort.navButtons[3],
+            board->gridPos.x - GRID_VIEWPORT_BUTTON_WIDTH,
+            board->viewPort.navButtons[1].y,
+            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
     }
 }
 
