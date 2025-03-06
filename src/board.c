@@ -8,6 +8,7 @@
 
 #include "board.h"
 #include "grid.h"
+#include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
@@ -21,6 +22,7 @@
     extern bopti_image_t g_boxes;
     extern bopti_image_t g_smileys;
     extern bopti_image_t g_leds;
+    extern bopti_image_t g_viewport;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_create() : Create an empty board
@@ -272,12 +274,25 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
     }
 }
 
-// board_drawViewPortButtons() : Draw buttons for viewport scrolling
+// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
 //
-// @board : pointer to the board
+//  @board : pointer to the board
+//  @hightlght : Draw buttons in hightlighted state
 //
-void board_drawViewPortButtons(PBOARD board){
+void board_drawViewPortButtonsEx(PBOARD board, BOOL hightlight){
     if (board){
+        RECT buttons[4];
+        uint8_t sequence[4];    // Img IDs
+
+        // Buttons' rects
+
+
+        if (DRAW_HORIZONTAL == board->orientation){
+            memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
+        }
+        else{
+            memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
+        }
 
     }
 }
@@ -296,10 +311,28 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 #endif // #ifdef DEST_CASIO_CALC
 }
 
+//  board_changeOrientation() : Change drawing orientation
+//
+//  Change display orientation and update screen
+//
+//  @board : Pointer to the board
+//
+//  @return TRUE if done
+//
+BOOL board_changeOrientation(PBOARD const board){
+    if (board){
+        board_setOrientation(board, (DRAW_VERTICAL == board->orientation)?DRAW_HORIZONTAL:DRAW_VERTICAL);
+        board_update(board);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 //  board_setOrientation() : Set drawing orientation
 //
 //  @board : Pointer to the board
-//  orientation : Drawing orientation
+//  @orientation : Drawing orientation
 //
 void board_setOrientation(PBOARD const board, ORIENTATION orientation){
     if (board){

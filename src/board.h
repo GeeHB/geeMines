@@ -29,7 +29,7 @@ extern "C" {
 
 // Positions
 //
-#define GRID_VIEWPORT_BUTTON_WIDTH  4
+#define GRID_VIEWPORT_BUTTON_WIDTH  12
 #define GRID_VIEWPORT_LEFT          2
 #define GRID_VIEWPORT_TOP           2
 
@@ -122,6 +122,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level);
 //  @board : Pointer to the board
 //
 void board_draw(PBOARD const board);
+#define board_update(board) board_draw(board)
 
 //  board_click() : User "clicks" on the a box
 //
@@ -190,16 +191,28 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
 //
 void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 
-// board_drawViewPortButtons() : Draw buttons for viewport scrolling
+// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
 //
-// @board : pointer to the board
+//  @board : pointer to the board
+//  @hightlght : Draw buttons in hightlighted state
 //
-void board_drawViewPortButtons(PBOARD board);
+void board_drawViewPortButtonsEx(PBOARD board, BOOL hightlight);
+#define board_drawViewPortButtons(board) board_drawViewPortButtonsEx(board, FALSE)
+
+//  board_changeOrientation() : Change drawing orientation
+//
+//  Change display orientation and update screen
+//
+//  @board : Pointer to the board
+//
+//  @return TRUE if done
+//
+BOOL board_changeOrientation(PBOARD const board);
 
 //  board_setOrientation() : Set drawing orientation
 //
 //  @board : Pointer to the board
-//  orientation : Drawing orientation
+//  @orientation : Drawing orientation
 //
 void board_setOrientation(PBOARD const board, ORIENTATION orientation);
 

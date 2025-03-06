@@ -21,3 +21,7 @@ smileys.png:
 leds.png:
   type: bopti-image
   name: g_leds
+
+viewport.png:
+  type: bopti-image
+  name: g_viewport

@@ -24,6 +24,7 @@ set(ASSETS_cg
   assets-cg/boxes.png
   assets-cg/smileys.png
   assets-cg/leds.png
+  assets-cg/viewport.png
 )
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
