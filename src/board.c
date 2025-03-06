@@ -282,6 +282,7 @@ void board_drawBox(PBOARD const board, uint8_t row, uint8_t col, uint16_t dx, ui
 void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight){
     if (board){
         uint8_t sequence[4];    // Img IDs
+        BOOL showButton;
         if (CALC_HORIZONTAL == board->orientation){
             memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
         }
@@ -289,18 +290,50 @@ void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight){
             memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
         }
 
-        // "top"
-        if (highLight){
-#ifdef DEST_CASIO_CALC
-            drect(
-                board->viewPort.navButtons[0].x, board->viewPort.navButtons[0].y,
-                board->viewPort.navButtons[0].x + board->viewPort.navButtons[0].w - 1,
-                board->viewPort.navButtons[0].y + board->viewPort.navButtons[0].h - 1,
-                board->viewPort.visibleFrame.x>0?C_INVERT:COL_BKGROUND
-            );
-#endif // #ifdef DEST_CASIO_CALC
-        }
+        for (uint8_t id=0; id<4; id++){
+            // is the button visible ?
+            switch (id){
+                // top
+                case 0:
+                    showButton = (board->viewPort.visibleFrame.y>0);
+                    break;
 
+                // right
+                case 1:
+                    showButton = ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) >= board->viewPort.dimensions.x);
+                    break;
+
+                // bottom
+                case 2:
+                    showButton = ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h) >= board->viewPort.dimensions.y);
+                    break;
+
+                // left
+                case 3:
+                    showButton = (board->viewPort.visibleFrame.x>0);
+                    break;
+            } // switch
+
+            // Show / hide the button
+            if (highLight || (!highLight && !showButton)){
+#ifdef DEST_CASIO_CALC
+                drect(
+                    board->viewPort.navButtons[0].x, board->viewPort.navButtons[0].y,
+                    board->viewPort.navButtons[0].x + board->viewPort.navButtons[0].w - 1,
+                    board->viewPort.navButtons[0].y + board->viewPort.navButtons[0].h - 1,
+                    showButton?C_INVERT:COL_BKGROUND);
+#endif // #ifdef DEST_CASIO_CALC
+            }
+            else{
+#ifdef DEST_CASIO_CALC
+                dsubimage(
+                    board->viewPort.navButtons[0].x, board->viewPort.navButtons[0].y,
+                    &g_viewport, 0, id * GRID_VIEWPORT_BUTTON_WIDTH,
+                    GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT,
+                   DIMAGE_NOCLIP);
+#endif // #ifdef DEST_CASIO_CALC
+            }
+        } // if
     }
 }
 
