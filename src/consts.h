@@ -18,19 +18,13 @@
 #define APP_VERSION         "0.0.1"
 #define APP_AUTHOR          "GeeHB"
 
-// Menu
+// Main menu
 //
 #define IDS_NEW             "New"
 #define IDM_NEW             1
 
-#define IDS_PRESS           "Press"
-#define IDM_PRESS           2
-
-#define IDS_FLAG            "Flag"
-#define IDM_FLAG            3
-
-#define IDS_QUESTION        "Question"
-#define IDM_QUESTION        4
+#define IDS_START           "Start"
+#define IDM_START           2
 
 #define IDS_QUIT            "Quit"
 #define IDM_QUIT            6
@@ -43,6 +37,21 @@
 
 #define IDS_NEW_EXPERT      "Expert"
 #define IDM_NEW_EXPERT      13
+
+// Game menu
+//
+#define IDS_PRESS           "Press"
+#define IDM_PRESS           101
+
+#define IDS_FLAG            "Flag"
+#define IDM_FLAG            102
+
+#define IDS_QUESTION        "Question"
+#define IDM_QUESTION        103
+
+#define IDS_CANCEL          "Cancel"
+#define IDM_CANCEL          106
+
 
 // "pause" image
 #ifdef DEST_CASIO_CALC

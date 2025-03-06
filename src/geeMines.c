@@ -9,6 +9,8 @@
 #include "consts.h"
 #include "shared/menu.h"
 
+#include "board.h"
+
 #ifdef DEST_CASIO_CALC
     //#include "shared/casioCalcs.h"
     #include <string.h>
@@ -104,9 +106,7 @@ POWNMENU _createMenu(){
             // Create menu bar
             PMENUBAR bar = menu_getMenuBar(menu);
             menubar_appendSubMenu(bar, sub, IDM_NEW, IDS_NEW, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
-            menubar_appendItem(bar, IDM_PRESS, IDS_PRESS, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-            menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
-            menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
+            menubar_appendItem(bar, IDM_START, IDS_START, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
             menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
         else{
@@ -118,11 +118,18 @@ POWNMENU _createMenu(){
     return menu;
 }
 
+// Start a new game
+//
+void _onNewGame(PBOARD const board, uint8_t level){
+    board_init(board, level);
+    board_update(board);
+}
+
 int main(void){
 #ifdef DEST_CASIO_CALC
     POWNMENU menu = _createMenu();
-
-    if (menu){
+    PBOARD board = board_create();
+    if (menu && board){
         BOOL end = FALSE;
         MENUACTION action;
 
@@ -132,9 +139,13 @@ int main(void){
         while (!end){
             if (menu_handleKeyboard(menu, &action)){
                 switch (action.value){
-                    case IDM_NEW_BEGINNER :{
-
+                    // Start a new game
+                    case IDM_NEW_BEGINNER :
+                    case IDM_NEW_MEDIUM :
+                    case IDM_NEW_EXPERT:{
+                        _onNewGame(board, action.value - IDM_NEW_BEGINNER);
                         menu_showParentBar(menu, TRUE);
+                        menubar_activateItem(menu_getMenuBar(menu), IDM_START, SEARCH_BY_ID, TRUE);
                         break;
                     }
 
@@ -159,6 +170,10 @@ int main(void){
         //
         menu_free(menu);
     }   // if (menu)
+
+    if (board){
+        board_free(board, TRUE);
+    }
 
     //gint_setrestart(0);
     gint_osmenu();

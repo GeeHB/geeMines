@@ -367,7 +367,7 @@ PMENUITEM menubar_appendCheckbox(PMENUBAR bar, int id, const char* text, int sta
 //  @bar : Pointer to the bar
 //  @searchedID : Menu item's ID
 //  @searchMode : Type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
-//  @activated : true if item must be activated
+//  @activated : TRUE if item must be activated
 //
 //  @return : TRUE if activation state changed
 //
