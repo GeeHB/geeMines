@@ -41,11 +41,17 @@ extern "C" {
 #define GRID_VIEWPORT_LEFT          2
 #define GRID_VIEWPORT_TOP           2
 
+#define SMILEY_VERT_X               200
+#define SMILEY_VERT_Y               GRID_VIEWPORT_TOP
+
+#define TIMER_VERT_X                200
+#define TIMER_VERT_Y                40
+
 // Game state
 //
 typedef enum {
     STATE_WAITING, STATE_PLAYING,
-    STATE_GAMEWON, STATE_GAMELOST
+    STATE_WON, STATE_LOST
 } GAME_STATE;
 
 // Orientation
@@ -130,6 +136,24 @@ void board_draw(PBOARD const board);
 //
 void board_click(PBOARD const board, PCOORD const pos, ACTION action);
 
+//  board_setGameStateEx() : Change the state of a game
+//
+//  @board : Pointer to the board
+//  @state : new game state
+//  @redraw : update screen
+//
+void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw);
+#define board_setGameState(board, state) board_setGameStateEx(board, state, FALSE)
+
+//  board_setSmileyEx() : Change the state of a game
+//
+//  @board : Pointer to the board
+//  @smiley : new smiley to draw
+//  @redraw : update screen
+//
+void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw);
+#define board_setSmiley(board, smiley) board_setSmileyEx(board, smiley, FALSE)
+
 //  board_free() : Free a board
 //
 //  @board : Pointer to the board
@@ -178,6 +202,16 @@ void board_drawSmileyEx(PBOARD const board, BOOL update);
 //
 void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
+
+//  board_selectBoxEx() : Select a box
+//
+//  @board : Pointer to the board
+//  @pos : Box coordinates of the box in the grid
+//  @select : TRUE if box is selected, FALSe if unselected
+//
+void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
+#define  board_selectBox(board, pos) board_selectBoxEx(board, pos, TRUE)
+#define  board_unselectBox(board, pos) board_selectBoxEx(board, pos, FALSE)
 
 // board_drawLed() : Draw a led digit
 //

@@ -8,15 +8,13 @@
 
 #include "consts.h"
 #include "shared/menu.h"
-
-#include "board.h"
+#include "game.h"
 
 #ifdef DEST_CASIO_CALC
     //#include "shared/casioCalcs.h"
     #include <string.h>
 
     extern bopti_image_t g_about;   // "about" image
-    extern bopti_image_t g_pause;
 #endif // #ifdef DEST_CASIO_CALC
 
 //
@@ -50,45 +48,6 @@ void _about(){
 #endif // #ifdef DEST_CASIO_CALC
 }
 
-// _onPause() : Show pause screen
-//
-void _onPause(){
-#ifdef DEST_CASIO_CALC
-    uint car = KEY_NONE;
-    uint16_t y;
-
-    // Top of image
-    dsubimage(0, 0, &g_pause,
-            0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
-
-    // "middle"
-    for (y = IMG_PAUSE_COPY_Y;
-        y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
-        dsubimage(0, y, &g_pause,
-            0, IMG_PAUSE_COPY_Y,
-            IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
-    }
-
-    // bottom
-    y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
-    dsubimage(0, y, &g_pause,
-            0, IMG_PAUSE_COPY_Y + 1,
-            IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
-            DIMAGE_NOCLIP);
-
-    dupdate();
-
-    do{
-        car = getKey();
-    }while (KEY_CODE_PAUSE != car && KEY_CODE_EXIT != car);
-
-    if (KEY_CODE_EXIT == car){
-        // Close app.
-        gint_osmenu();
-    }
-#endif // #ifdef DEST_CASIO_CALC
-}
-
 // _createMenu : Create the applicaiton menu
 //
 //  return : Pointer the the menu (or NULL on error)
@@ -118,13 +77,6 @@ POWNMENU _createMenu(){
     return menu;
 }
 
-// Start a new game
-//
-void _onNewGame(PBOARD const board, uint8_t level){
-    board_init(board, level);
-    board_update(board);
-}
-
 int main(void){
 #ifdef DEST_CASIO_CALC
     POWNMENU menu = _createMenu();
@@ -134,28 +86,35 @@ int main(void){
         MENUACTION action;
 
         _about();
-        menu_update(menu);
 
+        // Main menu
+        menu_update(menu);
         while (!end){
             if (menu_handleKeyboard(menu, &action)){
                 switch (action.value){
                     // Start a new game
                     case IDM_NEW_BEGINNER :
                     case IDM_NEW_MEDIUM :
-                    case IDM_NEW_EXPERT:{
+                    case IDM_NEW_EXPERT:
                         _onNewGame(board, action.value - IDM_NEW_BEGINNER);
                         menu_showParentBar(menu, TRUE);
                         menubar_activateItem(menu_getMenuBar(menu), IDM_START, SEARCH_BY_ID, TRUE);
                         break;
-                    }
+
+                    // Start the game
+                    case IDM_START:
+                        _onStartGame(board);
+                        menu_update(menu);
+                        break;
 
                     // Pause
                     case KEY_CODE_PAUSE:
                         _onPause();
-                        //game_.display();
+                        board_update(board);    // update screen and menu
                         menu_update(menu);
                         break;
 
+                    // End app.
                     case IDM_QUIT :
                         end = TRUE;
                         break;
@@ -163,7 +122,7 @@ int main(void){
                     default :
                         break;
                 } // swicth
-            }
+            } // menu_handleKeyboard
         } // while (!end)
 
         // Quit app.
@@ -181,3 +140,5 @@ int main(void){
 #endif // #ifdef DEST_CASIO_CALC
 	return 1;
 }
+
+// EOF

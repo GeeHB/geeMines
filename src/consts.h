@@ -65,7 +65,6 @@
 //
 #ifdef DEST_CASIO_CALC
 #include "shared/keys.h"
-
 enum GAME_KEY{
     KEY_CODE_F1 = KEY_F1,     // !!!
     KEY_CODE_F6 = KEY_F6,
@@ -73,21 +72,25 @@ enum GAME_KEY{
     KEY_CODE_DOWN = KEY_DOWN,
     KEY_CODE_LEFT = KEY_LEFT,
     KEY_CODE_RIGHT = KEY_RIGHT,
-    KEY_CODE_0 = KEY_0,
-    KEY_CODE_1 = KEY_1,
-    KEY_CODE_2 = KEY_2,
-    KEY_CODE_3 = KEY_3,
-    KEY_CODE_4 = KEY_4,
-    KEY_CODE_5 = KEY_5,
-    KEY_CODE_6 = KEY_6,
-    KEY_CODE_7 = KEY_7,
-    KEY_CODE_8 = KEY_8,
-    KEY_CODE_9 = KEY_9,
     KEY_CODE_CAPTURE = KEY_7,
     KEY_CODE_ROTATE_DISPLAY = KEY_XOT,
     KEY_CODE_PAUSE = KEY_OPTN,
     KEY_CODE_EXIT = KEY_EXIT,
     KEY_CODE_EXE = KEY_EXE
+};
+#else
+enum GAME_KEY{
+    KEY_CODE_F1 = 'a',
+    KEY_CODE_F6 = 'f',
+    KEY_CODE_UP = '8',
+    KEY_CODE_DOWN = '2',
+    KEY_CODE_LEFT = '4',
+    KEY_CODE_RIGHT = '6',
+    KEY_CODE_CAPTURE = '*',
+    KEY_CODE_ROTATE_DISPLAY = 'r',
+    KEY_CODE_PAUSE = 'p',
+    KEY_CODE_EXIT = 'q',
+    KEY_CODE_EXE = 13
 };
 #endif // #ifdef DEST_CASIO_CALC
 

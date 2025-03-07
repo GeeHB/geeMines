@@ -72,6 +72,79 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     return TRUE;
 }
 
+//  board_setSmileyEx() : Change the state of a game
+//
+//  @board : Pointer to the board
+//  @smiley : new smiley to draw
+//  @redraw : update screen
+//
+void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw){
+    if (smiley != board->smileyState){
+        board->smileyState = smiley;
+        if (redraw){
+            board_drawSmiley(board);
+        }
+    }
+}
+
+//  board_setGameStateEx() : Change the state of a game
+//
+//  @board : Pointer to the board
+//  @state : new game state
+//  @redraw : update screen
+//
+void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
+    if (state == board->gameState){
+        return;
+    }
+
+    board->gameState = state;
+
+    switch (state){
+        case STATE_WON:
+        {
+            PBOX box;
+            //ZeroMinesLeft();
+            board_setSmileyEx(board, SMILEY_WIN, FALSE);
+            for (uint8_t r = 0; r < board->grid->size.row; r++)
+                for (uint8_t c = 0; c < board->grid->size.col; c++){
+                    box = GRID_AT(board->grid, c, r);
+                    if (box->mine && box->state != BS_FLAG){
+                        box->state = BS_FLAG;
+                    }
+                }
+
+            board_update(board);
+            break;
+        }
+
+        case STATE_LOST:
+        {
+            PBOX box;
+            board_setSmileyEx(board, SMILEY_LOSE, FALSE);
+            for (uint8_t r = 0; r < board->grid->size.row; r++)
+                for (uint8_t c = 0; c < board->grid->size.col; c++){
+                    box = GRID_AT(board->grid, c, r);
+                    if (box->mine && box->state != BS_BLAST){
+                        box->state = BS_MINE;
+                    }
+                    else{
+                        if (box->state == BS_FLAG){
+                            box->state = BS_WRONG;
+                        }
+                    }
+                }
+
+            board_update(board);
+            break;
+        }
+
+        default:
+            break;
+
+    } // switch
+}
+
 //  board_free() : Free a board
 //
 //  @board : Pointer to the board
@@ -102,9 +175,9 @@ void board_draw(PBOARD const board){
         drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
-        board_drawTime(board);
-        board_drawSmiley(board);
-        board_drawGridEx(board, TRUE);  // + update
+        board_drawTimeEx(board, FALSE);
+        board_drawSmileyEx(board, FALSE);
+        board_drawGrid(board);  // + update
     }
 }
 
@@ -411,6 +484,33 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             board->gridPos.x - GRID_VIEWPORT_BUTTON_WIDTH,
             board->viewPort.navButtons[1].y,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+
+        // Smiley Pos
+        board->smileyPos = (POINT){.x = SMILEY_VERT_X , .y = SMILEY_VERT_Y};
+
+        // Time pos
+        board->timerPos = (POINT){.x = TIMER_VERT_X , .y = TIMER_VERT_Y};
+    }
+}
+
+//  board_selectBoxEx() : Select a box
+//
+//  @board : Pointer to the board
+//  @pos : Box coordinates of the box in the grid
+//  @select : TRUE if box is selected, FALSe if unselected
+//
+void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
+    POINT base;
+    base.x = board->gridPos.x + BOX_WIDTH * (pos->col - board->viewPort.visibleFrame.x);
+    base.y = board->gridPos.y + BOX_HEIGHT * (pos->row - board->viewPort.visibleFrame.y);
+
+    if (select){
+#ifdef DEST_CASIO
+        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_INVERT);
+#endif // #ifdef DEST_CASIO
+    }
+    else{
+        board_drawBoxEx(board, pos, base.x, base.y);
     }
 }
 
