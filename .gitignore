@@ -19,3 +19,4 @@ linuxMines/bin/Debug
 # Common IDE files
 /linux
 .vscode
+.zed

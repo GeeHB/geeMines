@@ -102,6 +102,10 @@ BOOL _onStartGame(PBOARD const board){
 
                 _updateMenuItemsStates(board, gMenu, &pos);
 
+                if (!board->fullGrid){
+                    board_drawViewPortButtons(board);
+                }
+
 #ifdef DEST_CASIO_CALC
                 dupdate();
 #endif // #ifdef DEST_CASIO_CALC
