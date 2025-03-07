@@ -90,13 +90,13 @@ BOOL _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
 BOOL _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyUp(board, pos) _onKeyUpEx(board, pos, TRUE)
 
-// _updateMenuState() : Update state of items in the menu
+// _updateMenuItemsStates() : Update state of items in the menu
 //
 //  @board : pointer to the game board
-//  @menuBar : Pointer to the menubar
+//  @menu : Pointer to the menu
 //  @pos : position of cursor
 //
-void _updateMenuState(PBOARD const board, PMENUBAR menuBar, PCOORD pos);
+void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos);
 
 #ifdef __cplusplus
 }

@@ -16,7 +16,7 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
-#define _GEEHB_MENU_VER_        "0.6.0"
+#define _GEEHB_MENU_VER_        "0.6.1"
 
 #define MENUBAR_MAX_ITEM_COUNT  6   // ie. "F" buttons count
 
@@ -383,6 +383,17 @@ BOOL menubar_activate(PMENUBAR bar, int searchedID, int searchMode, BOOL activat
 //  @return : Item's state or -1 if error
 //
 int menubar_getItemState(PMENUBAR bar, int searchedID, int searchMode);
+
+//  menubar_setItemState() : Set the state of an item
+//
+//  @bar : Pointer to the bar
+//  @searchedID : ID of searched item
+//  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+//  @state : new item state
+//
+//  @return : previous item state or -1 on error
+//
+int menubar_setItemState(PMENUBAR bar, int searchedID, int searchMode, int state);
 
 // menubar_checkMenuItem() : Check or uncheck a menu item checkbox
 //

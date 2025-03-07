@@ -8,9 +8,9 @@
 
 #include "consts.h"
 #include "shared/menu.h"
-#include "game.h"
 
 #ifdef DEST_CASIO_CALC
+    #include "game.h"
     //#include "shared/casioCalcs.h"
     #include <string.h>
 

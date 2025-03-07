@@ -52,7 +52,7 @@ POWNMENU _createGameMenu(){
 BOOL _onStartGame(PBOARD const board){
     MENUACTION action;
     COORD pos = {0,0}, oPos = {0, 0};
-    BOOL cont = TRUE, reDraw;
+    BOOL cont = TRUE, reDraw = FALSE;
     POWNMENU gMenu = _createGameMenu();
     if (!gMenu){
         return FALSE;
@@ -99,7 +99,7 @@ BOOL _onStartGame(PBOARD const board){
                 board_selectBox(board, &pos);
                 oPos = (COORD){.row = pos.row, .col = pos.col};
 
-                _updateMenuState(board, menu_getMenuBar(gMenu), &pos);
+                _updateMenuItemsStates(board, gMenu, &pos);
 
 #ifdef DEST_CASIO_CALC
                 dupdate();
@@ -258,10 +258,51 @@ BOOL _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
 // _updateMenuState() : Update state of items in the menu
 //
 //  @board : pointer to the game board
-//  @menuBar : Pointer to the menubar
+//  @menu : Pointer to the menu
 //  @pos : position of cursor
 //
-void _updateMenuState(PBOARD const board, PMENUBAR menuBar, PCOORD pos){
+void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
+    PMENUBAR menuBar = menu_getMenuBar(menu);
+    if (menuBar){
+        PBOX box = BOX_AT_POS(board->grid, pos);
+        BOOL flag = FALSE, question = FALSE, step = FALSE, greyAll = FALSE;
+
+        switch (box->state){
+            case BS_INITIAL:
+                step = TRUE;
+                break;
+
+            case BS_FLAG:
+                flag = TRUE;
+                step = TRUE;
+                break;
+
+            case BS_QUESTION:
+                question = TRUE;
+                step = TRUE;
+                break;
+
+            case BS_MINE:
+                step = TRUE;
+                break;
+
+            default:
+                break;
+        }
+
+        if (greyAll){
+            menubar_activateItem(menuBar, IDM_PRESS, SEARCH_BY_ID, step);
+            menubar_setItemState(menuBar, IDM_FLAG, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
+            menubar_setItemState(menuBar, IDM_QUESTION, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
+        }
+        else{
+            menubar_activateItem(menuBar, IDM_PRESS, SEARCH_BY_ID, step);
+            menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+            menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+        }
+
+        menu_update(menu);
+    }
 }
 
 // EOF

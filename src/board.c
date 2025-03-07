@@ -108,13 +108,15 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
             for (uint8_t r = 0; r < board->grid->size.row; r++)
                 for (uint8_t c = 0; c < board->grid->size.col; c++){
-                    box = GRID_AT(board->grid, c, r);
+                    box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_FLAG){
                         box->state = BS_FLAG;
                     }
                 }
 
-            board_update(board);
+            if (redraw){
+                board_update(board);
+            }
             break;
         }
 
@@ -124,7 +126,7 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             board_setSmileyEx(board, SMILEY_LOSE, FALSE);
             for (uint8_t r = 0; r < board->grid->size.row; r++)
                 for (uint8_t c = 0; c < board->grid->size.col; c++){
-                    box = GRID_AT(board->grid, c, r);
+                    box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_BLAST){
                         box->state = BS_MINE;
                     }
@@ -135,7 +137,9 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
                     }
                 }
 
-            board_update(board);
+            if (redraw){
+                board_update(board);
+            }
             break;
         }
 
@@ -328,7 +332,7 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
 //
 void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
     if (board){
-        PBOX box = GRID_AT(board->grid, pos->row, pos->col);
+        PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
         dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);

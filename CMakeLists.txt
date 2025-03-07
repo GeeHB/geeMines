@@ -9,9 +9,9 @@ set(SOURCES
   src/geeMines.c
   src/grid.c
   src/board.c
+  src/game.c
   src/shared/keys.c
   src/shared/menu.c
-  # ...
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS

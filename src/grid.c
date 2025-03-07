@@ -84,7 +84,7 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
                 PBOX box;
                 for (r = 0; r < grid->size.row; r++){
                     for (c = 0; c < grid->size.col; c++){
-                        box = GRID_AT(grid, r, c);
+                        box = BOX_AT(grid, r, c);
                         box->mine = FALSE;
                         box->state = BS_INITIAL;
                     }
@@ -119,7 +119,7 @@ uint8_t grid_layMines(PGRID const grid){
         while (mines < grid->minesCount){
             r = (uint8_t)(rand() % grid->size.row);
             c = (uint8_t)(rand() % grid->size.col);
-            box = GRID_AT(grid, r, c);
+            box = BOX_AT(grid, r, c);
 
             if (!box->mine){
                 box->mine = TRUE;     // A new mine in a new pos.
@@ -149,7 +149,7 @@ void grid_display(PGRID const grid){
 
     for (r=0; r<grid->size.row; r++){
         for (c=0; c<grid->size.col; c++){
-            box = GRID_AT(grid, r, c);
+            box = BOX_AT(grid, r, c);
             nPos = (COORD){.col = c, .row = r};
             printf("| %c ", box->mine?'x':'0' + grid_countMines(grid, &nPos));
         }
@@ -174,7 +174,7 @@ uint8_t grid_countMines(PGRID const grid, PCOORD const pos){
     for (r = (int8_t)pos->row-1; r <= pos->row+1; r++){
         for (c = (uint8_t)pos->col-1; c <= pos->col+1; c++){
             if (GRID_IS_VALID_POS(grid, r, c) && (r != pos->row || c != pos->col) &&
-                GRID_AT(grid, r, c)->mine){
+                BOX_AT(grid, r, c)->mine){
                 sMines++;
             }
         }
@@ -194,7 +194,7 @@ BOOL grid_stepBox(PGRID const grid, PCOORD const pos){
     if (grid){
 
         uint8_t surroundingMines = 0;
-        PBOX box = GRID_AT(grid, pos->col, pos->row);
+        PBOX box = BOX_AT_POS(grid, pos);
 
         surroundingMines = grid_countMines(grid, pos);
 

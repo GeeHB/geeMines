@@ -944,6 +944,31 @@ int menubar_getItemState(PMENUBAR bar, int searchedID, int searchMode){
     return (item?item->state:-1);
 }
 
+//  menubar_setItemState() : Set the state of an item
+//
+//  @bar : Pointer to the bar
+//  @searchedID : ID of searched item
+//  @searchMode : type of search (SEARCH_BY_ID or SEARCH_BY_INDEX)
+//  @state : new item state
+//
+//  @return : previous item state or -1 on error
+//
+int menubar_setItemState(PMENUBAR bar, int searchedID, int searchMode, int state){
+    if (!bar){
+        return -1;
+    }
+
+    PMENUITEM item = menubar_findItem(bar, searchedID, searchMode, NULL, NULL);
+
+    if (!item){
+        return -1;
+    }
+
+    int oState =item->state;
+    item->state = state;
+    return oState;
+}
+
 //  menubar_activateItem() : Activate or deactivate an item
 //
 //  When an item is deactivated, it can't be called by the user
