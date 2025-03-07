@@ -99,18 +99,6 @@ enum GAME_KEY{
 /*
 typedef struct
 {
-    HINSTANCE hInst;
-    HWND hWnd;
-    int cxNcLeft;
-    int cyNcTop;
-    int cxNcRight;
-    int cyNcBottom;
-    HDC hMemDCLed;
-    HDC hMemDCFace;
-    HDC hMemDCBox;
-
-    POINT Pos;
-    DIFFICULTY Difficulty;
     UINT uWidth;
     UINT uHeight;
     UINT uRows;
@@ -118,60 +106,28 @@ typedef struct
     UINT uMines;
     UINT uMaxSteps;
 
-    RECT StatRect;
-    RECT CounterRect;
-    RECT FaceRect;
-    RECT TimerRect;
-    RECT GridRect;
 
-    GAME_STATE GameState;
-    FACE_STATE FaceState;
     UINT uMinesLeft;
-    UINT uTime;
     UINT uSteps;
     BOOL bMark;
     int colPressed;
     int rowPressed;
 
-    BOX_STRUCT Box[MAX_ROWS][MAX_COLS];
-
 } BOARD;
 
 
-void InitBoard();
-void LoadBoard();
-void SaveBoard();
-void DestroyBoard();
-void CheckLevel();
-void NewBoard();
-void NewGame();
 void TranslateMouseMsg(UINT* puMsg, WPARAM wParam);
 void ProcessMouseMsg(UINT uMsg, LPARAM lParam);
 void OnCommand(WPARAM wParam, LPARAM lParam);
-void SetDifficulty(DIFFICULTY Difficulty);
-void DrawBackground(HDC hDC);
 void DrawMinesLeft(HDC hdc);
-void DrawFace(HDC hdc);
-void DrawTime(HDC hdc);
-void DrawGrid(HDC hdc);
-void DisplayFace(FACE_STATE faceState);
 void SetAndDispBoxState(int r, int c, BOX_STATE state);
 void DecMinesLeft();
 void IncMinesLeft();
 void ZeroMinesLeft();
 void IncTime();
 void Pt2RowCol(POINT pt, int *prow, int *pcol);
-void GameWon();
-void GameLost();
 void PressBox(int row, int col);
 void UnPressBox();
-*/
-
-// ???
-//
-/*
-#define MAX_COLS            30
-#define MAX_ROWS            24
 */
 
 #endif // #ifdef __GEE_MINES_CONSTS_h__

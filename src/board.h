@@ -252,13 +252,13 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation);
 //  tools
 //
 
-//  rotatePoint() : Rotate a single point (trig. 90°)
+//  rotatePoint() : Rotate (trig. 90°) and translate a single point
 //
 //  @pos : Pointer to point coordinates
 //
 void rotatePoint(PPOINT const pos);
 
-//  rotateRect() : Rotate a rectangle (trig. 90°)
+//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
 //
 //  @rect : Pointer to the rect
 //

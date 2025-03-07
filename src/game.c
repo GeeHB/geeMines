@@ -50,13 +50,14 @@ POWNMENU _createGameMenu(){
 //  @return : FALSE on error
 //
 BOOL _onStartGame(PBOARD const board){
-    MENUACTION action;
-    COORD pos = {0,0}, oPos = {0, 0};
-    BOOL cont = TRUE, reDraw = FALSE;
     POWNMENU gMenu = _createGameMenu();
     if (!gMenu){
         return FALSE;
     }
+
+    MENUACTION action;
+    COORD pos = {0,0}, oPos = {0, 0};
+    BOOL cont = TRUE, reDraw = FALSE;
 
     board_setGameStateEx(board, STATE_PLAYING, TRUE);
     board_selectBox(board, &pos);
@@ -97,7 +98,7 @@ BOOL _onStartGame(PBOARD const board){
             if (reDraw){
                 board_unselectBox(board, &oPos);
                 board_selectBox(board, &pos);
-                oPos = (COORD){.row = pos.row, .col = pos.col};
+                oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
 
                 _updateMenuItemsStates(board, gMenu, &pos);
 

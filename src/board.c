@@ -522,7 +522,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 // Tools
 //
 
-//  rotatePoint() : Rotate a single point (trig. 90°)
+//  rotatePoint() : Rotate (trig. 90°) and translate a single point
 //
 //  @pos : Pointer to point coordinates
 //
@@ -532,7 +532,7 @@ void rotatePoint(PPOINT const pos){
     pos->y = ny;
 }
 
-//  rotateRect() : Rotate a rectangle (trig. 90°)
+//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
 //
 //  @rect : Pointer to the rect
 //
