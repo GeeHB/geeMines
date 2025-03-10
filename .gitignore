@@ -6,6 +6,7 @@
 *-base.*
 *.xcf
 *.depend
+*.ico
 
 # Outputs
 /build-cg
