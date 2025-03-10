@@ -6,9 +6,6 @@
 //--
 //----------------------------------------------------------------------
 
-// other sample : https://github.com/reactos/reactos/tree/master/base/applications/games/winmine
-// https://minesweeper.online/fr/game/4289190080
-
 #ifndef __GEE_MINES_CONSTS_h__
 #define __GEE_MINES_CONSTS_h__    1
 
@@ -125,10 +122,6 @@ void ProcessMouseMsg(UINT uMsg, LPARAM lParam);
 void OnCommand(WPARAM wParam, LPARAM lParam);
 void DrawMinesLeft(HDC hdc);
 void SetAndDispBoxState(int r, int c, BOX_STATE state);
-void DecMinesLeft();
-void IncMinesLeft();
-void ZeroMinesLeft();
-void IncTime();
 void Pt2RowCol(POINT pt, int *prow, int *pcol);
 void PressBox(int row, int col);
 void UnPressBox();
