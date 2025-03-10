@@ -18,8 +18,8 @@ set(ASSETS
   # ...
 )
 set(ASSETS_cg
-  assets-cg/about.png
   assets-cg/menu.png
+  assets-cg/mine.png
   assets-cg/pause.png
   assets-cg/boxes.png
   assets-cg/smileys.png

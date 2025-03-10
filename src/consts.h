@@ -18,6 +18,12 @@
 #define APP_VERSION         "0.0.1"
 #define APP_AUTHOR          "GeeHB"
 
+// "About" / Splash screen
+//
+#define APP_LOGO_WIDTH      48
+#define APP_LOGO_HEIGHT     APP_LOGO_WIDTH
+#define COL_BKGROUND        C_RGB(192,192,192)
+
 // Main menu
 //
 #define IDS_NEW             "New"
@@ -93,8 +99,6 @@ enum GAME_KEY{
     KEY_CODE_EXE = 13
 };
 #endif // #ifdef DEST_CASIO_CALC
-
-#define COL_BKGROUND    C_RGB(192,192,192)
 
 /*
 typedef struct

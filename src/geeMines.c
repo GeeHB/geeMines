@@ -14,7 +14,7 @@
     //#include "shared/casioCalcs.h"
     #include <string.h>
 
-    extern bopti_image_t g_about;   // "about" image
+    extern bopti_image_t g_mine;   // "about" image
 #endif // #ifdef DEST_CASIO_CALC
 
 //
@@ -27,12 +27,14 @@ void _about(){
 #ifdef DEST_CASIO_CALC
     int w, h;
     char copyright[255];    // Should be enough !
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
+    // Draw the lgo
+    dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2,
+            (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2,
+            &g_mine);
 
-    // Draw the image and copyright
-    dimage(0, 0, &g_about);
-
+    // Copyright
     strcpy(copyright, APP_NAME);
     strcat(copyright, " par ");
     strcat(copyright, APP_AUTHOR);

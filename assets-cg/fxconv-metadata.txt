@@ -1,10 +1,10 @@
+mine.png:
+  type: bopti-image
+  name: g_mine
+
 menu.png:
   type: bopti-image
   name: g_menu
-
-about.png:
-  type: bopti-image
-  name: g_about
 
 pause.png:
   type: bopti-image
