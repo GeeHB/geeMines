@@ -17,8 +17,9 @@
 
 // "About" / Splash screen
 //
-#define APP_LOGO_WIDTH      48
+#define APP_LOGO_WIDTH      80
 #define APP_LOGO_HEIGHT     APP_LOGO_WIDTH
+
 #define COL_BKGROUND        C_RGB(192,192,192)
 
 // Main menu

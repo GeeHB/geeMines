@@ -27,9 +27,9 @@ void _about(){
 #ifdef DEST_CASIO_CALC
     int w, h;
     char copyright[255];    // Should be enough !
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
 
-    // Draw the lgo
+    // Draw the logo
     dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2,
             (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2,
             &g_mine);
