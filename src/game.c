@@ -11,6 +11,7 @@
 #include "shared/menu.h"
 
 #ifdef DEST_CASIO_CALC
+#include <gint/clock.h>
 extern bopti_image_t g_pause;
 #endif // #ifdef DEST_CASIO_CALC
 
@@ -148,12 +149,12 @@ BOOL _onStartGame(PBOARD const board){
                 }
 
                 if (redraw & REDRAW_SELECTION){
-                    hightLighted != hightLighted;// Blink selected box
+                    hightLighted = !hightLighted;// Blink selected box
                     board_selectBoxEx(board, &pos, hightLighted);
                 }
 
                 if (redraw & REDRAW_NAV_BUTTONS){
-                    navButtons != navButtons;
+                    navButtons = !navButtons;
                     board_drawViewPortButtonsEx(board, navButtons); // Blink nav buttons
                 }
 
