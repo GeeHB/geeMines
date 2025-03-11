@@ -67,7 +67,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     board->smileyState = SMILEY_HAPPY;
     board->uMinesLeft = board->grid->minesCount;
     board->uMines = 0;
-    board->uTime = 0;
+    board->time = 0;
 
     return TRUE;
 }
@@ -98,6 +98,8 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         return;
     }
 
+    uint8_t r,c;
+
     board->gameState = state;
 
     switch (state){
@@ -106,17 +108,13 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             PBOX box;
             //ZeroMinesLeft();
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
-            for (uint8_t r = 0; r < board->grid->size.row; r++)
-                for (uint8_t c = 0; c < board->grid->size.col; c++){
+            for (r = 0; r < board->grid->size.row; r++)
+                for (c = 0; c < board->grid->size.col; c++){
                     box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_FLAG){
                         box->state = BS_FLAG;
                     }
                 }
-
-            if (redraw){
-                board_update(board);
-            }
             break;
         }
 
@@ -124,22 +122,19 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         {
             PBOX box;
             board_setSmileyEx(board, SMILEY_LOSE, FALSE);
-            for (uint8_t r = 0; r < board->grid->size.row; r++)
-                for (uint8_t c = 0; c < board->grid->size.col; c++){
+            for (r = 0; r < board->grid->size.row; r++)
+                for (c = 0; c < board->grid->size.col; c++){
                     box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_BLAST){
                         box->state = BS_MINE;
                     }
                     else{
-                        if (box->state == BS_FLAG){
+                        if (box->state == BS_FLAG  && !box->mine){
                             box->state = BS_WRONG;
                         }
                     }
                 }
 
-            if (redraw){
-                board_update(board);
-            }
             break;
         }
 
@@ -147,6 +142,26 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             break;
 
     } // switch
+
+    if (redraw){
+        board_update(board);
+    }
+}
+
+//  board_incTime() : Increase game timer of 1 sec.
+//
+//  @board : Pointer to the board
+//
+//  @return : FALSE if the game is over
+//
+BOOL board_incTime(PBOARD const board){
+    if (board && board->time < TIMER_MAX_VALUE){
+        board->time++;
+        return TRUE;
+    }
+
+    board_gameLost(board);
+    return FALSE;
 }
 
 //  board_free() : Free a board
@@ -259,7 +274,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 //
 void board_drawTimeEx(PBOARD const board, BOOL update){
     if (board){
-        uint16_t value = board->uTime;
+        uint16_t value = board->time;
         RECT rect;
         int8_t ox, oy;
 
@@ -551,19 +566,5 @@ void rotateRect(PRECT const rect){
     rect->w = bottomRight.x - rect->x + 1;
     rect->h = topLeft.y - rect->y + 1;
 }
-
-#ifdef DEST_CASIO_CALC
-// __callbackTick() : Call back function for timer
-// This function is used during edition to make selected item blink
-//
-//  @pTick : pointer to blinking state indicator
-//
-//  @return : TIMER_CONTINUE if valid
-//
-int __callbackTick(volatile int *pTick){
-    *pTick = 1;
-    return TIMER_CONTINUE;
-}
-#endif // #ifdef DEST_CASIO_CALC
 
 // EOF

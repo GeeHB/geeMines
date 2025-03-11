@@ -56,8 +56,8 @@
 #define IDS_CANCEL          "Cancel"
 #define IDM_CANCEL          106
 
-
 // "pause" image
+//
 #ifdef DEST_CASIO_CALC
     #define IMG_PAUSE_W         CASIO_WIDTH
     #define IMG_PAUSE_H         70

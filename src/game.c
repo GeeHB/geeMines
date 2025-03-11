@@ -43,6 +43,8 @@ POWNMENU _createGameMenu(){
     return menu;
 }
 
+#ifdef DEST_CASIO_CALC
+
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
@@ -57,32 +59,69 @@ BOOL _onStartGame(PBOARD const board){
 
     MENUACTION action;
     COORD pos = {0,0}, oPos = {0, 0};
-    BOOL cont = TRUE, reDraw = FALSE;
+    BOOL cont = TRUE, navButtons = FALSE, hightLighted = FALSE;
+    uint8_t redraw = NO_REDRAW;
 
     board_setGameStateEx(board, STATE_PLAYING, TRUE);
     board_selectBox(board, &pos);
     menu_update(gMenu);
 
+    // Timer for blinking effect
+    int tickCount = 0;
+    static volatile int tick = 1;
+    int timerID = timer_configure(TIMER_ANY, TIMER_TICK_DURATION * 1000,
+                                    GINT_CALL(__callbackTick, &tick));
+    if (timerID >= 0){
+        timer_start(timerID);   // set the timer
+    }
+    else{
+        cont = FALSE;   // No timer => no game
+    }
+
     while (cont){
+        // Time management
+        while(!tick){
+            sleep();
+        }
+        tick = 0;
+
+        // Time to blink ?
+        tickCount++;
+
+        if (0 == (tickCount % BLINK_CURSOR)){
+            redraw |= REDRAW_SELECTION;
+        }
+
+        if (0 == (tickCount % TIMER_SECOND)){
+            redraw |= REDRAW_TIME;
+        }
+
+        // A keyboard event ?
         if (menu_handleKeyboard(gMenu, &action)){
             switch (action.value){
-
                 // Change cursor pos
                 //
                 case KEY_CODE_LEFT:
-                    reDraw = _onKeyLeft(board, &pos);
+                    redraw != _onKeyLeft(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_DOWN:
-                    reDraw = _onKeyDown(board, &pos);
+                    redraw != _onKeyDown(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_RIGHT:
-                    reDraw = _onKeyRight(board, &pos);
+                    redraw != _onKeyRight(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_UP:
-                    reDraw = _onKeyUp(board, &pos);
+                    redraw != _onKeyUp(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    break;
+
+                // Pause
+                case KEY_CODE_PAUSE:
+                    _onPause();
+                    board_update(board);    // update screen and menu
+                    menu_update(gMenu);
                     break;
 
                 // Cancel (end) the game
@@ -95,29 +134,52 @@ BOOL _onStartGame(PBOARD const board){
                     break;
             } // switch (action.value)
 
-            if (reDraw){
-                board_unselectBox(board, &oPos);
-                board_selectBox(board, &pos);
-                oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
+            if (redraw != NO_REDRAW){
+                if (redraw & REDRAW_BOX){
+                    board_unselectBox(board, &oPos);
+                    board_selectBox(board, &pos);
+                    oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
 
-                _updateMenuItemsStates(board, gMenu, &pos);
+                    _updateMenuItemsStates(board, gMenu, &pos);
 
-                if (!board->fullGrid){
-                    board_drawViewPortButtons(board);
+                    if (!board->fullGrid){
+                        board_drawViewPortButtons(board);
+                    }
                 }
 
-#ifdef DEST_CASIO_CALC
-                dupdate();
-#endif // #ifdef DEST_CASIO_CALC
-            }
+                if (redraw & REDRAW_SELECTION){
+                    hightLighted != hightLighted;// Blink selected box
+                    board_selectBoxEx(board, &pos, hightLighted);
+                }
 
+                if (redraw & REDRAW_NAV_BUTTONS){
+                    navButtons != navButtons;
+                    board_drawViewPortButtonsEx(board, navButtons); // Blink nav buttons
+                }
+
+                if (redraw & REDRAW_TIME){
+                    cont = board_incTime(board);
+                    board_drawTimeEx(board, FALSE);     // Time has changed
+                }
+
+                dupdate();
+                redraw = NO_REDRAW;
+            } // if (reDraw)
         } // if (menu_handleKeyboard
     } // while (cont)
 
-    // Game is over
+    // stop the timer
+    if (timerID >= 0){
+        timer_stop(timerID);
+    }
+
+    // Display end status board
+    board_draw(board);
     menu_free(gMenu);
+
     return TRUE;
 }
+#endif // #ifdef DEST_CASIO_CALC
 
 // _onPause() : Show pause screen
 //
@@ -309,5 +371,19 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
         menu_update(menu);
     }
 }
+
+#ifdef DEST_CASIO_CALC
+// __callbackTick() : Call back function for timer
+// This function is used during edition to make selected item blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+int __callbackTick(volatile int *pTick){
+    *pTick = 1;
+    return TIMER_CONTINUE;
+}
+#endif // #ifdef DEST_CASIO_CALC
 
 // EOF

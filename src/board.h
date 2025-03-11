@@ -20,11 +20,6 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
-// Blinking
-//
-#define BLINK_TICK_DURATION     100 //  in ms
-#define BLINK_TICKCOUNT         4   // "duration" of blinking in ticks
-
 // Images dims.
 //
 #define BOX_WIDTH           16
@@ -44,8 +39,10 @@ extern "C" {
 #define SMILEY_VERT_X               200
 #define SMILEY_VERT_Y               GRID_VIEWPORT_TOP
 
-#define TIMER_VERT_X                200
+#define TIMER_VERT_X                200     // Game timer
 #define TIMER_VERT_Y                40
+
+#define TIMER_MAX_VALUE             99      // Max. game duration in sec.
 
 // Game state
 //
@@ -99,7 +96,7 @@ typedef struct __board{
 
     uint8_t uMinesLeft;
     uint8_t uMines;
-    uint16_t uTime;
+    uint16_t time;
 } BOARD, * PBOARD;
 
 //
@@ -144,6 +141,8 @@ void board_click(PBOARD const board, PCOORD const pos, ACTION action);
 //
 void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw);
 #define board_setGameState(board, state) board_setGameStateEx(board, state, FALSE)
+#define board_gameLost(board) board_setGameStateEx(board, STATE_LOST, FALSE)
+#define board_gameWon(board) board_setGameStateEx(board, STATE_WON, FALSE)
 
 //  board_setSmileyEx() : Change the state of a game
 //
@@ -153,6 +152,14 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw);
 //
 void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw);
 #define board_setSmiley(board, smiley) board_setSmileyEx(board, smiley, FALSE)
+
+//  board_incTime() : Increase game timer of 1 sec.
+//
+//  @board : Pointer to the board
+//
+//  @return : FALSE if the game is over
+//
+BOOL board_incTime(PBOARD const board);
 
 //  board_free() : Free a board
 //
@@ -263,17 +270,6 @@ void rotatePoint(PPOINT const pos);
 //  @rect : Pointer to the rect
 //
 void rotateRect(PRECT const rect);
-
-#ifdef DEST_CASIO_CALC
-// __callbackTick() : Call back function for timer
-// This function is used during edition to make selected item blink
-//
-//  @pTick : pointer to blinking state indicator
-//
-//  @return : TIMER_CONTINUE if valid
-//
-static int __callbackTick(volatile int *pTick);
-#endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 }

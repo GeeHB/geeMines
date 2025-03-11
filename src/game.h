@@ -13,6 +13,22 @@
 #include "shared/menu.h"
 #include "board.h"
 
+// Blinking
+//
+#define TIMER_TICK_DURATION     100 // Basic 'tick' in ms
+#define TIMER_SECOND            10  // a sec. in 'tick' count
+#define TIMER_HALF_SECOND       5
+
+#define BLINK_CURSOR            TIMER_HALF_SECOND   // "duration" of cursor blinking
+
+// Redraw mode (any combianison of)
+//
+#define NO_REDRAW               0
+#define REDRAW_TIME             1
+#define REDRAW_SELECTION        2
+#define REDRAW_NAV_BUTTONS      4       // viewport navigation buttons
+#define REDRAW_BOX              8
+
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
 #endif // #ifdef DEST_CASIO_CALC
@@ -40,7 +56,9 @@ POWNMENU _createGameMenu();
 //
 //  @return : FALSE on error
 //
+#ifdef DEST_CASIO_CALC
 BOOL _onStartGame(PBOARD const board);
+#endif // #ifdef DEST_CASIO_CALC
 
 // _onPause() : Show pause screen
 //
@@ -97,6 +115,17 @@ BOOL _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 //  @pos : position of cursor
 //
 void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos);
+
+#ifdef DEST_CASIO_CALC
+// __callbackTick() : Call back function for timer
+// This function is used during edition to make selected item blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+static int __callbackTick(volatile int *pTick);
+#endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 }
