@@ -241,9 +241,10 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
+//  @update : Update screen ?
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight);
-#define board_drawViewPortButtons(board) board_drawViewPortButtonsEx(board, FALSE)
+void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update);
+#define board_drawViewPortButtons(board) board_drawViewPortButtonsEx(board, hightLight, TRUE)
 
 //  board_changeOrientation() : Change drawing orientation
 //

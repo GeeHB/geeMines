@@ -38,8 +38,8 @@ POWNMENU _createGameMenu(){
         // Create menu bar
         PMENUBAR bar = menu_getMenuBar(menu);
         menubar_appendItem(bar, IDM_PRESS, IDS_PRESS, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-        menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-        menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
+        menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
+        menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
         menubar_addItem(bar, MENU_POS_RIGHT, IDM_CANCEL, IDS_CANCEL, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
     }
 
@@ -113,6 +113,10 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
+        if (0 == (tickCount % BLINK_NAV_BUTTONS)){
+            redraw |= REDRAW_NAV_BUTTONS;
+        }
+
         // A keyboard event ?
         if (menu_handleKeyboard(gMenu, &action)){
             switch (action.value){
@@ -154,7 +158,7 @@ BOOL _onStartGame(PBOARD const board){
             if (redraw != NO_REDRAW){
 
                 if (redraw & REDRAW_GRID){
-                    //board_drawEx(board, FALSE); // no screen update
+                    board_drawEx(board, FALSE); // no screen update
                 }
 
                 if (redraw & REDRAW_BOX){
@@ -177,7 +181,7 @@ BOOL _onStartGame(PBOARD const board){
 
                 if (redraw & REDRAW_NAV_BUTTONS){
                     navButtons = !navButtons;
-                    board_drawViewPortButtonsEx(board, navButtons); // Blink nav buttons
+                    board_drawViewPortButtonsEx(board, navButtons, FALSE); // Blink nav buttons
                 }
 
                 if (redraw & REDRAW_TIME){
@@ -368,20 +372,25 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
     if (menuBar){
         PBOX box = BOX_AT_POS(board->grid, pos);
         BOOL flag = FALSE, question = FALSE, step = FALSE, greyAll = FALSE;
+        BOOL fState = FALSE, qState = FALSE;
 
         switch (box->state){
             case BS_INITIAL:
                 step = TRUE;
+                flag = TRUE;
+                question = TRUE;
                 break;
 
             case BS_FLAG:
-                flag = TRUE;
                 step = TRUE;
+                flag = TRUE;
+                fState = TRUE;
                 break;
 
             case BS_QUESTION:
-                question = TRUE;
                 step = TRUE;
+                question = TRUE;
+                qState = TRUE;
                 break;
 
             case BS_MINE:
@@ -389,6 +398,7 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
                 break;
 
             default:
+                greyAll = TRUE;
                 break;
         }
 
@@ -399,8 +409,10 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
         }
         else{
             menubar_activateItem(menuBar, IDM_PRESS, SEARCH_BY_ID, step);
-            menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
-            menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+            menubar_activateItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag);
+            menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, fState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+            menubar_activateItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question);
+            menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, qState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
         }
 
         //menu_update(menu);

@@ -20,6 +20,7 @@
 #define TIMER_HALF_SECOND       5
 
 #define BLINK_CURSOR            TIMER_HALF_SECOND   // "duration" of cursor blinking
+#define BLINK_NAV_BUTTONS       8
 
 // Redraw mode (any combinaison of)
 //
