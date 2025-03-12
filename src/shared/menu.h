@@ -16,7 +16,7 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
-#define _GEEHB_MENU_VER_        "0.6.1"
+#define _GEEHB_MENU_VER_        "0.6.2"
 
 #define MENUBAR_MAX_ITEM_COUNT  6   // ie. "F" buttons count
 
@@ -533,13 +533,15 @@ BOOL menu_defDrawItem(POWNMENU const menu, PMENUITEM const item, RECT* const anc
 BOOL menu_drawItem(POWNMENU menu, PMENUITEM const item, RECT* const anchor);
 
 
-//  menu_update() : Update the menu bar
+//  menu_updateEx() : Update the menu bar
 //
 //  All items will be drawn according to their state et status
 //
 //  @menu : Pointer to the menu
+//  @update : if TRUE the screen is updated
 //
-void menu_update(POWNMENU menu);
+void menu_updateEx(POWNMENU menu, BOOL update);
+#define menu_update(menu) menu_updateEx(menu, TRUE)
 
 // menu_getColour() : Get the colour used for item's drawings in the
 //              active menu bar

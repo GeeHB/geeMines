@@ -116,8 +116,9 @@ BOOL menu_getRect(POWNMENU menu, RECT* barRect){
 //  All items will be drawn according to their state et status
 //
 //  @menu : Pointer to the menu
+//  @update : if TRUE the screen is updated
 //
-void menu_update(POWNMENU menu){
+void menu_updateEx(POWNMENU menu, BOOL update){
     if (menu){
         // First item's rect
         RECT anchor;
@@ -128,11 +129,14 @@ void menu_update(POWNMENU menu){
             menu_drawItem(menu, menu->visible_->items[index], &anchor);
             anchor.x += anchor.w;   // Next item's position
         } // for
+
+        if (update){
 #ifdef DEST_CASIO_CALC
-        dupdate();
+            dupdate();
 #else
-        printf("\n");
+            printf("\n");
 #endif // #ifdef DEST_CASIO_CALC
+        }
     }
 }
 

@@ -79,6 +79,8 @@ BOOL _onStartGame(PBOARD const board){
 
     board_setGameStateEx(board, STATE_PLAYING, TRUE);
     board_selectBox(board, &pos);
+
+    _updateMenuItemsStates(board, gMenu, &pos);
     menu_update(gMenu);
 
     // Timer for blinking effect
@@ -168,15 +170,16 @@ BOOL _onStartGame(PBOARD const board){
                     oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
 
                     _updateMenuItemsStates(board, gMenu, &pos);
+                    menu_updateEx(gMenu, FALSE);
 
                     if (!board->fullGrid){
-                        //board_drawViewPortButtons(board);
+                        board_drawViewPortButtons(board);
                     }
                 }
 
                 if (redraw & REDRAW_SELECTION){
                     hightLighted = !hightLighted;// Blink selected box
-                    //board_selectBoxEx(board, &pos, hightLighted);
+                    board_selectBoxEx(board, &pos, hightLighted);
                 }
 
                 if (redraw & REDRAW_NAV_BUTTONS){
@@ -407,7 +410,7 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
             menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
         }
 
-        menu_update(menu);
+        //menu_update(menu);
     }
 }
 
