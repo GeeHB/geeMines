@@ -121,9 +121,11 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level);
 //  board_draw() : Draw the whole board
 //
 //  @board : Pointer to the board
+//  @update : update the screen ?
 //
-void board_draw(PBOARD const board);
-#define board_update(board) board_draw(board)
+void board_drawEx(PBOARD const board, BOOL update);
+#define board_draw(board) board_drawEx(board, TRUE)
+#define board_update(board) board_drawEx(board, TRUE)
 
 //  board_click() : User "clicks" on the a box
 //

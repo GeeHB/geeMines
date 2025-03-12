@@ -21,13 +21,14 @@
 
 #define BLINK_CURSOR            TIMER_HALF_SECOND   // "duration" of cursor blinking
 
-// Redraw mode (any combianison of)
+// Redraw mode (any combinaison of)
 //
 #define NO_REDRAW               0
 #define REDRAW_TIME             1
 #define REDRAW_SELECTION        2
 #define REDRAW_NAV_BUTTONS      4       // viewport navigation buttons
-#define REDRAW_BOX              8
+#define REDRAW_BOX              8       // Box at current and prev. positions
+#define REDRAW_GRID             16
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
@@ -70,9 +71,9 @@ void _onPause();
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check);
+uint8_t _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyLeft(board, pos) _onKeyLeftEx(board, pos, TRUE)
 
 // _onKeyDownEx() : User press "down" key
@@ -81,9 +82,9 @@ BOOL _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check);
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check);
+uint8_t _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyDown(board, pos) _onKeyDownEx(board, pos, TRUE)
 
 // _onKeyRightEx() : User press "right" key
@@ -92,9 +93,9 @@ BOOL _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check);
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
+uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyRight(board, pos) _onKeyRightEx(board, pos, TRUE)
 
 // _onKeyUpEx() : User press "up" key
@@ -103,9 +104,9 @@ BOOL _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
+uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyUp(board, pos) _onKeyUpEx(board, pos, TRUE)
 
 // _updateMenuItemsStates() : Update state of items in the menu

@@ -9,6 +9,7 @@
 #include "game.h"
 #include "board.h"
 #include "shared/menu.h"
+#include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
@@ -103,19 +104,19 @@ BOOL _onStartGame(PBOARD const board){
                 // Change cursor pos
                 //
                 case KEY_CODE_LEFT:
-                    redraw != _onKeyLeft(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyLeft(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_DOWN:
-                    redraw != _onKeyDown(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyDown(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_RIGHT:
-                    redraw != _onKeyRight(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyRight(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 case KEY_CODE_UP:
-                    redraw != _onKeyUp(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyUp(board, &pos)?REDRAW_BOX:NO_REDRAW;
                     break;
 
                 // Pause
@@ -136,6 +137,11 @@ BOOL _onStartGame(PBOARD const board){
             } // switch (action.value)
 
             if (redraw != NO_REDRAW){
+
+                if (redraw & REDRAW_GRID){
+                    board_drawEx(board, FALSE); // no screen update
+                }
+
                 if (redraw & REDRAW_BOX){
                     board_unselectBox(board, &oPos);
                     board_selectBox(board, &pos);
@@ -227,24 +233,27 @@ void _onPause(){
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : TDrawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
+uint8_t _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (check && CALC_HORIZONTAL == board->orientation){
         return _onKeyUpEx(board, pos, FALSE);
     }
 
+    uint8_t action = NO_REDRAW;
+
     if (pos->col){
         if (board->viewPort.visibleFrame.x == pos->col){
             board->viewPort.visibleFrame.x--;
+            action = REDRAW_GRID;
         }
 
         pos->col--;
-        return TRUE;
+        action |= REDRAW_BOX;
     }
 
-    return FALSE;
+    return action;
 }
 
 // _onKeyDownEx() : User press "down" key
@@ -253,24 +262,27 @@ BOOL _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check){
+uint8_t _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (check && CALC_HORIZONTAL == board->orientation){
         return _onKeyLeftEx(board, pos, FALSE);
     }
 
+    uint8_t action = NO_REDRAW;
+
     if (pos->row < (board->viewPort.dimensions.row - 1)){
         if ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h - 1) == pos->row){
             board->viewPort.visibleFrame.y++;
+            action = REDRAW_GRID;
         }
 
         pos->row++;
-        return TRUE;
+        action |= REDRAW_BOX;
     }
 
-    return FALSE;
+    return action;
 }
 
 // _onKeyRightEx() : User press "right" key
@@ -279,23 +291,26 @@ BOOL _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check){
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check){
+uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check){
     if (check && CALC_HORIZONTAL == board->orientation){
         return _onKeyDownEx(board, pos, FALSE);
     }
 
+    uint8_t action = NO_REDRAW;
+
     if (pos->col < (board->viewPort.dimensions.col - 1)){
         if ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w - 1) == pos->col){
             board->viewPort.visibleFrame.x++;
+            action = REDRAW_GRID;
         }
 
         pos->col++;
-        return TRUE;
+        action |= REDRAW_BOX;
     }
 
-    return FALSE;
+    return action;
 }
 
 // _onKeyUpEx() : User press "up" key
@@ -304,23 +319,26 @@ BOOL _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check){
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TRUE if position changed
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
-BOOL _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
+uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
     if (check && CALC_HORIZONTAL == board->orientation){
         return _onKeyRightEx(board, pos, FALSE);
     }
 
+    uint8_t action = NO_REDRAW;
+
     if (pos->row){
         if (board->viewPort.visibleFrame.y == pos->row){
             board->viewPort.visibleFrame.y--;
+            action = REDRAW_GRID;
         }
 
         pos->row--;
-        return TRUE;
+        action |= REDRAW_BOX;
     }
 
-    return FALSE;
+    return action;
 }
 
 // _updateMenuState() : Update state of items in the menu

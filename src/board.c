@@ -184,11 +184,12 @@ void board_free(PBOARD const board, BOOL freeAll){
 // Drawings
 //
 
-//  board_draw() : Draw the whole board
+//  board_drawEx() : Draw the whole board
 //
 //  @board : Pointer to the board
+//  @update : update the screen ?
 //
-void board_draw(PBOARD const board){
+void board_drawEx(PBOARD const board, BOOL update){
     if (board){
 #ifdef DEST_CASIO_CALC
         drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
@@ -196,7 +197,7 @@ void board_draw(PBOARD const board){
 
         board_drawTimeEx(board, FALSE);
         board_drawSmileyEx(board, FALSE);
-        board_drawGrid(board);  // + update
+        board_drawGridEx(board, update);  // + update
     }
 }
 
