@@ -99,14 +99,16 @@ int main(void){
                     case IDM_NEW_MEDIUM :
                     case IDM_NEW_EXPERT:
                         _onNewGame(board, action.value - IDM_NEW_BEGINNER);
+
                         menu_showParentBar(menu, TRUE);
                         menubar_activateItem(menu_getMenuBar(menu), IDM_START, SEARCH_BY_ID, TRUE);
+                        menu_update(menu);
                         break;
 
                     // Start the game
                     case IDM_START:
                         _onStartGame(board);
-                        menu_update(menu);
+                        menu_update(menu);  // back to current menu
                         break;
 
                     // Pause

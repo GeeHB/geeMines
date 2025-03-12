@@ -81,9 +81,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
 void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw){
     if (smiley != board->smileyState){
         board->smileyState = smiley;
-        if (redraw){
-            board_drawSmiley(board);
-        }
+        board_drawSmileyEx(board, redraw);
     }
 }
 
@@ -99,6 +97,7 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
     }
 
     uint8_t r,c;
+    BOOL redrawBoard = FALSE;
 
     board->gameState = state;
 
@@ -115,6 +114,8 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
                         box->state = BS_FLAG;
                     }
                 }
+
+            redrawBoard = TRUE;
             break;
         }
 
@@ -135,15 +136,20 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
                     }
                 }
 
+            redrawBoard = TRUE;
             break;
         }
+
+        case STATE_PLAYING:
+            board_setSmileyEx(board, SMILEY_HAPPY, redraw);
+            break;
 
         default:
             break;
 
     } // switch
 
-    if (redraw){
+    if (redrawBoard){
         board_update(board);
     }
 }
@@ -418,7 +424,8 @@ void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update){
                     board->viewPort.navButtons[id].x, board->viewPort.navButtons[id].y,
                     board->viewPort.navButtons[id].x + board->viewPort.navButtons[id].w - 1,
                     board->viewPort.navButtons[id].y + board->viewPort.navButtons[id].h - 1,
-                    showButton?C_INVERT:COL_BKGROUND);
+                    //showButton?C_INVERT:COL_BKGROUND);
+                    COL_BACKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
             }
             else{

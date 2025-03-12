@@ -71,7 +71,7 @@ typedef enum{
 // Smiley state
 //
 typedef enum {
-    SMILEY_DOWN, SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
+    SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
 } SMILEY_STATE;
 
 // A viewport - defines visible part of the grid

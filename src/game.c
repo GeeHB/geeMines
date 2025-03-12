@@ -77,7 +77,7 @@ BOOL _onStartGame(PBOARD const board){
     BOOL cont = TRUE, navButtons = FALSE, hightLighted = FALSE;
     uint8_t redraw = NO_REDRAW;
 
-    board_setGameStateEx(board, STATE_PLAYING, TRUE);
+    board_setGameStateEx(board, STATE_PLAYING, FALSE);
     board_selectBox(board, &pos);
 
     _updateMenuItemsStates(board, gMenu, &pos);
@@ -373,13 +373,14 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
         PBOX box = BOX_AT_POS(board->grid, pos);
         BOOL flag = FALSE, question = FALSE, step = FALSE, greyAll = FALSE;
         BOOL fState = FALSE, qState = FALSE;
+        SMILEY_STATE smiley = SMILEY_HAPPY, current = board->smileyState;
 
         switch (box->state){
             case BS_INITIAL:
                 step = TRUE;
                 flag = TRUE;
                 question = TRUE;
-                break;
+                smiley = SMILEY_CAUTION;                break;
 
             case BS_FLAG:
                 step = TRUE;
@@ -415,7 +416,9 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
             menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, qState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
         }
 
-        //menu_update(menu);
+        if (current != smiley){
+            board_setSmileyEx(board, smiley, FALSE);
+        }
     }
 }
 
