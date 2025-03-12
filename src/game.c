@@ -10,11 +10,9 @@
 #include "board.h"
 #include "shared/menu.h"
 #include <stdint.h>
-#include <string.h>
 
 #ifdef DEST_CASIO_CALC
 #include <gint/clock.h>
-#include "shared/trace.h"
 
 extern bopti_image_t g_pause;
 #endif // #ifdef DEST_CASIO_CALC
@@ -159,11 +157,11 @@ BOOL _onStartGame(PBOARD const board){
 
                 if (redraw & REDRAW_BOX){
 
-                    #ifdef TRACE_MODE
-                    char trace[250];
-                    __corrdtoa("Pos : ", &pos, trace);
-                    TRACE_DEF(trace);
-                    #endif // TRACE_MODE
+#ifdef TRACE_MODE
+                    //char trace[250];
+                    //__coordtoa("Pos : ", pos->col, pos->row, trace);
+                    //TRACE(trace, C_BLACK, COL_BKGROUND);
+#endif // TRACE_MODE
 
                     board_unselectBox(board, &oPos);
                     board_selectBox(board, &pos);
@@ -172,13 +170,13 @@ BOOL _onStartGame(PBOARD const board){
                     _updateMenuItemsStates(board, gMenu, &pos);
 
                     if (!board->fullGrid){
-                        board_drawViewPortButtons(board);
+                        //board_drawViewPortButtons(board);
                     }
                 }
 
                 if (redraw & REDRAW_SELECTION){
                     hightLighted = !hightLighted;// Blink selected box
-                    board_selectBoxEx(board, &pos, hightLighted);
+                    //board_selectBoxEx(board, &pos, hightLighted);
                 }
 
                 if (redraw & REDRAW_NAV_BUTTONS){
@@ -412,92 +410,5 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
         menu_update(menu);
     }
 }
-
-#ifdef TRACE_MODE
-
-// __coordtoa() : Format a CCORD struct to an output string
-//
-//  This specific method creates a string composed of the name of the value
-//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
-//
-//  The base can't be changed it is always equal to 10
-//
-//  This method assumes the output buffer - ie. str - is large enough to contain
-//  the name and the formated value.
-//
-//  @name : Name of the value (can be NULL)
-//  @pos : Position to show
-//  @str : Pointer to output string
-//
-//  @return : pointer to formated string
-//
-char* __corrdtoa(const char* name, PCOORD const pos, char* str){
-    char* strVal = str;
-
-    // Add name
-    if (name){
-        strcpy(str, name);
-        strVal+=strlen(str);    // num. value starts here
-    }
-
-    // Append col. value
-    __atoi(pos->col, strVal);
-
-    strVal = str + strlen(str);
-    strVal[0] = ',';                // Add a separator
-    strVal++;
-
-    __atoi(pos->row, strVal);
-
-    return str;
-}
-
-// __atoi() : Convert a num. val to a string
-//
-//  @num : Numeric value to convert
-//  @str : String to reverse
-//
-//  @return : a pointer to the string
-//
-char* __atoi(int num, char *str){
-    char* strVal = str;
-    int sum= ((num < 0)?-1*num:num);
-    uint8_t i = 0, digit, dCount = 0;
-    do{
-        digit = sum % 10;
-        strVal[i++] = '0' + digit;
-        if (!(++dCount % 3)){
-            strVal[i++] = ' ';  // for large numbers lisibility
-        }
-
-        sum /= 10;
-    }while (sum);
-
-    // A sign ?
-    if (num < 0){
-        strVal[i++] = '-';
-    }
-    strVal[i] = '\0';
-
-    __strrev(strVal);   // reverse the string
-    return str;
-}
-
-// __strrev() : Reverse a string
-//
-//  @str : String to reverse
-//
-void __strrev(char *str){
-    int i, j;
-    unsigned char a;
-    size_t len = strlen((const char *)str);
-    for (i = 0, j = len - 1; i < j; i++, j--){
-        a = str[i];
-        str[i] = str[j];
-        str[j] = a;
-    }
-}
-
-#endif // TRACE_MODE
 
 // EOF

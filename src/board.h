@@ -10,7 +10,12 @@
 #define __GEE_MINES_BOARD_h__    1
 
 #include "shared/casioCalcs.h"
+#include "consts.h"
 #include "grid.h"
+
+#ifdef TRACE_MODE
+#include "shared/trace.h"
+#endif // TRACE_MODE
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
@@ -216,7 +221,7 @@ void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t d
 //
 //  @board : Pointer to the board
 //  @pos : Box coordinates of the box in the grid
-//  @select : TRUE if box is selected, FALSe if unselected
+//  @select : TRUE if box is selected, FALSE if unselected
 //
 void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
 #define  board_selectBox(board, pos) board_selectBoxEx(board, pos, TRUE)
@@ -272,6 +277,43 @@ void rotatePoint(PPOINT const pos);
 //  @rect : Pointer to the rect
 //
 void rotateRect(PRECT const rect);
+
+#ifdef TRACE_MODE
+
+// __coordtoa() : Format a point coord. to an output string
+//
+//  This specific method creates a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed it is always equal to 10
+//
+//  This method assumes the output buffer - ie. str - is large enough to contain
+//  the name and the formated value.
+//
+//  @name : Name of the value (can be NULL)
+//  @x,@y : Position to show
+//  @str : Pointer to output string
+//
+//  @return : pointer to formated string
+//
+char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str);
+
+// __atoi() : Convert a num. val to a string
+//
+//  @num : Numeric value to convert
+//  @str : String to reverse
+//
+//  @return : a pointer to the string
+//
+char* __atoi(int num, char *str);
+
+// __strrev() : Reverse a string
+//
+//  @str : String to reverse
+//
+void __strrev(char *str);
+
+#endif // TRACE_MODE
 
 #ifdef __cplusplus
 }

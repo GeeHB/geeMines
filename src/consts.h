@@ -12,7 +12,7 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.0.1"
+#define APP_VERSION         "0.0.1 - alpha"
 #define APP_AUTHOR          "GeeHB"
 
 #define TRACE_MODE          1

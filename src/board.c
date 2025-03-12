@@ -211,6 +211,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     RECT rect;
     POINT offsetCol, offsetRow;
     COORD pos;
+    uint8_t r, c;
 
     if (!board || !board->grid){
         return;
@@ -239,7 +240,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         origin =rect.x;
     }
 
-    for (uint8_t r=0; r < board->viewPort.dimensions.row; r++){
+    for (r = 0; r < board->viewPort.dimensions.row; r++){
         // aligned with first "col"
         if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
@@ -248,7 +249,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             rect.x = origin;
         }
 
-        for (uint8_t c=0; c < board->viewPort.dimensions.col; c++){
+        for (c = 0; c < board->viewPort.dimensions.col; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
             board_drawBoxEx(board, &pos, rect.x, rect.y);
             OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
@@ -517,7 +518,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 //
 //  @board : Pointer to the board
 //  @pos : Box coordinates of the box in the grid
-//  @select : TRUE if box is selected, FALSe if unselected
+//  @select : TRUE if box is selected, FALSE if unselected
 //
 void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
     POINT base;
@@ -526,12 +527,19 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 
     if (select){
 #ifdef DEST_CASIO
-        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_INVERT);
+        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_BLUE);
 #endif // #ifdef DEST_CASIO
     }
     else{
         board_drawBoxEx(board, pos, base.x, base.y);
+        //drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_RED);
     }
+
+#ifdef TRACE_MODE
+        char trace[250];
+        __coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
+        TRACE(trace, C_BLACK, COL_BKGROUND);
+#endif // TRACE_MODE
 }
 
 //
@@ -567,5 +575,92 @@ void rotateRect(PRECT const rect){
     rect->w = bottomRight.x - rect->x + 1;
     rect->h = topLeft.y - rect->y + 1;
 }
+
+#ifdef TRACE_MODE
+
+// __coordtoa() : Format point coord. to an output string
+//
+//  This specific method creates a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed it is always equal to 10
+//
+//  This method assumes the output buffer - ie. str - is large enough to contain
+//  the name and the formated value.
+//
+//  @name : Name of the value (can be NULL)
+//  @x,@y : Position to show
+//  @str : Pointer to output string
+//
+//  @return : pointer to formated string
+//
+char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str){
+    char* strVal = str;
+
+    // Add name
+    if (name){
+        strcpy(str, name);
+        strVal+=strlen(str);    // num. value starts here
+    }
+
+    // Append col. value
+    __atoi(x, strVal);
+
+    strVal = str + strlen(str);
+    strVal[0] = ',';                // Add a separator
+    strVal++;
+
+    __atoi(y, strVal);
+
+    return str;
+}
+
+// __atoi() : Convert a num. val to a string
+//
+//  @num : Numeric value to convert
+//  @str : String to reverse
+//
+//  @return : a pointer to the string
+//
+char* __atoi(int num, char *str){
+    char* strVal = str;
+    int sum= ((num < 0)?-1*num:num);
+    uint8_t i = 0, digit, dCount = 0;
+    do{
+        digit = sum % 10;
+        strVal[i++] = '0' + digit;
+        if (!(++dCount % 3)){
+            strVal[i++] = ' ';  // for large numbers lisibility
+        }
+
+        sum /= 10;
+    }while (sum);
+
+    // A sign ?
+    if (num < 0){
+        strVal[i++] = '-';
+    }
+    strVal[i] = '\0';
+
+    __strrev(strVal);   // reverse the string
+    return str;
+}
+
+// __strrev() : Reverse a string
+//
+//  @str : String to reverse
+//
+void __strrev(char *str){
+    int i, j;
+    unsigned char a;
+    size_t len = strlen((const char *)str);
+    for (i = 0, j = len - 1; i < j; i++, j--){
+        a = str[i];
+        str[i] = str[j];
+        str[j] = a;
+    }
+}
+
+#endif // TRACE_MODE
 
 // EOF
