@@ -15,6 +15,8 @@
 #define APP_VERSION         "0.0.1"
 #define APP_AUTHOR          "GeeHB"
 
+#define TRACE_MODE          1
+
 // "About" / Splash screen
 //
 #define APP_LOGO_WIDTH      80
