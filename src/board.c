@@ -240,7 +240,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         origin =rect.x;
     }
 
-    for (r = 0; r < board->viewPort.dimensions.row; r++){
+    for (r = 0; r < board->viewPort.visibleFrame.h; r++){
         // aligned with first "col"
         if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
@@ -249,7 +249,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             rect.x = origin;
         }
 
-        for (c = 0; c < board->viewPort.dimensions.col; c++){
+        for (c = 0; c < board->viewPort.visibleFrame.w; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
             board_drawBoxEx(board, &pos, rect.x, rect.y);
             OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
@@ -527,7 +527,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 
     if (select){
 #ifdef DEST_CASIO_CALC
-        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_INVERT);
+        drect(base.x + 2, base.y + 2, base.x + BOX_WIDTH - 3, base.y + BOX_HEIGHT - 3, C_INVERT);
 #endif // #ifdef DEST_CASIO_CALC
     }
     else{
@@ -535,9 +535,9 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
     }
 
 #ifdef TRACE_MODE
-        char trace[250];
-        __coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
-        TRACE(trace, C_BLACK, COL_BKGROUND);
+        //char trace[250];
+        //__coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
+        //TRACE(trace, C_BLACK, COL_BKGROUND);
 #endif // TRACE_MODE
 }
 

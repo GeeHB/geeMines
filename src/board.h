@@ -77,7 +77,7 @@ typedef enum {
 // A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
-    DIMS dimensions;      // max. box count (w x h)
+    DIMS dimensions;        // max. box count (w x h)
     RECT visibleFrame;      // current visible boxes window
     RECT navButtons[4];
 }VIEWPORT, * PVIEWPORT;
