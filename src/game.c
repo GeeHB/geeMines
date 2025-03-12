@@ -154,17 +154,10 @@ BOOL _onStartGame(PBOARD const board){
             if (redraw != NO_REDRAW){
 
                 if (redraw & REDRAW_GRID){
-                    board_drawEx(board, FALSE); // no screen update
+                    //board_drawEx(board, FALSE); // no screen update
                 }
 
                 if (redraw & REDRAW_BOX){
-
-#ifdef TRACE_MODE
-                    //char trace[250];
-                    //__coordtoa("Pos : ", pos->col, pos->row, trace);
-                    //TRACE(trace, C_BLACK, COL_BKGROUND);
-#endif // TRACE_MODE
-
                     board_unselectBox(board, &oPos);
                     board_selectBox(board, &pos);
                     oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos

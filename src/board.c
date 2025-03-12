@@ -526,13 +526,12 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
     base.y = board->gridPos.y + BOX_HEIGHT * (pos->row - board->viewPort.visibleFrame.y);
 
     if (select){
-#ifdef DEST_CASIO
-        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_BLUE);
-#endif // #ifdef DEST_CASIO
+#ifdef DEST_CASIO_CALC
+        drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_INVERT);
+#endif // #ifdef DEST_CASIO_CALC
     }
     else{
         board_drawBoxEx(board, pos, base.x, base.y);
-        //drect(base.x, base.y, base.x + BOX_WIDTH - 1, base.y + BOX_HEIGHT - 1, C_RED);
     }
 
 #ifdef TRACE_MODE
