@@ -125,7 +125,7 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos);
 //
 //  @return : TIMER_CONTINUE if valid
 //
-static int __callbackTick(volatile int *pTick);
+//static int __callbackTick(volatile int *pTick);
 #endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus

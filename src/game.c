@@ -47,6 +47,18 @@ POWNMENU _createGameMenu(){
 
 #ifdef DEST_CASIO_CALC
 
+// __callbackTick() : Call back function for timer
+// This function is used during edition to make selected item blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+static int __callbackTick(volatile int *pTick){
+    *pTick = 1;
+    return TIMER_CONTINUE;
+}
+
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
@@ -104,19 +116,19 @@ BOOL _onStartGame(PBOARD const board){
                 // Change cursor pos
                 //
                 case KEY_CODE_LEFT:
-                    redraw = _onKeyLeft(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyLeft(board, &pos);
                     break;
 
                 case KEY_CODE_DOWN:
-                    redraw = _onKeyDown(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyDown(board, &pos);
                     break;
 
                 case KEY_CODE_RIGHT:
-                    redraw = _onKeyRight(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyRight(board, &pos);
                     break;
 
                 case KEY_CODE_UP:
-                    redraw = _onKeyUp(board, &pos)?REDRAW_BOX:NO_REDRAW;
+                    redraw = _onKeyUp(board, &pos);
                     break;
 
                 // Pause
@@ -390,19 +402,5 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
         menu_update(menu);
     }
 }
-
-#ifdef DEST_CASIO_CALC
-// __callbackTick() : Call back function for timer
-// This function is used during edition to make selected item blink
-//
-//  @pTick : pointer to blinking state indicator
-//
-//  @return : TIMER_CONTINUE if valid
-//
-int __callbackTick(volatile int *pTick){
-    *pTick = 1;
-    return TIMER_CONTINUE;
-}
-#endif // #ifdef DEST_CASIO_CALC
 
 // EOF

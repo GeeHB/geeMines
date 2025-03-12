@@ -20,7 +20,7 @@
 #define APP_LOGO_WIDTH      80
 #define APP_LOGO_HEIGHT     APP_LOGO_WIDTH
 
-#define COL_BKGROUND        C_RGB(192,192,192)
+#define COL_BKGROUND        C_RGB(24,24,24)
 
 // Main menu
 //
