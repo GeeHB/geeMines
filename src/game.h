@@ -25,7 +25,7 @@
 // Redraw mode (any combinaison of)
 //
 #define NO_REDRAW               0
-#define REDRAW_MINES            1
+#define REDRAW_MINES_LEFT       1
 //#define REDRAW_SMILEY           2
 #define REDRAW_MOVE             2
 #define REDRAW_TIME             4

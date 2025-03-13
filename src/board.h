@@ -163,14 +163,6 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw);
 void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw);
 #define board_setSmiley(board, smiley) board_setSmileyEx(board, smiley, FALSE)
 
-//  board_incTime() : Increase game timer of 1 sec.
-//
-//  @board : Pointer to the board
-//
-//  @return : FALSE if the game is over
-//
-BOOL board_incTime(PBOARD const board);
-
 //  board_free() : Free a board
 //
 //  @board : Pointer to the board

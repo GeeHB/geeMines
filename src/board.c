@@ -153,22 +153,6 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
     }
 }
 
-//  board_incTime() : Increase game timer of 1 sec.
-//
-//  @board : Pointer to the board
-//
-//  @return : FALSE if the game is over
-//
-BOOL board_incTime(PBOARD const board){
-    if (board && board->time < TIMER_MAX_VALUE){
-        board->time++;
-        return TRUE;
-    }
-
-    board_gameLost(board);
-    return FALSE;
-}
-
 //  board_free() : Free a board
 //
 //  @board : Pointer to the board

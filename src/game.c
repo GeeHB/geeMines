@@ -201,12 +201,16 @@ BOOL _onStartGame(PBOARD const board){
                     board_drawViewPortButtonsEx(board, navButtons, FALSE); // Blink nav buttons
                 }
 
-                if (redraw & REDRAW_MINES){
-                    board_drawMinesEx(board, FALSE);
+                if (redraw & REDRAW_MINES_LEFT){
+                    board_drawMinesLeftEx(board, FALSE);
                 }
 
                 if (redraw & REDRAW_TIME){
-                    cont = board_incTime(board);
+                    if (++board->time >= TIMER_MAX_VALUE){
+                        board_gameLost(board);
+                        cont = FALSE;
+                    }
+
                     board_drawTimeEx(board, FALSE);     // Time has changed
                 }
 
@@ -243,7 +247,7 @@ uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     box->state = (flag?BS_INITIAL:BS_FLAG);
     box->mine += flag?+1:-1;    // mines left !!
     menubar_checkMenuItem(menu_getMenuBar(menu), IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
-    return REDRAW_BOX | REDRAW_MINES;
+    return REDRAW_BOX | REDRAW_MINES_LEFT;
 }
 
 // _onQuestion() : Put / remove a 'question' attribute to the box
