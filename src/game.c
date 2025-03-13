@@ -233,7 +233,7 @@ BOOL _onStartGame(PBOARD const board){
                     board_drawTimeEx(board, FALSE);     // Time has changed
                 }
 
-                dupdate();
+                dupdate();      // (redraw & REDRAW_UPDATE)
                 redraw = NO_REDRAW;
             } // if (reDraw)
         } // if (menu_handleKeyboard

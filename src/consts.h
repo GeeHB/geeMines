@@ -2,7 +2,7 @@
 //--
 //--    consts.h
 //--
-//--            Shared types and constants pour geeMine app.
+//--            Shared types and constants for geeMine app.
 //--
 //----------------------------------------------------------------------
 
@@ -12,10 +12,10 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.0.1 - alpha"
+#define APP_VERSION         "0.0.1 - beta 1"
 #define APP_AUTHOR          "GeeHB"
 
-#define TRACE_MODE          1
+//#define TRACE_MODE          1
 
 // "About" / Splash screen
 //
@@ -46,8 +46,8 @@
 
 // Game menu
 //
-#define IDS_STEP           "Step"
-#define IDM_STEP           101
+#define IDS_STEP            "Step"
+#define IDM_STEP            101
 
 #define IDS_FLAG            "Flag"
 #define IDM_FLAG            102
@@ -99,36 +99,6 @@ enum GAME_KEY{
     KEY_CODE_EXE = 13
 };
 #endif // #ifdef DEST_CASIO_CALC
-
-/*
-typedef struct
-{
-    UINT uWidth;
-    UINT uHeight;
-    UINT uRows;
-    UINT uCols;
-    UINT uMines;
-    UINT uMaxSteps;
-
-
-    UINT uMinesLeft;
-    UINT uSteps;
-    BOOL bMark;
-    int colPressed;
-    int rowPressed;
-
-} BOARD;
-
-
-void TranslateMouseMsg(UINT* puMsg, WPARAM wParam);
-void ProcessMouseMsg(UINT uMsg, LPARAM lParam);
-void OnCommand(WPARAM wParam, LPARAM lParam);
-void DrawMinesLeft(HDC hdc);
-void SetAndDispBoxState(int r, int c, BOX_STATE state);
-void Pt2RowCol(POINT pt, int *prow, int *pcol);
-void PressBox(int row, int col);
-void UnPressBox();
-*/
 
 #endif // #ifdef __GEE_MINES_CONSTS_h__
 
