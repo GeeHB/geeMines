@@ -31,8 +31,10 @@
 #define REDRAW_TIME             4
 #define REDRAW_BOX              8       // Redraw current box and menu
 #define REDRAW_SELECTION        16
-#define REDRAW_NAV_BUTTONS      32       // viewport navigation buttons
+#define REDRAW_NAV_BUTTONS      32      // viewport navigation buttons
 #define REDRAW_GRID             64
+
+#define REDRAW_UPDATE           256     // Just update
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
@@ -65,6 +67,16 @@ POWNMENU _createGameMenu();
 BOOL _onStartGame(PBOARD const board);
 #endif // #ifdef DEST_CASIO_CALC
 
+//  _onStep : User steps on a box
+//
+//  @board : Pointer to the board
+//  @pos : Position of the box
+//  @redraw : pointer to the redraw indicator
+//
+//  @return : FALSE if stepped on a mine
+//
+BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw);
+
 // _onFlag() : Put / remove a flag
 //
 //  @board : pointer to the current board
@@ -73,7 +85,7 @@ BOOL _onStartGame(PBOARD const board);
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos);
+uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos);
 
 // _onQuestion() : Put / remove a 'question' attribute to the box
 //
@@ -83,7 +95,7 @@ uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos);
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint8_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos);
+uint16_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos);
 
 // _onPause() : Show pause screen
 //

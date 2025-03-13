@@ -6,6 +6,7 @@
 //--
 //----------------------------------------------------------------------
 
+#include <stdint.h>
 #ifndef __GEE_MINES_GRID_h__
 #define __GEE_MINES_GRID_h__    1
 
@@ -70,9 +71,10 @@ typedef enum {
 //
 typedef struct __grid{
     GAME_LEVEL  level;
-    uint8_t     minesCount;     // count of mines at startup
-    DIMS       size;
+    uint8_t     mines;     // count of mines
+    DIMS        size;
     PBOX        boxes;
+    uint8_t     maxSteps;
 } GRID, * PGRID;
 
 // Helpers for box access in the grid
@@ -121,15 +123,6 @@ void grid_display(PGRID const grid);
 //  @return : count of mines surrounding
 //
 uint8_t grid_countMines(PGRID const grid, PCOORD const pos);
-
-//  grid_stepBox : steps on a box
-//
-//  @grid : Pointer to the grid
-//  @pos : Position of the box
-//
-//  @return : TRUE if pos is safe and FALSE if stepped on a bomb
-//
-BOOL grid_stepBox(PGRID const grid, PCOORD const pos);
 
 //  grid_free() : Free memory allocated for a grid
 //

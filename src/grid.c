@@ -56,13 +56,13 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
         grid->level = level;
         switch (level) {
             case LEVEL_MEDIUM:
-                grid->minesCount = MEDIUM_MINES;
+                grid->mines = MEDIUM_MINES;
                 grid->size.col = MEDIUM_COLS;
                 grid->size.row = MEDIUM_ROWS;
                 break;
 
             case LEVEL_EXPERT:
-                grid->minesCount = EXPERT_MINES;
+                grid->mines = EXPERT_MINES;
                 grid->size.col = EXPERT_COLS;
                 grid->size.row = EXPERT_ROWS;
                 break;
@@ -70,7 +70,7 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
             // ???
             default:
             case LEVEL_BEGINNER:
-                grid->minesCount = BEGINNER_MINES;
+                grid->mines = BEGINNER_MINES;
                 grid->size.col = BEGINNER_COLS;
                 grid->size.row = BEGINNER_ROWS;
                 break;
@@ -90,6 +90,7 @@ BOOL grid_init(PGRID const grid, GAME_LEVEL level){
                     }
                 }
 
+                grid->maxSteps = grid->size.col * grid->size.row - grid->mines;
                 return TRUE;    // Done
             }
         }
@@ -114,9 +115,9 @@ uint8_t grid_layMines(PGRID const grid){
     uint8_t r,c;
     PBOX box;
 
-    if (grid && grid->minesCount){
+    if (grid && grid->mines){
         srand((unsigned int)clock());
-        while (mines < grid->minesCount){
+        while (mines < grid->mines){
             r = (uint8_t)(rand() % grid->size.row);
             c = (uint8_t)(rand() % grid->size.col);
             box = BOX_AT(grid, r, c);
@@ -156,7 +157,7 @@ void grid_display(PGRID const grid){
         printf("|\n");       // EOL
     }
 
-    printf("\n%d mines\n", grid->minesCount);
+    printf("\n%d mines\n", grid->mines);
 }
 #endif // #ifndef DEST_CASIO_CALC
 
@@ -181,48 +182,6 @@ uint8_t grid_countMines(PGRID const grid, PCOORD const pos){
     }
 
     return sMines;
-}
-
-//  grid_stepBox : steps on a box
-//
-//  @grid : Pointer to the grid
-//  @pos : Position of the box
-//
-//  @return : TRUE if pos is safe and FALSE if stepped on a bomb
-//
-BOOL grid_stepBox(PGRID const grid, PCOORD const pos){
-    if (grid){
-
-        uint8_t surroundingMines = 0;
-        PBOX box = BOX_AT_POS(grid, pos);
-
-        surroundingMines = grid_countMines(grid, pos);
-
-        if (box->mine){
-            // stepped on a mine!
-            box->state =  BS_BLAST;
-            return FALSE;
-        }
-
-        box->state =  BS_DOWN - surroundingMines;
-
-        // Auto step surrounding boxes
-        if (!surroundingMines){
-            int r, c;
-            COORD nPos;
-            for (r = pos->row-1; r <= pos->row+1; r++){
-                for (c = pos->col-1; c <= pos->col+1; c++){
-                    if (GRID_IS_VALID_POS(grid, r, c) && (r != pos->row || c != pos->col)){
-                        nPos = (COORD){.col = c, .row = r};
-                        grid_stepBox(grid, &nPos);
-                    }
-                }
-            }
-        }
-    }
-
-    // Valid step
-    return TRUE;
 }
 
 //  grid_free() : Free memory allocated for a grid

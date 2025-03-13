@@ -65,7 +65,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     // New game !
     board->gameState = STATE_WAITING;
     board->smileyState = SMILEY_HAPPY;
-    board->minesLeft = (int8_t)board->grid->minesCount;
+    board->minesLeft = (int8_t)board->grid->mines;
     board->time = 0;
 
     return TRUE;

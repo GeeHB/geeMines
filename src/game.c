@@ -37,7 +37,7 @@ POWNMENU _createGameMenu(){
     if (menu){
         // Create menu bar
         PMENUBAR bar = menu_getMenuBar(menu);
-        menubar_appendItem(bar, IDM_PRESS, IDS_PRESS, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
+        menubar_appendItem(bar, IDM_STEP, IDS_STEP, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
         menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
         menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
         menubar_addItem(bar, MENU_POS_RIGHT, IDM_CANCEL, IDS_CANCEL, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
@@ -48,8 +48,9 @@ POWNMENU _createGameMenu(){
 
 #ifdef DEST_CASIO_CALC
 
-// __callbackTick() : Call back function for timer
-// This function is used during edition to make selected item blink
+// __callbackTick() : Callback function for timer
+//
+//  This function is used during game to make selected box blink
 //
 //  @pTick : pointer to blinking state indicator
 //
@@ -67,6 +68,10 @@ static int __callbackTick(volatile int *pTick){
 //  @return : FALSE on error
 //
 BOOL _onStartGame(PBOARD const board){
+    if (!board){
+        return FALSE;
+    }
+
     POWNMENU gMenu = _createGameMenu();
     if (!gMenu){
         return FALSE;
@@ -75,7 +80,7 @@ BOOL _onStartGame(PBOARD const board){
     MENUACTION action;
     COORD pos = {0,0}, oPos = {0, 0};
     BOOL cont = TRUE, navButtons = FALSE, hightLighted = FALSE;
-    uint8_t redraw = NO_REDRAW;
+    uint16_t redraw = NO_REDRAW;
 
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
     board_selectBox(board, &pos);
@@ -141,6 +146,20 @@ BOOL _onStartGame(PBOARD const board){
                 // User actions
                 //
 
+                case IDM_STEP:
+                    if (_onStep(board, &pos, &redraw)){
+                        if (board->steps == board->grids->maxSteps){
+                            board_gameWon(board);
+                            cont = FALSE;
+                        }
+                    }
+                    else{
+                        board_gameLost(board);
+                        count = FALSE;
+                    }
+
+                    break;
+
                 case IDM_FLAG:
                     redraw = _onFlag(board, gMenu, &pos);
                     break;
@@ -169,7 +188,7 @@ BOOL _onStartGame(PBOARD const board){
             if (redraw != NO_REDRAW){
 
                 if (redraw & REDRAW_GRID){
-                    board_drawEx(board, FALSE); // no screen update
+                    board_drawGridEx(board, FALSE); // no screen update
                 }
 
                 if (redraw & REDRAW_BOX){
@@ -233,6 +252,58 @@ BOOL _onStartGame(PBOARD const board){
 }
 #endif // #ifdef DEST_CASIO_CALC
 
+//  _onStep : User steps on a box
+//
+//  @board : Pointer to the board
+//  @pos : Position of the box
+//  @redraw : pointer to the redraw indicator
+//
+//  @return : FALSE if stepped on a mine
+//
+BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
+    POINT scrPos;
+    uint8_t surroundingMines = 0;
+    PBOX box = BOX_AT_POS(board->grid, pos);
+
+    // Already stepped ???
+    if (box->state > BS_QUESTION){
+        (*redraw) = NO_REDRAW;
+        return TRUE;
+    }
+
+    (*redraw) =REDRAW_UPDATE;
+    surroundingMines = grid_countMines(board->grid, pos);
+
+    if (box->mine){
+        // stepped on a mine!
+        box->state =  BS_BLAST;
+        board_Pos2Point(board, pos, &scrPos);
+        board_drawBox(board, pos, scrPos.x, scrPos.y);
+        return FALSE;
+    }
+
+    board->steps++;
+    box->state =  BS_DOWN - surroundingMines;
+    board_Pos2Point(board, pos, &scrPos);
+    board_drawBox(board, pos, scrPos.x, scrPos.y);
+
+    // Auto step surrounding boxes
+    if (!surroundingMines){
+        int r, c;
+        COORD nPos;
+        for (r = pos->row-1; r <= pos->row+1; r++){
+            for (c = pos->col-1; c <= pos->col+1; c++){
+                if (GRID_IS_VALID_POS(board->grid, r, c) && (r != pos->row || c != pos->col)){
+                    nPos = (COORD){.col = c, .row = r};
+                    _onStep(board, &nPos, redraw);
+                }
+            }
+        }
+    }
+
+    return TRUE;    // No mine at this pos
+}
+
 // _onFlag() : Put / remove a flag
 //
 //  @board : pointer to the current board
@@ -241,7 +312,7 @@ BOOL _onStartGame(PBOARD const board){
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
+uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
     BOOL flag = (box->state == BS_FLAG);
     box->state = (flag?BS_INITIAL:BS_FLAG);
@@ -258,7 +329,7 @@ uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint8_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos){
+uint16_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
     BOOL question = (box->state == BS_FLAG);
     box->state = (question?BS_INITIAL:BS_QUESTION);
@@ -463,12 +534,12 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
         }
 
         if (greyAll){
-            menubar_activateItem(menuBar, IDM_PRESS, SEARCH_BY_ID, step);
+            menubar_activateItem(menuBar, IDM_STEP, SEARCH_BY_ID, step);
             menubar_setItemState(menuBar, IDM_FLAG, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
             menubar_setItemState(menuBar, IDM_QUESTION, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
         }
         else{
-            menubar_activateItem(menuBar, IDM_PRESS, SEARCH_BY_ID, step);
+            menubar_activateItem(menuBar, IDM_STEP, SEARCH_BY_ID, step);
             menubar_activateItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag);
             menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, fState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
             menubar_activateItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question);

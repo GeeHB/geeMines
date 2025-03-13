@@ -99,7 +99,8 @@ typedef struct __board{
     CALC_ORIENTATION orientation;
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
-    int8_t minesLeft;
+    int8_t minesLeft;   // could be < 0 !
+    uint8_t steps;
     uint16_t time;
     POINT minesCounterPos;
     POINT smileyPos;

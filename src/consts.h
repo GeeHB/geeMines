@@ -46,8 +46,8 @@
 
 // Game menu
 //
-#define IDS_PRESS           "Press"
-#define IDM_PRESS           101
+#define IDS_STEP           "Step"
+#define IDM_STEP           101
 
 #define IDS_FLAG            "Flag"
 #define IDM_FLAG            102
