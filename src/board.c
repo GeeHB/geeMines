@@ -443,7 +443,7 @@ void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update){
                     board->viewPort.navButtons[id].x + board->viewPort.navButtons[id].w - 1,
                     board->viewPort.navButtons[id].y + board->viewPort.navButtons[id].h - 1,
                     //showButton?C_INVERT:COL_BKGROUND);
-                    COL_BACKGROUND);
+                    COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
             }
             else{

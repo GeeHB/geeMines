@@ -142,11 +142,11 @@ BOOL _onStartGame(PBOARD const board){
                 //
 
                 case IDM_FLAG:
-                    redraw = onFlag(board, menu, pos);
+                    redraw = _onFlag(board, gMenu, &pos);
                     break;
 
                 case IDM_QUESTION:
-                    redraw = onQuestion(board, menu, pos);
+                    redraw = _onQuestion(board, gMenu, &pos);
                     break;
 
                 // Pause
@@ -175,7 +175,7 @@ BOOL _onStartGame(PBOARD const board){
                 if (redraw & REDRAW_BOX){
                     POINT scrPos;
                     board_Pos2Point(board, &pos, &scrPos);
-                    board_drawBox(board, &pos, srcPos.x, srcPos.y);
+                    board_drawBox(board, &pos, scrPos.x, scrPos.y);
                 }
 
                 if (redraw & REDRAW_MOVE){
@@ -187,7 +187,7 @@ BOOL _onStartGame(PBOARD const board){
                     menu_updateEx(gMenu, FALSE);
 
                     if (!board->fullGrid){
-                        board_drawViewPortButtons(board);
+                        board_drawViewPortButtonsEx(board, TRUE, FALSE);
                     }
                 }
 
