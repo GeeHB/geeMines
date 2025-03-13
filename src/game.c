@@ -148,14 +148,14 @@ BOOL _onStartGame(PBOARD const board){
 
                 case IDM_STEP:
                     if (_onStep(board, &pos, &redraw)){
-                        if (board->steps == board->grids->maxSteps){
+                        if (board->steps == board->grid->maxSteps){
                             board_gameWon(board);
                             cont = FALSE;
                         }
                     }
                     else{
                         board_gameLost(board);
-                        count = FALSE;
+                        cont = FALSE;
                     }
 
                     break;
