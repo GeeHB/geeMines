@@ -26,10 +26,11 @@
 //
 #define NO_REDRAW               0
 #define REDRAW_TIME             1
-#define REDRAW_SELECTION        2
-#define REDRAW_NAV_BUTTONS      4       // viewport navigation buttons
-#define REDRAW_BOX              8       // Box at current and prev. positions
-#define REDRAW_GRID             16
+#define REDRAW_BOX              2       // Redraw current box and menu
+#define REDRAW_SELECTION        4
+#define REDRAW_NAV_BUTTONS      8       // viewport navigation buttons
+#define REDRAW_MOVE             16
+#define REDRAW_GRID             32
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>
@@ -61,6 +62,26 @@ POWNMENU _createGameMenu();
 #ifdef DEST_CASIO_CALC
 BOOL _onStartGame(PBOARD const board);
 #endif // #ifdef DEST_CASIO_CALC
+
+// _onFlag() : Put / remove a flag
+//
+//  @board : pointer to the current board
+//  @menu : Pointer to the menu
+//  @pos : Current position in the grid
+//
+//  @return drawing action to perform or NO_DRAWING
+//
+uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos);
+
+// _onQuestion() : Put / remove a 'question' attribute to the box
+//
+//  @board : pointer to the current board
+//  @pos : Current position in the grid
+//  @menu : Pointer to the menu
+//
+//  @return drawing action to perform or NO_DRAWING
+//
+uint8_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos);
 
 // _onPause() : Show pause screen
 //
@@ -116,7 +137,7 @@ uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 //  @menu : Pointer to the menu
 //  @pos : position of cursor
 //
-void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos);
+void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD const pos);
 
 #ifdef DEST_CASIO_CALC
 // __callbackTick() : Call back function for timer

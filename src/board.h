@@ -180,6 +180,16 @@ void board_free(PBOARD const board, BOOL freeAll);
 // Drawings
 //
 
+// board_Pos2Point() : Get Box coordinates in the current viewport
+//
+//  @board : pointer to the board
+//  @pos : Coordindate of the box in the grid
+//  @pt : Pointer to the position in screen corrdinates
+//
+//  @return TRUE if doone successfully
+//
+BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
+
 //  board_drawGridEx() : Draw the visible grid
 //
 //  @board : Pointer to the board

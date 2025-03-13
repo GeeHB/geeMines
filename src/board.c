@@ -190,6 +190,24 @@ void board_free(PBOARD const board, BOOL freeAll){
 // Drawings
 //
 
+// board_Pos2Point() : Get Box coordinates in the current viewport
+//
+//  @board : pointer to the board
+//  @pos : Coordindate of the box in the grid
+//  @pt : Pointer to the position in screen corrdinates
+//
+//  @return TRUE if doone successfully
+//
+BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
+    if (board && pos && pt){
+        pt->x = board->gridPos.x + BOX_WIDTH * (pos->col - board->viewPort.visibleFrame.x);
+        pt->y = board->gridPos.y + BOX_HEIGHT * (pos->row - board->viewPort.visibleFrame.y);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 //  board_drawEx() : Draw the whole board
 //
 //  @board : Pointer to the board
@@ -368,10 +386,10 @@ void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t d
         if (CALC_HORIZONTAL == board->orientation){
             RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
             rotateRect(&rect);
-            board_drawBox(board, pos, rect.x, rect.y);
+            board_drawBoxEx(board, pos, rect.x, rect.y);
         }
         else{
-            board_drawBox(board, pos, dx, dy);
+            board_drawBoxEx(board, pos, dx, dy);
         }
     }
 }
@@ -536,8 +554,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 //
 void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
     POINT base;
-    base.x = board->gridPos.x + BOX_WIDTH * (pos->col - board->viewPort.visibleFrame.x);
-    base.y = board->gridPos.y + BOX_HEIGHT * (pos->row - board->viewPort.visibleFrame.y);
+    board_Pos2Point(board, pos, &base);
 
     if (select){
 #ifdef DEST_CASIO_CALC

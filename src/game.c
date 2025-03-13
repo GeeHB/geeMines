@@ -138,6 +138,17 @@ BOOL _onStartGame(PBOARD const board){
                     redraw = _onKeyUp(board, &pos);
                     break;
 
+                // User actions
+                //
+
+                case IDM_FLAG:
+                    redraw = onFlag(board, menu, pos);
+                    break;
+
+                case IDM_QUESTION:
+                    redraw = onQuestion(board, menu, pos);
+                    break;
+
                 // Pause
                 case KEY_CODE_PAUSE:
                     _onPause();
@@ -162,6 +173,12 @@ BOOL _onStartGame(PBOARD const board){
                 }
 
                 if (redraw & REDRAW_BOX){
+                    POINT scrPos;
+                    board_Pos2Point(board, &pos, &scrPos);
+                    board_drawBox(board, &pos, srcPos.x, srcPos.y);
+                }
+
+                if (redraw & REDRAW_MOVE){
                     board_unselectBox(board, &oPos);
                     board_selectBox(board, &pos);
                     oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
@@ -207,6 +224,38 @@ BOOL _onStartGame(PBOARD const board){
     return TRUE;
 }
 #endif // #ifdef DEST_CASIO_CALC
+
+// _onFlag() : Put / remove a flag
+//
+//  @board : pointer to the current board
+//  @pos : Current position in the grid
+//  @menu : Pointer to the menu
+//
+//  @return drawing action to perform or NO_DRAWING
+//
+uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
+    PBOX box = BOX_AT_POS(board->grid, pos);
+    BOOL flag = (box->state == BS_FLAG);
+    box->state = (flag?BS_INITIAL:BS_FLAG);
+    menubar_checkMenuItem(menu_getMenuBar(menu), IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
+    return REDRAW_BOX;
+}
+
+// _onQuestion() : Put / remove a 'question' attribute to the box
+//
+//  @board : pointer to the current board
+//  @pos : Current position in the grid
+//  @menu : Pointer to the menu
+//
+//  @return drawing action to perform or NO_DRAWING
+//
+uint8_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos){
+    PBOX box = BOX_AT_POS(board->grid, pos);
+    BOOL question = (box->state == BS_FLAG);
+    box->state = (question?BS_INITIAL:BS_QUESTION);
+    menubar_checkMenuItem(menu_getMenuBar(menu), IDM_QUESTION, SEARCH_BY_ID, question?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
+    return REDRAW_BOX;
+}
 
 // _onPause() : Show pause screen
 //
@@ -270,7 +319,7 @@ uint8_t _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
         }
 
         pos->col--;
-        action |= REDRAW_BOX;
+        action |= REDRAW_MOVE;
     }
 
     return action;
@@ -299,7 +348,7 @@ uint8_t _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check){
         }
 
         pos->row++;
-        action |= REDRAW_BOX;
+        action |= REDRAW_MOVE;
     }
 
     return action;
@@ -327,7 +376,7 @@ uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check){
         }
 
         pos->col++;
-        action |= REDRAW_BOX;
+        action |= REDRAW_MOVE;
     }
 
     return action;
@@ -355,7 +404,7 @@ uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
         }
 
         pos->row--;
-        action |= REDRAW_BOX;
+        action |= REDRAW_MOVE;
     }
 
     return action;
@@ -367,7 +416,7 @@ uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
 //  @menu : Pointer to the menu
 //  @pos : position of cursor
 //
-void _updateMenuItemsStates(PBOARD const board, POWNMENU menu, PCOORD pos){
+void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PMENUBAR menuBar = menu_getMenuBar(menu);
     if (menuBar){
         PBOX box = BOX_AT_POS(board->grid, pos);
