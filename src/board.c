@@ -65,8 +65,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     // New game !
     board->gameState = STATE_WAITING;
     board->smileyState = SMILEY_HAPPY;
-    board->uMinesLeft = board->grid->minesCount;
-    board->uMines = 0;
+    board->minesLeft = (int8_t)board->grid->minesCount;
     board->time = 0;
 
     return TRUE;
@@ -219,8 +218,9 @@ void board_drawEx(PBOARD const board, BOOL update){
         drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
-        board_drawTimeEx(board, FALSE);
+        board_drawMinesLeftEx(board, FALSE);
         board_drawSmileyEx(board, FALSE);
+        board_drawTimeEx(board, FALSE);
         board_drawGridEx(board, update);  // + update
     }
 }
@@ -293,7 +293,66 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     }
 }
 
-//  board_drawTimeEx() : Draw time
+//  board_DrawMinesLeftEx() : Draw the number of mines left
+//
+//  This number can be negative when the user 'puts' to many flags
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will be updated after drawing
+//
+void board_drawMinesLeftEx(PBOARD const board, BOOL update){
+    if (board){
+        int8_t value = board->minesLeft;
+        uint8_t ids[3];
+        BOOL negative = FALSE;
+        RECT rect;
+        int8_t ox, oy;
+
+        if (value < 0){
+            value = -1 * value;
+            negative = TRUE;
+        }
+
+        if (value >= 100){
+            value = 99; // Should never be executed
+        }
+
+        SET_RECT(rect, board->minesCounterPos.x, board->minesCounterPos.y, LED_WIDTH, LED_HEIGHT);
+
+        if (CALC_HORIZONTAL == board->orientation){
+            rotateRect(&rect);
+            ox = 0;
+            oy = -1 * LED_WIDTH;
+        }
+        else{
+            ox = LED_WIDTH;
+            oy = 0;
+        }
+
+        // up to 3 digits - total in ]-100, 100[
+        ids[0] = LED_EMPTY_ID;
+        ids[1] = value / 10;  // dec.
+        ids[2] = value % 10;  // units
+
+        // A sign ?
+        if (negative){
+            ids[ids[1]?0:1] =LED_MINUS_ID;
+        }
+
+        for (uint8_t id = 0; id < 3; id++){
+            board_drawLed(board, (uint8_t)ids[id], &rect);
+            OFFSET_RECT(rect, ox, oy);  // next pos
+        }
+
+        if (update){
+#ifdef DEST_CASIO_CALC
+            dupdate();
+#endif // #ifdef DEST_CASIO_CALC
+        }
+    }
+}
+
+//  board_drawTimeEx() : Draw elapsed time
 //
 //  @board : Pointer to the board
 //  @update : if TRUE screen will be updated after drawing
@@ -538,11 +597,14 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             board->viewPort.navButtons[1].y,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
+        // Mines left pos
+        board->minesCounterPos = (POINT){.x = board->gridPos.x + board->gridPos.w + GRID_VIEWPORT_LEFT , .y = MINES_VERT_Y};
+
         // Smiley Pos
-        board->smileyPos = (POINT){.x = SMILEY_VERT_X , .y = SMILEY_VERT_Y};
+        board->smileyPos = (POINT){.x = board->minesCounterPos.x + 3 * LED_WIDTH + GRID_VIEWPORT_LEFT, .y = SMILEY_VERT_Y};
 
         // Time pos
-        board->timerPos = (POINT){.x = TIMER_VERT_X , .y = TIMER_VERT_Y};
+        board->timerPos = (POINT){.x = board->smileyPos.x + SMILEY_WIDTH  + GRID_VIEWPORT_LEFT, .y = TIMER_VERT_Y};
     }
 }
 

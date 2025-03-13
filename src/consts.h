@@ -52,7 +52,7 @@
 #define IDS_FLAG            "Flag"
 #define IDM_FLAG            102
 
-#define IDS_QUESTION        "Question"
+#define IDS_QUESTION        "?"
 #define IDM_QUESTION        103
 
 #define IDS_CANCEL          "Cancel"

@@ -25,12 +25,14 @@
 // Redraw mode (any combinaison of)
 //
 #define NO_REDRAW               0
-#define REDRAW_TIME             1
-#define REDRAW_BOX              2       // Redraw current box and menu
-#define REDRAW_SELECTION        4
-#define REDRAW_NAV_BUTTONS      8       // viewport navigation buttons
-#define REDRAW_MOVE             16
-#define REDRAW_GRID             32
+#define REDRAW_MINES            1
+//#define REDRAW_SMILEY           2
+#define REDRAW_MOVE             2
+#define REDRAW_TIME             4
+#define REDRAW_BOX              8       // Redraw current box and menu
+#define REDRAW_SELECTION        16
+#define REDRAW_NAV_BUTTONS      32       // viewport navigation buttons
+#define REDRAW_GRID             64
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>

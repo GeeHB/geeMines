@@ -29,8 +29,6 @@ extern "C" {
 //
 #define BOX_WIDTH           16
 #define BOX_HEIGHT          BOX_WIDTH
-#define LED_WIDTH           13
-#define LED_HEIGHT          23
 #define SMILEY_WIDTH        24
 #define SMILEY_HEIGHT       24
 
@@ -41,13 +39,23 @@ extern "C" {
 #define GRID_VIEWPORT_LEFT          2
 #define GRID_VIEWPORT_TOP           2
 
+#define MINES_VERT_Y                GRID_VIEWPORT_TOP
+
 #define SMILEY_VERT_X               200
 #define SMILEY_VERT_Y               GRID_VIEWPORT_TOP
 
 #define TIMER_VERT_X                200     // Game timer
-#define TIMER_VERT_Y                40
+#define TIMER_VERT_Y                GRID_VIEWPORT_TOP
 
 #define TIMER_MAX_VALUE             99      // Max. game duration in sec.
+
+// LED images
+//
+#define LED_WIDTH           13
+#define LED_HEIGHT          23
+
+#define LED_MINUS_ID        0
+#define LED_EMPTY_ID        1
 
 // Game state
 //
@@ -89,19 +97,14 @@ typedef struct __board{
     VIEWPORT viewPort;
     BOOL fullGrid;            // Is the whole grid visible ?
     CALC_ORIENTATION orientation;
-
-    RECT statRect;
-    RECT counterRect;
+    GAME_STATE gameState;
+    SMILEY_STATE smileyState;
+    int8_t minesLeft;
+    uint16_t time;
+    POINT minesCounterPos;
     POINT smileyPos;
     POINT timerPos;
     RECT gridPos;
-
-    GAME_STATE gameState;
-    SMILEY_STATE smileyState;
-
-    uint8_t uMinesLeft;
-    uint8_t uMines;
-    uint16_t time;
 } BOARD, * PBOARD;
 
 //
@@ -198,7 +201,17 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
 void board_drawGridEx(PBOARD const board, BOOL update);
 #define board_drawGrid(board) board_drawGridEx(board, TRUE)
 
-//  board_drawTimeEx() : Draw time
+//  board_DrawMinesLeftEx() : Draw the number of mines left
+//
+//  This number can be negative when the user 'puts' to many flags
+//
+//  @board : Pointer to the board
+//  @update : if TRUE screen will be updated after drawing
+//
+void board_drawMinesLeftEx(PBOARD const board, BOOL update);
+#define board_drawMinesLeft(board) board_drawMinesLeftEx(board, TRUE)
+
+//  board_drawTimeEx() : Draw elapsed time
 //
 //  @board : Pointer to the board
 //  @update : if TRUE screen will be updated after drawing

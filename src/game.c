@@ -201,6 +201,10 @@ BOOL _onStartGame(PBOARD const board){
                     board_drawViewPortButtonsEx(board, navButtons, FALSE); // Blink nav buttons
                 }
 
+                if (redraw & REDRAW_MINES){
+                    board_drawMinesEx(board, FALSE);
+                }
+
                 if (redraw & REDRAW_TIME){
                     cont = board_incTime(board);
                     board_drawTimeEx(board, FALSE);     // Time has changed
@@ -237,8 +241,9 @@ uint8_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
     BOOL flag = (box->state == BS_FLAG);
     box->state = (flag?BS_INITIAL:BS_FLAG);
+    box->mine += flag?+1:-1;    // mines left !!
     menubar_checkMenuItem(menu_getMenuBar(menu), IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
-    return REDRAW_BOX;
+    return REDRAW_BOX | REDRAW_MINES;
 }
 
 // _onQuestion() : Put / remove a 'question' attribute to the box
@@ -429,7 +434,8 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
                 step = TRUE;
                 flag = TRUE;
                 question = TRUE;
-                smiley = SMILEY_CAUTION;                break;
+                smiley = SMILEY_CAUTION;
+                break;
 
             case BS_FLAG:
                 step = TRUE;
