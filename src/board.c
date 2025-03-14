@@ -13,6 +13,8 @@
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
 #include "shared/menu.h"
+#else
+#include <stdio.h>
 #endif // #ifdef DEST_CASIO_CALC
 
 #include <string.h>
@@ -53,6 +55,9 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     if (!board || !grid_init(board->grid, level)){
         return FALSE;
     }
+
+    // Mines
+    grid_layMines(board->grid);
 
     // Initial viewport
     SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
@@ -197,16 +202,14 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
 //  @update : update the screen ?
 //
 void board_drawEx(PBOARD const board, BOOL update){
-    if (board){
 #ifdef DEST_CASIO_CALC
-        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
-        board_drawMinesLeftEx(board, FALSE);
-        board_drawSmileyEx(board, FALSE);
-        board_drawTimeEx(board, FALSE);
-        board_drawGridEx(board, update);  // + update
-    }
+    board_drawMinesLeftEx(board, FALSE);
+    board_drawSmileyEx(board, FALSE);
+    board_drawTimeEx(board, FALSE);
+    board_drawGridEx(board, update);  // + update
 }
 
 //  board_drawGridEx() : Draw the visible grid
@@ -248,7 +251,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         origin =rect.x;
     }
 
-    for (r = 0; r < board->viewPort.visibleFrame.h; r++){
+    for (r = 0; r < board->grid->size.row; r++){
         // aligned with first "col"
         if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
@@ -257,13 +260,16 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             rect.x = origin;
         }
 
-        for (c = 0; c < board->viewPort.visibleFrame.w; c++){
+        for (c = 0; c < board->grid->size.col; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
             board_drawBoxEx(board, &pos, rect.x, rect.y);
             OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
         }
 
         OFFSET_RECT(rect, offsetRow.x, offsetRow.y);
+#ifndef DEST_CASIO_CALC
+        printf("|\n");       // EOL
+#endif // #ifndef DEST_CASIO_CALC
     }
 
     if (!board->fullGrid){
@@ -285,54 +291,52 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 //  @update : if TRUE screen will be updated after drawing
 //
 void board_drawMinesLeftEx(PBOARD const board, BOOL update){
-    if (board){
-        int8_t value = board->minesLeft;
-        uint8_t ids[3];
-        BOOL negative = FALSE;
-        RECT rect;
-        int8_t ox, oy;
+    int8_t value = board->minesLeft;
+    uint8_t ids[3];
+    BOOL negative = FALSE;
+    RECT rect;
+    int8_t ox, oy;
 
-        if (value < 0){
-            value = -1 * value;
-            negative = TRUE;
-        }
+    if (value < 0){
+        value = -1 * value;
+        negative = TRUE;
+    }
 
-        if (value >= 100){
-            value = 99; // Should never be executed
-        }
+    if (value >= 100){
+        value = 99; // Should never be executed
+    }
 
-        SET_RECT(rect, board->minesCounterPos.x, board->minesCounterPos.y, LED_WIDTH, LED_HEIGHT);
+    SET_RECT(rect, board->minesCounterPos.x, board->minesCounterPos.y, LED_WIDTH, LED_HEIGHT);
 
-        if (CALC_HORIZONTAL == board->orientation){
-            rotateRect(&rect);
-            ox = 0;
-            oy = -1 * LED_WIDTH;
-        }
-        else{
-            ox = LED_WIDTH;
-            oy = 0;
-        }
+    if (CALC_HORIZONTAL == board->orientation){
+        rotateRect(&rect);
+        ox = 0;
+        oy = -1 * LED_WIDTH;
+    }
+    else{
+        ox = LED_WIDTH;
+        oy = 0;
+    }
 
-        // up to 3 digits - total in ]-100, 100[
-        ids[0] = LED_EMPTY_ID;
-        ids[1] = value / 10;  // dec.
-        ids[2] = value % 10;  // units
+    // up to 3 digits - total in ]-100, 100[
+    ids[0] = LED_EMPTY_ID;
+    ids[1] = value / 10;  // dec.
+    ids[2] = value % 10;  // units
 
-        // A sign ?
-        if (negative){
-            ids[ids[1]?0:1] =LED_MINUS_ID;
-        }
+    // A sign ?
+    if (negative){
+        ids[ids[1]?0:1] =LED_MINUS_ID;
+    }
 
-        for (uint8_t id = 0; id < 3; id++){
-            board_drawLed(board, (uint8_t)ids[id], &rect);
-            OFFSET_RECT(rect, ox, oy);  // next pos
-        }
+    for (uint8_t id = 0; id < 3; id++){
+        board_drawLed(board, (uint8_t)ids[id], &rect);
+        OFFSET_RECT(rect, ox, oy);  // next pos
+    }
 
-        if (update){
+    if (update){
 #ifdef DEST_CASIO_CALC
-            dupdate();
+        dupdate();
 #endif // #ifdef DEST_CASIO_CALC
-        }
     }
 }
 
@@ -342,35 +346,33 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
 //  @update : if TRUE screen will be updated after drawing
 //
 void board_drawTimeEx(PBOARD const board, BOOL update){
-    if (board){
-        uint16_t value = board->time;
-        RECT rect;
-        int8_t ox, oy;
+    uint16_t value = board->time;
+    RECT rect;
+    int8_t ox, oy;
 
-        SET_RECT(rect, board->timerPos.x, board->timerPos.y, LED_WIDTH, LED_HEIGHT);
+    SET_RECT(rect, board->timerPos.x, board->timerPos.y, LED_WIDTH, LED_HEIGHT);
 
-        if (CALC_HORIZONTAL == board->orientation){
-            rotateRect(&rect);
-            ox = 0;
-            oy = -1 * LED_WIDTH;
-        }
-        else{
-            ox = LED_WIDTH;
-            oy = 0;
-        }
+    if (CALC_HORIZONTAL == board->orientation){
+        rotateRect(&rect);
+        ox = 0;
+        oy = -1 * LED_WIDTH;
+    }
+    else{
+        ox = LED_WIDTH;
+        oy = 0;
+    }
 
-        // 3 digits - total in [0, 1000[
-        board_drawLed(board, (uint8_t)(value/100), &rect);
-        OFFSET_RECT(rect, ox, oy);
-        board_drawLed(board, (value %= 100)/10, &rect);
-        OFFSET_RECT(rect, ox, oy);
-        board_drawLed(board,value % 10, &rect);
+    // 3 digits - total in [0, 1000[
+    board_drawLed(board, (uint8_t)(value/100), &rect);
+    OFFSET_RECT(rect, ox, oy);
+    board_drawLed(board, (value %= 100)/10, &rect);
+    OFFSET_RECT(rect, ox, oy);
+    board_drawLed(board,value % 10, &rect);
 
-        if (update){
+    if (update){
 #ifdef DEST_CASIO_CALC
-            dupdate();
+        dupdate();
 #endif // #ifdef DEST_CASIO_CALC
-        }
     }
 }
 
@@ -380,27 +382,25 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 //  @update : if TRUE screen will be updated after drawing
 //
 void board_drawSmileyEx(PBOARD const board, BOOL update){
-    if (board){
-        if (CALC_HORIZONTAL == board->orientation){
-            RECT rect;
-            SET_RECT(rect, board->smileyPos.x, board->smileyPos.y, SMILEY_WIDTH, SMILEY_WIDTH);
-            rotateRect(&rect);
+    if (CALC_HORIZONTAL == board->orientation){
+        RECT rect;
+        SET_RECT(rect, board->smileyPos.x, board->smileyPos.y, SMILEY_WIDTH, SMILEY_WIDTH);
+        rotateRect(&rect);
 
 #ifdef DEST_CASIO_CALC
-            dsubimage(rect.x, rect.y, &g_smileys, SMILEY_WIDTH, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(rect.x, rect.y, &g_smileys, SMILEY_WIDTH, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
-        }
-        else{
+    }
+    else{
 #ifdef DEST_CASIO_CALC
-            dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
-        }
+    }
 
-        if (update){
+    if (update){
 #ifdef DEST_CASIO_CALC
-            dupdate();
+        dupdate();
 #endif // #ifdef DEST_CASIO_CALC
-        }
     }
 }
 
@@ -415,30 +415,28 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
 void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
-    if (board){
-        PBOX box = BOX_AT_POS(board->grid, pos);
+    PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
-    #ifdef _DEBUG_
-        int ID = box->mine?BS_MINE:box->state;  // Always show mines in DEBUG mode
-        dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
-    #else
-        dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
-    #endif // DEBUG
+#ifdef _DEBUG_
+    int ID = box->mine?BS_MINE:box->state;  // Always show mines in DEBUG mode
+    dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
+#else
+    dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
+#endif // #ifdef _DEBUG_
+#else
+    printf("| %c ", box->mine?'x':'0' + grid_countMines(board->grid, pos));
 #endif // #ifdef DEST_CASIO_CALC
-    }
 }
 
 void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
-    if (board){
-        if (CALC_HORIZONTAL == board->orientation){
-            RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
-            rotateRect(&rect);
-            board_drawBoxEx(board, pos, rect.x, rect.y);
-        }
-        else{
-            board_drawBoxEx(board, pos, dx, dy);
-        }
+    if (CALC_HORIZONTAL == board->orientation){
+        RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
+        rotateRect(&rect);
+        board_drawBoxEx(board, pos, rect.x, rect.y);
+    }
+    else{
+        board_drawBoxEx(board, pos, dx, dy);
     }
 }
 

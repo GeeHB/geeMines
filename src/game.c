@@ -317,8 +317,9 @@ uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
     BOOL flag = (box->state == BS_FLAG);
     box->state = (flag?BS_INITIAL:BS_FLAG);
-    board->minesLeft += flag?+1:-1;    // mines left !!
     menubar_checkMenuItem(menu_getMenuBar(menu), IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
+
+    board->minesLeft += flag?+1:-1;    // mines left !!
     return REDRAW_BOX | REDRAW_MINES_LEFT;
 }
 
@@ -332,7 +333,7 @@ uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
 //
 uint16_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
-    BOOL question = (box->state == BS_FLAG);
+    BOOL question = (box->state == BS_QUESTION);
     box->state = (question?BS_INITIAL:BS_QUESTION);
     menubar_checkMenuItem(menu_getMenuBar(menu), IDM_QUESTION, SEARCH_BY_ID, question?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
     return REDRAW_BOX;

@@ -2,7 +2,7 @@
 #include "../src/shared/menu.h"
 #include "../src/consts.h"
 
-#include "../src/grid.h"
+#include "../src/board.h"
 
 // Menu de test
 //
@@ -116,15 +116,14 @@ int main()
             if (validKey){
                 switch (action.value){
                     case IDM_GAME_BEGINNER :{
-                        GRID grid;
-                        grid.boxes = NULL;
-                        grid_init(&grid, LEVEL_BEGINNER);
-                        grid_layMines(&grid);
+                        PBOARD board = board_create();
+                        board_init(board, LEVEL_BEGINNER);
 
-                        printf("Débutant\n");
+                        board_drawGridEx(board, FALSE);
+                        printf("\n\n");
+                        grid_display(board->grid);
 
-                        grid_display(&grid);
-                        grid_free(&grid, FALSE);
+                        board_free(board, TRUE);
 
                         menu_showParentBar(menu, TRUE);
                         break;
