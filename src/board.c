@@ -57,12 +57,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     }
 
     // Mines
-#ifdef _DEBUG_
-    board->grid->mines = 1;
-    BOX_AT(board->grid, 4, 4)->mine = TRUE;
-#else
     grid_layMines(board->grid);
-#endif // _DEBUG_
 
     // Initial viewport
     SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
