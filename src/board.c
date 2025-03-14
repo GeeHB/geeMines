@@ -419,7 +419,7 @@ void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t
         PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
-    #ifdef DEBUG
+    #ifdef DEBUG_
         int ID = box->mine?BS_MINE:box->state;  // Always show mines in DEBUG mode
         dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
     #else
@@ -440,6 +440,17 @@ void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t d
             board_drawBoxEx(board, pos, dx, dy);
         }
     }
+}
+
+//  board_drawBoxAtPos() : Draw the box at a given position
+//
+//  @board : Pointer to the board
+//  @pos : Box coordinates in the grid
+//
+void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
+    POINT scrPos; // Position in screen coordinates
+    board_Pos2Point(board, pos, &scrPos);
+    board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
 // board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling

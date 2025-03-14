@@ -233,6 +233,13 @@ void board_drawSmileyEx(PBOARD const board, BOOL update);
 void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 
+//  board_drawBoxAtPos() : Draw the box at a given position
+//
+//  @board : Pointer to the board
+//  @pos : Box coordinates in the grid
+//
+void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
+
 //  board_selectBoxEx() : Select a box
 //
 //  @board : Pointer to the board

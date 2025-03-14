@@ -120,7 +120,7 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (!booard->fullGrid && 0 == (tickCount % BLINK_NAV_BUTTONS)){
+        if (!board->fullGrid && 0 == (tickCount % BLINK_NAV_BUTTONS)){
             redraw |= REDRAW_NAV_BUTTONS;
         }
 
@@ -194,9 +194,7 @@ BOOL _onStartGame(PBOARD const board){
                 }
 
                 if (redraw & REDRAW_BOX){
-                    POINT scrPos;
-                    board_Pos2Point(board, &pos, &scrPos);
-                    board_drawBox(board, &pos, scrPos.x, scrPos.y);
+                    board_drawBoxAtPos(board, &pos);
                 }
 
                 if (redraw & REDRAW_MOVE){
@@ -263,15 +261,16 @@ BOOL _onStartGame(PBOARD const board){
 //  @return : FALSE if stepped on a mine
 //
 BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
-    POINT scrPos;
     uint8_t surroundingMines = 0;
     PBOX box = BOX_AT_POS(board->grid, pos);
 
+    /*
     // Already stepped ???
     if (box->state > BS_QUESTION){
         (*redraw) = NO_REDRAW;
         return TRUE;
     }
+    */
 
     (*redraw) =REDRAW_UPDATE;
     surroundingMines = grid_countMines(board->grid, pos);
@@ -279,23 +278,23 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     if (box->mine){
         // stepped on a mine!
         box->state =  BS_BLAST;
-        board_Pos2Point(board, pos, &scrPos);
-        board_drawBox(board, pos, scrPos.x, scrPos.y);
+        board_drawBoxAtPos(board, pos);
         return FALSE;
     }
 
     board->steps++;
     box->state =  BS_DOWN - surroundingMines;
-    board_Pos2Point(board, pos, &scrPos);
-    board_drawBox(board, pos, scrPos.x, scrPos.y);
+    board_drawBoxAtPos(board, pos);
 
     // Auto step surrounding boxes
     if (!surroundingMines){
-        int r, c;
+        int8_t r, c;
         COORD nPos;
-        for (r = pos->row-1; r <= pos->row+1; r++){
-            for (c = pos->col-1; c <= pos->col+1; c++){
-                if (GRID_IS_VALID_POS(board->grid, r, c) && (r != pos->row || c != pos->col)){
+        for (r = IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
+             r <= IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
+            for (c = IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
+                 c <= IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1); c++){
+                if (r != pos->row && c != pos->col){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
                 }

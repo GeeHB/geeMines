@@ -15,9 +15,6 @@
 #define APP_VERSION         "0.0.1 - beta 1"
 #define APP_AUTHOR          "GeeHB"
 
-//#define TRACE_MODE          1
-#define DEBUG               1
-
 // "About" / Splash screen
 //
 #define APP_LOGO_WIDTH      80
@@ -101,6 +98,9 @@ enum GAME_KEY{
     KEY_CODE_EXE = 13
 };
 #endif // #ifdef DEST_CASIO_CALC
+
+// Ensure value is in the range
+#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
 
 #endif // #ifdef __GEE_MINES_CONSTS_h__
 
