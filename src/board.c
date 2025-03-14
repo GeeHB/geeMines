@@ -419,7 +419,7 @@ void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t
         PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
-    #ifdef DEBUG_
+    #ifdef _DEBUG_
         int ID = box->mine?BS_MINE:box->state;  // Always show mines in DEBUG mode
         dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
     #else

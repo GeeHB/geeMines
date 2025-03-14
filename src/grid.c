@@ -21,7 +21,6 @@
 // Internal consts
 //
 
-
 //  grid_create() :Create a grid
 //
 //  @return : pointer to the new created grid
@@ -172,9 +171,11 @@ uint8_t grid_countMines(PGRID const grid, PCOORD const pos){
     uint8_t sMines = 0;
     int8_t r, c;
 
-    for (r = (int8_t)pos->row-1; r <= pos->row+1; r++){
-        for (c = (uint8_t)pos->col-1; c <= pos->col+1; c++){
-            if (GRID_IS_VALID_POS(grid, r, c) && (r != pos->row || c != pos->col) &&
+    for (r = IN_RANGE(pos->row-1, 0, grid->size.row - 1);
+        r <= IN_RANGE(pos->row+1, 0, grid->size.row - 1); r++){
+        for (c = IN_RANGE(pos->col-1, 0, grid->size.col - 1);
+            c <= IN_RANGE(pos->col+1, 0, grid->size.col - 1); c++){
+            if (!(r == pos->row && c == pos->col) &&
                 BOX_AT(grid, r, c)->mine){
                 sMines++;
             }

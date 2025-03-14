@@ -93,6 +93,9 @@ typedef struct __rect{
 #define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
 #define OFFSET_RECT(rect, dx,dy) rect.x+=dx; rect.y+=dy
 
+// Ensure value is in the range
+#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
+
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
 // EOF

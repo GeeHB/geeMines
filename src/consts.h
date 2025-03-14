@@ -99,9 +99,6 @@ enum GAME_KEY{
 };
 #endif // #ifdef DEST_CASIO_CALC
 
-// Ensure value is in the range
-#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
-
 #endif // #ifdef __GEE_MINES_CONSTS_h__
 
 // EOF

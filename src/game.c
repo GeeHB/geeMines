@@ -261,7 +261,7 @@ BOOL _onStartGame(PBOARD const board){
 //  @return : FALSE if stepped on a mine
 //
 BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
-    uint8_t surroundingMines = 0;
+    uint8_t minesAround = 0;
     PBOX box = BOX_AT_POS(board->grid, pos);
 
     /*
@@ -273,7 +273,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     */
 
     (*redraw) =REDRAW_UPDATE;
-    surroundingMines = grid_countMines(board->grid, pos);
+    minesAround = grid_countMines(board->grid, pos);
 
     if (box->mine){
         // stepped on a mine!
@@ -283,18 +283,18 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     }
 
     board->steps++;
-    box->state =  BS_DOWN - surroundingMines;
+    box->state =  BS_DOWN - minesAround;
     board_drawBoxAtPos(board, pos);
 
     // Auto step surrounding boxes
-    if (!surroundingMines){
+    if (!minesAround){
         int8_t r, c;
         COORD nPos;
         for (r = IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
              r <= IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
             for (c = IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
                  c <= IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1); c++){
-                if (r != pos->row && c != pos->col){
+                if (! (r == pos->row && c == pos->col)){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
                 }
