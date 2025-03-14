@@ -80,6 +80,76 @@ int main_basic()
     return 0;
 }
 
+//  _onStep : User steps on a box
+//
+//  @board : Pointer to the board
+//  @pos : Position of the box
+//  @redraw : pointer to the redraw indicator
+//
+//  @return : FALSE if stepped on a mine
+//
+BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
+    uint8_t minesAround = 0;
+    PBOX box = BOX_AT_POS(board->grid, pos);
+
+    // Already stepped ???
+    if (box->state > BS_QUESTION){
+        (*redraw) = 0;
+        return TRUE;
+    }
+
+    (*redraw) = 256;
+
+    if (box->mine){
+        // stepped on a mine!
+        box->state =  BS_BLAST;
+        //board_drawBoxAtPos(board, pos);
+        return FALSE;
+    }
+
+    minesAround = grid_countMines(board->grid, pos);
+    board->steps++;
+    box->state =  BS_DOWN - minesAround;
+    //board_drawBoxAtPos(board, pos);
+
+    // Auto step surrounding boxes
+    if (!minesAround){
+        COORD nPos;
+
+        int8_t r, rmin, rmax;
+        int8_t c, cmin, cmax;
+
+        rmin = pos->row-1;
+        if (rmin<0){
+            rmin =0;
+        }
+        rmax = pos->row+1;
+        if (rmax>(int8_t)board->grid->size.row-1){
+            rmax = (int8_t)board->grid->size.row-1;
+        }
+
+        cmin = pos->col-1;
+        if (cmin<0){
+            cmin =0;
+        }
+        cmax = pos->col+1;
+        if (cmax>(int8_t)board->grid->size.col-1){
+            cmax = (int8_t)board->grid->size.col-1;
+        }
+
+        for (r = rmin; r <= rmax; r++){
+            for (c = cmin; c <= cmax; c++){
+                if (r != pos->row || c != pos->col){
+                    nPos = (COORD){.col = c, .row = r};
+                    _onStep(board, &nPos, redraw);
+                }
+            }
+        }
+    }
+
+    return TRUE;    // No mine at this pos
+}
+
 int main()
 {
     // Création d'un menu
@@ -117,11 +187,17 @@ int main()
                 switch (action.value){
                     case IDM_GAME_BEGINNER :{
                         PBOARD board = board_create();
+                        COORD pos;
+                        uint16_t redraw = 0;
                         board_init(board, LEVEL_BEGINNER);
 
-                        board_drawGridEx(board, FALSE);
-                        printf("\n\n");
                         grid_display(board->grid);
+                        printf("\n\n");
+
+                        pos.col = 6;
+                        pos.row = 4;
+                        _onStep(board, &pos, &redraw);
+                        board_drawGridEx(board, FALSE);
 
                         board_free(board, TRUE);
 

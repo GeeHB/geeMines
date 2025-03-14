@@ -264,16 +264,13 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     uint8_t minesAround = 0;
     PBOX box = BOX_AT_POS(board->grid, pos);
 
-    /*
     // Already stepped ???
     if (box->state > BS_QUESTION){
         (*redraw) = NO_REDRAW;
         return TRUE;
     }
-    */
 
     (*redraw) =REDRAW_UPDATE;
-    minesAround = grid_countMines(board->grid, pos);
 
     if (box->mine){
         // stepped on a mine!
@@ -282,19 +279,39 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
         return FALSE;
     }
 
+    minesAround = grid_countMines(board->grid, pos);
     board->steps++;
     box->state =  BS_DOWN - minesAround;
     board_drawBoxAtPos(board, pos);
 
     // Auto step surrounding boxes
     if (!minesAround){
-        int8_t r, c;
         COORD nPos;
-        for (r = IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
-             r <= IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
-            for (c = IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
-                 c <= IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1); c++){
-                if (! (r == pos->row && c == pos->col)){
+
+        int8_t r, rmin, rmax;
+        int8_t c, cmin, cmax;
+
+        rmin = pos->row-1;
+        if (rmin<0){
+            rmin =0;
+        }
+        rmax = pos->row+1;
+        if (rmax>(int8_t)board->grid->size.row-1){
+            rmax = (int8_t)board->grid->size.row-1;
+        }
+
+        cmin = pos->col-1;
+        if (cmin<0){
+            cmin =0;
+        }
+        cmax = pos->col+1;
+        if (cmax>(int8_t)board->grid->size.col-1){
+            cmax = (int8_t)board->grid->size.col-1;
+        }
+
+        for (r = rmin; r <= rmax; r++){
+            for (c = cmin; c <= cmax; c++){
+                if (r != pos->row || c != pos->col){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
                 }

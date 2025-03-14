@@ -9,6 +9,8 @@
 #ifndef __GEE_MINES_CONSTS_h__
 #define __GEE_MINES_CONSTS_h__    1
 
+#define _DEBUG_
+
 // Application infos
 //
 #define APP_NAME            "geeMines"

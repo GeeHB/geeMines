@@ -57,7 +57,12 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     }
 
     // Mines
+#ifdef _DEBUG_
+    board->grid->mines = 1;
+    BOX_AT(board->grid, 4, 4)->mine = TRUE;
+#else
     grid_layMines(board->grid);
+#endif // _DEBUG_
 
     // Initial viewport
     SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
@@ -425,7 +430,13 @@ void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t
     dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef _DEBUG_
 #else
-    printf("| %c ", box->mine?'x':'0' + grid_countMines(board->grid, pos));
+    //printf("| %c ", box->mine?'x':'0' + grid_countMines(board->grid, pos));
+    if (box->mine){
+        printf("| x ");
+    }
+    else{
+        printf("| %c ", box->state>BS_DICEY_DOWN?'0' + (15 - box->state):' ');
+    }
 #endif // #ifdef DEST_CASIO_CALC
 }
 
