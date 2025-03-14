@@ -38,8 +38,10 @@ POWNMENU _createGameMenu(){
         // Create menu bar
         PMENUBAR bar = menu_getMenuBar(menu);
         menubar_appendItem(bar, IDM_STEP, IDS_STEP, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-        menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
-        menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
+        //menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
+        menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
+        //menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
+        menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
         menubar_addItem(bar, MENU_POS_RIGHT, IDM_CANCEL, IDS_CANCEL, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
     }
 
@@ -118,7 +120,7 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (0 == (tickCount % BLINK_NAV_BUTTONS)){
+        if (!booard->fullGrid && 0 == (tickCount % BLINK_NAV_BUTTONS)){
             redraw |= REDRAW_NAV_BUTTONS;
         }
 
@@ -316,7 +318,7 @@ uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
     BOOL flag = (box->state == BS_FLAG);
     box->state = (flag?BS_INITIAL:BS_FLAG);
-    box->mine += flag?+1:-1;    // mines left !!
+    board->minesLeft += flag?+1:-1;    // mines left !!
     menubar_checkMenuItem(menu_getMenuBar(menu), IDM_FLAG, SEARCH_BY_ID, flag?ITEM_STATE_UNCHECKED:ITEM_STATE_CHECKED);
     return REDRAW_BOX | REDRAW_MINES_LEFT;
 }
@@ -501,7 +503,7 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
     if (menuBar){
         PBOX box = BOX_AT_POS(board->grid, pos);
         BOOL flag = FALSE, question = FALSE, step = FALSE, greyAll = FALSE;
-        BOOL fState = FALSE, qState = FALSE;
+        //BOOL fState = FALSE, qState = FALSE;
         SMILEY_STATE smiley = SMILEY_HAPPY, current = board->smileyState;
 
         switch (box->state){
@@ -515,13 +517,13 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
             case BS_FLAG:
                 step = TRUE;
                 flag = TRUE;
-                fState = TRUE;
+                //fState = TRUE;
                 break;
 
             case BS_QUESTION:
                 step = TRUE;
                 question = TRUE;
-                qState = TRUE;
+                //qState = TRUE;
                 break;
 
             case BS_MINE:
@@ -535,15 +537,15 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
 
         if (greyAll){
             menubar_activateItem(menuBar, IDM_STEP, SEARCH_BY_ID, step);
-            menubar_setItemState(menuBar, IDM_FLAG, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
-            menubar_setItemState(menuBar, IDM_QUESTION, SEARCH_BY_ID, ITEM_STATE_UNCHECKED | ITEM_STATE_INACTIVE);
+            menubar_setItemState(menuBar, IDM_FLAG, SEARCH_BY_ID, /*ITEM_STATE_UNCHECKED |*/ ITEM_STATE_INACTIVE);
+            menubar_setItemState(menuBar, IDM_QUESTION, SEARCH_BY_ID, /*ITEM_STATE_UNCHECKED |*/ ITEM_STATE_INACTIVE);
         }
         else{
             menubar_activateItem(menuBar, IDM_STEP, SEARCH_BY_ID, step);
             menubar_activateItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag);
-            menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, fState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+            //menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, fState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
             menubar_activateItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question);
-            menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, qState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
+            //menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, qState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
         }
 
         if (current != smiley){

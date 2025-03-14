@@ -54,8 +54,8 @@ extern "C" {
 #define LED_WIDTH           13
 #define LED_HEIGHT          23
 
-#define LED_MINUS_ID        0
-#define LED_EMPTY_ID        1
+#define LED_MINUS_ID        11      // reverse order
+#define LED_EMPTY_ID        10
 
 // Game state
 //

@@ -16,6 +16,7 @@
 #define APP_AUTHOR          "GeeHB"
 
 //#define TRACE_MODE          1
+#define DEBUG               1
 
 // "About" / Splash screen
 //
@@ -26,37 +27,38 @@
 
 // Main menu
 //
-#define IDS_NEW             "New"
 #define IDM_NEW             1
+#define IDS_NEW             "New"
 
-#define IDS_START           "Start"
 #define IDM_START           2
+#define IDS_START           "Start"
 
-#define IDS_QUIT            "Quit"
 #define IDM_QUIT            6
+#define IDS_QUIT            "Quit"
 
-#define IDS_NEW_BEGINNER    "Beginner"      // sub-menu
 #define IDM_NEW_BEGINNER    11
+#define IDS_NEW_BEGINNER    "Beginner"      // sub-menu
 
-#define IDS_NEW_MEDIUM      "Medium"
 #define IDM_NEW_MEDIUM      12
+#define IDS_NEW_MEDIUM      "Medium"
 
-#define IDS_NEW_EXPERT      "Expert"
 #define IDM_NEW_EXPERT      13
+#define IDS_NEW_EXPERT      "Expert"
 
 // Game menu
 //
-#define IDS_STEP            "Step"
 #define IDM_STEP            101
+#define IDS_STEP            "Step"
 
-#define IDS_FLAG            "Flag"
 #define IDM_FLAG            102
+#define IDS_FLAG            "Flag"
 
-#define IDS_QUESTION        "?"
 #define IDM_QUESTION        103
+//#define IDS_QUESTION        "?"
+#define IDS_QUESTION        "Question"
 
-#define IDS_CANCEL          "Cancel"
 #define IDM_CANCEL          106
+#define IDS_CANCEL          "Cancel"
 
 // "pause" image
 //
