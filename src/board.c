@@ -308,7 +308,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
         value = 99; // Should never be executed
     }
 
-    SET_RECT(rect, board->minesCounterPos.x, board->minesCounterPos.y, LED_WIDTH, LED_HEIGHT);
+    SET_RECT(rect, board->statRect.x, board->statRect.y, LED_WIDTH, LED_HEIGHT);
 
     if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
@@ -352,7 +352,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
     RECT rect;
     int8_t ox, oy;
 
-    SET_RECT(rect, board->timerPos.x, board->timerPos.y, LED_WIDTH, LED_HEIGHT);
+    SET_RECT(rect, board->statRect.x + TIMER_OFFSET_V, board->statRect.y, LED_WIDTH, LED_HEIGHT);
 
     if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
@@ -386,7 +386,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 void board_drawSmileyEx(PBOARD const board, BOOL update){
     if (CALC_HORIZONTAL == board->orientation){
         RECT rect;
-        SET_RECT(rect, board->smileyPos.x, board->smileyPos.y, SMILEY_WIDTH, SMILEY_WIDTH);
+        SET_RECT(rect, board->statRect.x + SMILEY_OFFSET_V, board->statRect.y, SMILEY_WIDTH, SMILEY_WIDTH);
         rotateRect(&rect);
 
 #ifdef DEST_CASIO_CALC
@@ -395,7 +395,7 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
     }
     else{
 #ifdef DEST_CASIO_CALC
-        dsubimage(board->smileyPos.x, board->smileyPos.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(board->stat.x + SMILEY_OFFSET_V, board->stat.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
 
@@ -639,14 +639,10 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             board->viewPort.navButtons[1].y,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
-        // Mines left pos
-        board->minesCounterPos = (POINT){.x = board->gridRect.x + board->gridRect.w + GRID_VIEWPORT_LEFT , .y = MINES_VERT_Y};
-
-        // Smiley Pos
-        board->smileyPos = (POINT){.x = board->minesCounterPos.x + 3 * LED_WIDTH + GRID_VIEWPORT_LEFT, .y = SMILEY_VERT_Y};
-
-        // Time pos
-        board->timerPos = (POINT){.x = board->smileyPos.x + SMILEY_WIDTH  + GRID_VIEWPORT_LEFT, .y = TIMER_VERT_Y};
+        // Stat rect ( = [mines][smiley][timer] )
+        SET_RECT(board->statRect,
+            STAT_LEFT_V, STAT_TOP_V,
+            STAT_WIDTH, STAT_HEIGHT);
     }
 }
 

@@ -40,25 +40,33 @@ extern "C" {
 #define GRID_VIEWPORT_TOP           2
 
 #define GRID_BORDER         3
+
+#define STAT_LEFT_V         212     // Centerer in the right part of the screen
+#define STAT_TOP_V          GRID_VIEWPORT_TOP
+#define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
+#define STAT_HEIGHT         SMILEY_HEIGHT
 #define STAT_BORDER         3
 
-#define MINES_VERT_Y        GRID_VIEWPORT_TOP
-
-#define SMILEY_VERT_X       200
-#define SMILEY_VERT_Y       GRID_VIEWPORT_TOP
 
 #define TIMER_VERT_X        200     // Game timer
 #define TIMER_VERT_Y        GRID_VIEWPORT_TOP
-
-#define TIMER_MAX_VALUE     99      // Max. game duration in sec.
 
 // LED images
 //
 #define LED_WIDTH           13
 #define LED_HEIGHT          23
+#define LED_ZONE_WIDTH      3 * LED_WIDTH
+
+#define SMILEY_OFFSET_V     LED_ZONE_WIDTH
 
 #define LED_MINUS_ID        11      // reverse order
 #define LED_EMPTY_ID        10
+
+// Time
+//
+#define TIMER_OFFSET_V      LED_ZONE_WIDTH + SMILEY_WIDTH
+
+#define TIMER_MAX_VALUE     99      // Max. game duration in sec.
 
 // Game state
 //
@@ -105,10 +113,8 @@ typedef struct __board{
     int8_t minesLeft;   // could be < 0 !
     uint8_t steps;
     uint16_t time;
-    POINT minesCounterPos;
-    POINT smileyPos;
-    POINT timerPos;
     RECT gridRect;
+    RECT statRect;
 } BOARD, * PBOARD;
 
 //
