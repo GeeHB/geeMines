@@ -206,6 +206,7 @@ void board_drawEx(PBOARD const board, BOOL update){
     drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
+    board_drawBorder(board, &board->statRect, STAT_BORDER);
     board_drawMinesLeftEx(board, FALSE);
     board_drawSmileyEx(board, FALSE);
     board_drawTimeEx(board, FALSE);
