@@ -396,7 +396,7 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
     }
     else{
 #ifdef DEST_CASIO_CALC
-        dsubimage(board->stat.x + SMILEY_OFFSET_V, board->stat.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
+        dsubimage(board->statRect.x + SMILEY_OFFSET_V, board->statRect.y, &g_smileys, 0, board->smileyState * SMILEY_HEIGHT, SMILEY_WIDTH, SMILEY_HEIGHT, DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
     }
 
@@ -556,9 +556,9 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
     RECT rc;
     BOOL vertical = (board->orientation == CALC_VERTICAL);
 #ifdef DEST_CASIO_CALC
-    C_RGB light, dark;
+    int light, dark;
     light = C_WHITE;
-    dark = C_DK_GREY;
+    dark = COLOUR_DK_GREY;
 #endif // #ifdef DEST_CASIO_CALC
 
     COPY_RECT(rc, rect);
@@ -567,16 +567,16 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
         INFLATE_RECT(rc, 1);
 #ifdef DEST_CASIO_CALC
         // top (if CALC_VERTICAL)
-        drect(rc.x, rc.y, rc.x + rc.w - 1, rc.y + 1, vertical?light:dark);
+        drect(rc.x, rc.y, rc.x + rc.w - 1, rc.y, vertical?light:dark);
 
         // left
-        drect(rc.x, rc.y, rc.x + 1, rc.y + rc.h - 1, light);
+        drect(rc.x, rc.y, rc.x, rc.y + rc.h - 1, light);
 
         // bottom
-        drect(rc.x, rc.y + rc.h - 2, rc.x + rc.w - 1, rc.y + rc.h - 1, vertical?dark:light);
+        drect(rc.x, rc.y + rc.h - 1, rc.x + rc.w - 1, rc.y + rc.h - 1, vertical?dark:light);
 
         // right
-        drect(rc.x + rc.w - 2, rc.y, rc.x + rc.w - 1, rc.y + rc.h - 1, dark);
+        drect(rc.x + rc.w - 1, rc.y, rc.x + rc.w - 1, rc.y + rc.h - 1, dark);
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
@@ -610,8 +610,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // Grid position
         SET_RECT(board->gridRect,
-            GRID_VIEWPORT_LEFT + GRID_VIEWPORT_BUTTON_WIDTH,
-            GRID_VIEWPORT_TOP + GRID_VIEWPORT_BUTTON_WIDTH,
+            GRID_VIEWPORT_LEFT + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH,
+            GRID_VIEWPORT_TOP + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH,
             BEGINNER_COLS * BOX_WIDTH,
             BEGINNER_ROWS * BOX_HEIGHT);
 
@@ -634,7 +634,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             board->gridRect.y + board->gridRect.h,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
-        // left btton
+        // left button
         SET_RECT(board->viewPort.navButtons[3],
             board->gridRect.x - GRID_VIEWPORT_BUTTON_WIDTH,
             board->viewPort.navButtons[1].y,
@@ -642,7 +642,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // Stat rect ( = [mines][smiley][timer] )
         SET_RECT(board->statRect,
-            STAT_LEFT_V, STAT_TOP_V,
+            STAT_LEFT_V + board->fullGrid ? 0 : 2 * GRID_VIEWPORT_BUTTON_WIDTH,
+            STAT_TOP_V,
             STAT_WIDTH, STAT_HEIGHT);
     }
 }
