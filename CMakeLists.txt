@@ -10,6 +10,7 @@ set(SOURCES
   src/grid.c
   src/board.c
   src/game.c
+  src/shared/casioCalcs.c
   src/shared/keys.c
   src/shared/menu.c
 )

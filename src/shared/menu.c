@@ -88,7 +88,7 @@ BOOL menu_setHeight(POWNMENU menu, uint16_t barHeight, BOOL update){
         return FALSE;
     }
 
-    SET_RECT(menu->rect_,0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight);
+    setRect(&menu->rect_,0, CASIO_HEIGHT - barHeight, CASIO_WIDTH, barHeight);
     if (update){
         menu_update(menu);
     }
@@ -122,7 +122,7 @@ void menu_updateEx(POWNMENU menu, BOOL update){
     if (menu){
         // First item's rect
         RECT anchor;
-        SET_RECT(anchor, menu->rect_.x, menu->rect_.y, MENUBAR_DEF_ITEM_WIDTH, menu->rect_.h);
+        setRect(&anchor, menu->rect_.x, menu->rect_.y, MENUBAR_DEF_ITEM_WIDTH, menu->rect_.h);
 
         //  Draw all items (even empty ones)
         for (uint8_t index = 0; index < MENUBAR_MAX_ITEM_COUNT; index++){

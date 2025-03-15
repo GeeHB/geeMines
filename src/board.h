@@ -27,34 +27,30 @@ extern "C" {
 
 // Images dims.
 //
-#define BOX_WIDTH           16
+#define BOX_WIDTH           0x0010  // 16
 #define BOX_HEIGHT          BOX_WIDTH
-#define SMILEY_WIDTH        24
-#define SMILEY_HEIGHT       24
+#define SMILEY_WIDTH        0x0018  // 24
+#define SMILEY_HEIGHT       SMILEY_WIDTH
 
 // Positions
 //
-#define GRID_VIEWPORT_BUTTON_WIDTH  12
+#define GRID_VIEWPORT_BUTTON_WIDTH  0x000C      // 12
 #define GRID_VIEWPORT_BUTTON_HEIGHT GRID_VIEWPORT_BUTTON_WIDTH
-#define GRID_VIEWPORT_LEFT          2
-#define GRID_VIEWPORT_TOP           2
+#define GRID_VIEWPORT_LEFT          0x0002
+#define GRID_VIEWPORT_TOP           0x0002
 
-#define GRID_BORDER         3
+#define PLAYGROUND_BORDER    0x0003
 
-#define STAT_LEFT_V         212     // Centerer in the right part of the screen
+#define STAT_LEFT_V         0x00D4     // (212) Centered in the right part of the screen
 #define STAT_TOP_V          GRID_VIEWPORT_TOP
 #define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
 #define STAT_HEIGHT         SMILEY_HEIGHT
-#define STAT_BORDER         3
-
-
-#define TIMER_VERT_X        200     // Game timer
-#define TIMER_VERT_Y        GRID_VIEWPORT_TOP
+#define STAT_BORDER         0x0003
 
 // LED images
 //
-#define LED_WIDTH           13
-#define LED_HEIGHT          23
+#define LED_WIDTH           0x000D  // 13
+#define LED_HEIGHT          0x0017  // 23
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
 
 #define SMILEY_OFFSET_V     LED_ZONE_WIDTH
@@ -113,6 +109,7 @@ typedef struct __board{
     int8_t minesLeft;   // could be < 0 !
     uint8_t steps;
     uint16_t time;
+    RECT playgroundRect;
     RECT gridRect;
     RECT statRect;
 } BOARD, * PBOARD;

@@ -76,6 +76,9 @@
 
 typedef uint8_t BOOL;
 
+// Ensure value is in the range
+#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
+
 // Point coordinates
 //
 typedef struct __point{
@@ -90,14 +93,46 @@ typedef struct __rect{
     int    w, h;   // width and height
 } RECT, * PRECT;
 
-#define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
-#define OFFSET_RECT(rect, dx,dy) rect.x+=dx; rect.y+=dy
-#define COPY_RECT(dest, src) dest.x = src->x; dest.y = src->y; dest.w = src->w; dest.h = src->h
-#define DEFLATE_RECT(rect, dw) rect.x+=dw;rect.y+=dw;rect.w-=2*dw;rect.h-=2*dw
-#define INFLATE_RECT(rect, dw) rect.x-=dw;rect.y-=dw;rect.w+=2*dw;rect.h+=2*dw
+//
+// Rect. manipulation fucntions
+//
 
-// Ensure value is in the range
-#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
+// setRect() : Set rect dims & pos
+//
+//  @rect : pointer to the dest. rect
+//  @x, @y : Top left corner of the rectangle
+//  @w, @h : Width and height of the rectangle
+//
+//  @return : TRUE if values set
+//
+BOOL setRect(PRECT const rect, int x, int y, int w, int h);
+
+// offsetRect() : Translate a rect
+//
+//  @rect : pointer to the rect.
+//  @dx, @dy : Translation units
+//
+//  @return : TRUE if successfully translated
+//
+BOOL offsetRect(PRECT const rect, int dx, int dy);
+
+// copyRect() : Make a copy of a rect. struct.
+//
+//  @dest : pointer to the destination rect.
+//  @src : pointer to the source rect.
+//
+//  @return : TRUE if successfully copied
+//
+BOOL copyRect(PRECT const dest, PRECT const src);
+
+// inflateRect() : Inflate a rect
+//
+//  @rect : pointer to the rect.
+//  @dx, @dy : Inflation units
+//
+//  @return : TRUE if successfully inflated
+//
+BOOL inflateRect(PRECT const rect, int dx, int dy);
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 

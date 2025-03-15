@@ -60,7 +60,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     grid_layMines(board->grid);
 
     // Initial viewport
-    SET_RECT(board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
+    setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
     board->viewPort.dimensions.col = board->grid->size.col;
     board->viewPort.dimensions.row = board->grid->size.row;
     board->fullGrid = (LEVEL_BEGINNER == level);
@@ -211,7 +211,7 @@ void board_drawEx(PBOARD const board, BOOL update){
     board_drawSmileyEx(board, FALSE);
     board_drawTimeEx(board, FALSE);
 
-    board_drawBorder(board, &board->gridRect, GRID_BORDER);
+    board_drawBorder(board, &board->playgroundRect, PLAYGROUND_BORDER);
     board_drawGridEx(board, update);  // + update
 }
 
@@ -231,7 +231,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         return;
     }
 
-    SET_RECT(rect, board->gridRect.x, board->gridRect.y, BOX_WIDTH, BOX_HEIGHT);
+    setRect(&rect, board->gridRect.x, board->gridRect.y, BOX_WIDTH, BOX_HEIGHT);
 
     if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
@@ -266,10 +266,10 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         for (c = 0; c < board->grid->size.col; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
             board_drawBoxEx(board, &pos, rect.x, rect.y);
-            OFFSET_RECT(rect, offsetCol.x, offsetCol.y);
+            offsetRect(&rect, offsetCol.x, offsetCol.y);
         }
 
-        OFFSET_RECT(rect, offsetRow.x, offsetRow.y);
+        offsetRect(&rect, offsetRow.x, offsetRow.y);
 #ifndef DEST_CASIO_CALC
         printf("|\n");       // EOL
 #endif // #ifndef DEST_CASIO_CALC
@@ -309,7 +309,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
         value = 99; // Should never be executed
     }
 
-    SET_RECT(rect, board->statRect.x, board->statRect.y, LED_WIDTH, LED_HEIGHT);
+    setRect(&rect, board->statRect.x, board->statRect.y, LED_WIDTH, LED_HEIGHT);
 
     if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
@@ -333,7 +333,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
 
     for (uint8_t id = 0; id < 3; id++){
         board_drawLed(board, (uint8_t)ids[id], &rect);
-        OFFSET_RECT(rect, ox, oy);  // next pos
+        offsetRect(&rect, ox, oy);  // next pos
     }
 
     if (update){
@@ -353,7 +353,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
     RECT rect;
     int8_t ox, oy;
 
-    SET_RECT(rect, board->statRect.x + TIMER_OFFSET_V, board->statRect.y, LED_WIDTH, LED_HEIGHT);
+    setRect(&rect, board->statRect.x + TIMER_OFFSET_V, board->statRect.y, LED_WIDTH, LED_HEIGHT);
 
     if (CALC_HORIZONTAL == board->orientation){
         rotateRect(&rect);
@@ -367,9 +367,9 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 
     // 3 digits - total in [0, 1000[
     board_drawLed(board, (uint8_t)(value/100), &rect);
-    OFFSET_RECT(rect, ox, oy);
+    offsetRect(&rect, ox, oy);
     board_drawLed(board, (value %= 100)/10, &rect);
-    OFFSET_RECT(rect, ox, oy);
+    offsetRect(&rect, ox, oy);
     board_drawLed(board,value % 10, &rect);
 
     if (update){
@@ -387,7 +387,7 @@ void board_drawTimeEx(PBOARD const board, BOOL update){
 void board_drawSmileyEx(PBOARD const board, BOOL update){
     if (CALC_HORIZONTAL == board->orientation){
         RECT rect;
-        SET_RECT(rect, board->statRect.x + SMILEY_OFFSET_V, board->statRect.y, SMILEY_WIDTH, SMILEY_WIDTH);
+        setRect(&rect, board->statRect.x + SMILEY_OFFSET_V, board->statRect.y, SMILEY_WIDTH, SMILEY_WIDTH);
         rotateRect(&rect);
 
 #ifdef DEST_CASIO_CALC
@@ -554,17 +554,18 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 //
 void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
     RECT rc;
-    BOOL vertical = (board->orientation == CALC_VERTICAL);
+
 #ifdef DEST_CASIO_CALC
+    BOOL vertical = (board->orientation == CALC_VERTICAL);
     int light, dark;
     light = C_WHITE;
     dark = COLOUR_DK_GREY;
 #endif // #ifdef DEST_CASIO_CALC
 
-    COPY_RECT(rc, rect);
+    copyRect(&rc, rect);
 
     for (uint8_t count = 0; count < thickness; thickness++){
-        INFLATE_RECT(rc, 1);
+        inflateRect(&rc, 1, 1);
 #ifdef DEST_CASIO_CALC
         // top (if CALC_VERTICAL)
         drect(rc.x, rc.y, rc.x + rc.w - 1, rc.y, vertical?light:dark);
@@ -608,41 +609,48 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board){
         board->orientation = orientation;
 
+        // Play ground (grid + viewport buttons)
+        setRect(&board->playgroundRect,
+            GRID_VIEWPORT_LEFT,
+            GRID_VIEWPORT_TOP,
+            BEGINNER_COLS * BOX_WIDTH + board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH),
+            BEGINNER_ROWS * BOX_HEIGHT + board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT));
+
         // Grid position
-        SET_RECT(board->gridRect,
+        setRect(&board->gridRect,
             GRID_VIEWPORT_LEFT + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH,
-            GRID_VIEWPORT_TOP + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH,
+            GRID_VIEWPORT_TOP + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT,
             BEGINNER_COLS * BOX_WIDTH,
             BEGINNER_ROWS * BOX_HEIGHT);
 
         // Viewport navigation buttons
         // top button
-        SET_RECT(board->viewPort.navButtons[0],
+        setRect(&board->viewPort.navButtons[0],
             board->gridRect.x + (board->gridRect.w - GRID_VIEWPORT_BUTTON_WIDTH) / 2,
             board->gridRect.y - GRID_VIEWPORT_BUTTON_HEIGHT,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
         // right btton
-        SET_RECT(board->viewPort.navButtons[1],
+        setRect(&board->viewPort.navButtons[1],
             board->gridRect.x + board->gridRect.w,
             board->gridRect.y + (board->gridRect.h - GRID_VIEWPORT_BUTTON_HEIGHT) / 2,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
         // bottom button
-        SET_RECT(board->viewPort.navButtons[2],
+        setRect(&board->viewPort.navButtons[2],
             board->viewPort.navButtons[0].x,
             board->gridRect.y + board->gridRect.h,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
         // left button
-        SET_RECT(board->viewPort.navButtons[3],
+        setRect(&board->viewPort.navButtons[3],
             board->gridRect.x - GRID_VIEWPORT_BUTTON_WIDTH,
             board->viewPort.navButtons[1].y,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
         // Stat rect ( = [mines][smiley][timer] )
-        SET_RECT(board->statRect,
-            STAT_LEFT_V + board->fullGrid ? 0 : 2 * GRID_VIEWPORT_BUTTON_WIDTH,
+        setRect(&board->statRect,
+            STAT_LEFT_V + (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
             STAT_TOP_V,
             STAT_WIDTH, STAT_HEIGHT);
     }

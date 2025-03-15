@@ -198,6 +198,7 @@ int main()
                         pos.row = 4;
                         _onStep(board, &pos, &redraw);
                         board_drawGridEx(board, FALSE);
+                        board_drawBorder(board, &board->statRect, STAT_BORDER);
 
                         board_free(board, TRUE);
 
