@@ -92,6 +92,9 @@ typedef struct __rect{
 
 #define SET_RECT(rect, px,py,width,height) rect.x=px; rect.y=py; rect.w=width; rect.h=height
 #define OFFSET_RECT(rect, dx,dy) rect.x+=dx; rect.y+=dy
+#define COPY_RECT(dest, src) dest.x = src->x; dest.y = src->y; dest.w = src->w; dest.h = src->h
+#define DEFLATE_RECT(rect, dw) rect.x+=dw;rect.y+=dw;rect.w-=2*dw;rect.h-=2*dw
+#define INFLATE_RECT(rect, dw) rect.x-=dw;rect.y-=dw;rect.w+=2*dw;rect.h+=2*dw
 
 // Ensure value is in the range
 #define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))

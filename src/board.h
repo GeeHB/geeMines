@@ -39,15 +39,18 @@ extern "C" {
 #define GRID_VIEWPORT_LEFT          2
 #define GRID_VIEWPORT_TOP           2
 
-#define MINES_VERT_Y                GRID_VIEWPORT_TOP
+#define GRID_BORDER         3
+#define STAT_BORDER         3
 
-#define SMILEY_VERT_X               200
-#define SMILEY_VERT_Y               GRID_VIEWPORT_TOP
+#define MINES_VERT_Y        GRID_VIEWPORT_TOP
 
-#define TIMER_VERT_X                200     // Game timer
-#define TIMER_VERT_Y                GRID_VIEWPORT_TOP
+#define SMILEY_VERT_X       200
+#define SMILEY_VERT_Y       GRID_VIEWPORT_TOP
 
-#define TIMER_MAX_VALUE             99      // Max. game duration in sec.
+#define TIMER_VERT_X        200     // Game timer
+#define TIMER_VERT_Y        GRID_VIEWPORT_TOP
+
+#define TIMER_MAX_VALUE     99      // Max. game duration in sec.
 
 // LED images
 //
@@ -105,7 +108,7 @@ typedef struct __board{
     POINT minesCounterPos;
     POINT smileyPos;
     POINT timerPos;
-    RECT gridPos;
+    RECT gridRect;
 } BOARD, * PBOARD;
 
 //
@@ -240,15 +243,14 @@ void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t d
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-//  board_selectBoxEx() : Select a box
+// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
 //
-//  @board : Pointer to the board
-//  @pos : Box coordinates of the box in the grid
-//  @select : TRUE if box is selected, FALSE if unselected
+//  @board : pointer to the board
+//  @highLight : Draw buttons in hightlighted state
+//  @update : Update screen ?
 //
-void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
-#define  board_selectBox(board, pos) board_selectBoxEx(board, pos, TRUE)
-#define  board_unselectBox(board, pos) board_selectBoxEx(board, pos, FALSE)
+void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update);
+#define board_drawViewPortButtons(board, highLight) board_drawViewPortButtonsEx(board, highLight, TRUE)
 
 // board_drawLed() : Draw a led digit
 //
@@ -260,14 +262,16 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
 //
 void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 
-// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
+// board_drawBorder() : Draw a border
 //
-//  @board : pointer to the board
-//  @highLight : Draw buttons in hightlighted state
-//  @update : Update screen ?
+//  Draw a 3-d border with the specified thickness around a rect
+//  borders are outside the rectangle
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update);
-#define board_drawViewPortButtons(board, highLight) board_drawViewPortButtonsEx(board, highLight, TRUE)
+//  @board : Pointer to the board
+//  @rect : Rect. whose borders will be drawn
+//  @thickness : Border thickness
+//
+void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness);
 
 //  board_changeOrientation() : Change drawing orientation
 //
@@ -285,6 +289,16 @@ BOOL board_changeOrientation(PBOARD const board);
 //  @orientation : Drawing orientation
 //
 void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation);
+
+//  board_selectBoxEx() : Select a box
+//
+//  @board : Pointer to the board
+//  @pos : Box coordinates of the box in the grid
+//  @select : TRUE if box is selected, FALSE if unselected
+//
+void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
+#define  board_selectBox(board, pos) board_selectBoxEx(board, pos, TRUE)
+#define  board_unselectBox(board, pos) board_selectBoxEx(board, pos, FALSE)
 
 //
 //  tools
