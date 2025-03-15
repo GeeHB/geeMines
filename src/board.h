@@ -32,20 +32,16 @@ extern "C" {
 #define SMILEY_WIDTH        0x0018  // 24
 #define SMILEY_HEIGHT       SMILEY_WIDTH
 
-// Positions
+// Positions & dims.
 //
 #define GRID_VIEWPORT_BUTTON_WIDTH  0x000C      // 12
 #define GRID_VIEWPORT_BUTTON_HEIGHT GRID_VIEWPORT_BUTTON_WIDTH
-#define GRID_VIEWPORT_LEFT          0x0002
-#define GRID_VIEWPORT_TOP           0x0002
-
-#define PLAYGROUND_BORDER    0x0003
-
-#define STAT_LEFT_V         0x00D4     // (212) Centered in the right part of the screen
-#define STAT_TOP_V          GRID_VIEWPORT_TOP
-#define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
-#define STAT_HEIGHT         SMILEY_HEIGHT
+#
+#define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
+
+#define GRID_VIEWPORT_LEFT  (STAT_BORDER + 2)
+#define GRID_VIEWPORT_TOP   GRID_VIEWPORT_LEFT
 
 // LED images
 //
@@ -54,6 +50,11 @@ extern "C" {
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
 
 #define SMILEY_OFFSET_V     LED_ZONE_WIDTH
+
+#define STAT_LEFT_V         0x00D4     // (212) Centered in the right part of the screen
+#define STAT_TOP_V          GRID_VIEWPORT_TOP
+#define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
+#define STAT_HEIGHT         SMILEY_HEIGHT
 
 #define LED_MINUS_ID        11      // reverse order
 #define LED_EMPTY_ID        10

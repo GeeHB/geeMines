@@ -199,6 +199,7 @@ int main()
                         _onStep(board, &pos, &redraw);
                         board_drawGridEx(board, FALSE);
                         board_drawBorder(board, &board->statRect, STAT_BORDER);
+                        board_drawMinesLeftEx(board, FALSE);
 
                         board_free(board, TRUE);
 

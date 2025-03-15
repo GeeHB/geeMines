@@ -265,6 +265,15 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 
         for (c = 0; c < board->grid->size.col; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
+
+#ifdef TRACE_MODE
+            if (!r && !c){
+                char trace[250];
+                __coordtoa("Pos : ", rect.x, rect.y, trace);
+                TRACE(trace, C_BLACK, COL_BKGROUND);
+            }
+#endif // TRACE_MODE
+
             board_drawBoxEx(board, &pos, rect.x, rect.y);
             offsetRect(&rect, offsetCol.x, offsetCol.y);
         }
@@ -298,7 +307,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
     uint8_t ids[3];
     BOOL negative = FALSE;
     RECT rect;
-    int8_t ox, oy;
+    int ox, oy;
 
     if (value < 0){
         value = -1 * value;
@@ -351,7 +360,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
 void board_drawTimeEx(PBOARD const board, BOOL update){
     uint16_t value = board->time;
     RECT rect;
-    int8_t ox, oy;
+    int ox, oy;
 
     setRect(&rect, board->statRect.x + TIMER_OFFSET_V, board->statRect.y, LED_WIDTH, LED_HEIGHT);
 
@@ -558,26 +567,26 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
 #ifdef DEST_CASIO_CALC
     BOOL vertical = (board->orientation == CALC_VERTICAL);
     int light, dark;
-    light = C_WHITE;
-    dark = COLOUR_DK_GREY;
+    light = COLOUR_LT_GREY;
+    dark = COLOUR_GREY;
 #endif // #ifdef DEST_CASIO_CALC
 
     copyRect(&rc, rect);
 
-    for (uint8_t count = 0; count < thickness; thickness++){
+    for (uint8_t count = 0; count < thickness; count++){
         inflateRect(&rc, 1, 1);
 #ifdef DEST_CASIO_CALC
         // top (if CALC_VERTICAL)
-        drect(rc.x, rc.y, rc.x + rc.w - 1, rc.y, vertical?light:dark);
+        dline(rc.x, rc.y, rc.x + rc.w - 1, rc.y, vertical?light:dark);
 
         // left
-        drect(rc.x, rc.y, rc.x, rc.y + rc.h - 1, light);
+        dline(rc.x, rc.y, rc.x, rc.y + rc.h - 1, light);
 
         // bottom
-        drect(rc.x, rc.y + rc.h - 1, rc.x + rc.w - 1, rc.y + rc.h - 1, vertical?dark:light);
+        dline(rc.x, rc.y + rc.h - 1, rc.x + rc.w - 1, rc.y + rc.h - 1, vertical?dark:light);
 
         // right
-        drect(rc.x + rc.w - 1, rc.y, rc.x + rc.w - 1, rc.y + rc.h - 1, dark);
+        dline(rc.x + rc.w - 1, rc.y, rc.x + rc.w - 1, rc.y + rc.h - 1, dark);
 #endif // #ifdef DEST_CASIO_CALC
     }
 }
@@ -613,13 +622,13 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         setRect(&board->playgroundRect,
             GRID_VIEWPORT_LEFT,
             GRID_VIEWPORT_TOP,
-            BEGINNER_COLS * BOX_WIDTH + board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH),
-            BEGINNER_ROWS * BOX_HEIGHT + board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT));
+            BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
+            BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT)));
 
         // Grid position
         setRect(&board->gridRect,
-            GRID_VIEWPORT_LEFT + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH,
-            GRID_VIEWPORT_TOP + board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT,
+            GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH),
+            GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT),
             BEGINNER_COLS * BOX_WIDTH,
             BEGINNER_ROWS * BOX_HEIGHT);
 
@@ -650,7 +659,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // Stat rect ( = [mines][smiley][timer] )
         setRect(&board->statRect,
-            STAT_LEFT_V + (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
+            STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
             STAT_TOP_V,
             STAT_WIDTH, STAT_HEIGHT);
     }
