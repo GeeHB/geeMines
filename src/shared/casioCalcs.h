@@ -3,6 +3,7 @@
 //--    casioCalcs.h
 //--
 //--            Types and defines specific to the casio targets
+//--            & shared functions
 //--
 //----------------------------------------------------------------------
 
@@ -94,7 +95,7 @@ typedef struct __rect{
 } RECT, * PRECT;
 
 //
-// Rect. manipulation fucntions
+// Rect. manipulation functions
 //
 
 // setRect() : Set rect dims & pos
@@ -133,6 +134,47 @@ BOOL copyRect(PRECT const dest, PRECT const src);
 //  @return : TRUE if successfully inflated
 //
 BOOL inflateRect(PRECT const rect, int dx, int dy);
+
+#ifdef TRACE_MODE
+
+//
+// Debug & trace primitives
+//
+
+// __coordtoa() : Format a point coord. to an output string
+//
+//  This specific method creates a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed it is always equal to 10
+//
+//  This method assumes the output buffer - ie. str - is large enough to contain
+//  the name and the formated value.
+//
+//  @name : Name of the value (can be NULL)
+//  @x,@y : Position to show
+//  @str : Pointer to output string
+//
+//  @return : pointer to formated string
+//
+char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str);
+
+// __atoi() : Convert a num. val to a string
+//
+//  @num : Numeric value to convert
+//  @str : String to reverse
+//
+//  @return : a pointer to the string
+//
+char* __atoi(int num, char *str);
+
+// __strrev() : Reverse a string
+//
+//  @str : String to reverse
+//
+void __strrev(char *str);
+
+#endif // TRACE_MODE
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 
