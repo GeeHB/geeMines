@@ -68,8 +68,7 @@ extern "C" {
 // Game state
 //
 typedef enum {
-    STATE_WAITING, STATE_PLAYING,
-    STATE_WON, STATE_LOST
+    STATE_WAITING, STATE_PLAYING, STATE_WON, STATE_LOST
 } GAME_STATE;
 
 // Orientation
@@ -77,12 +76,6 @@ typedef enum {
 typedef enum {
     CALC_VERTICAL = 0, CALC_HORIZONTAL
 } CALC_ORIENTATION;
-
-// Type of click (action)
-//
-typedef enum{
-    ACTION_STEP, ACTION_QUESTION, ACTION_FLAG
-} ACTION, * PACTION;
 
 // Smiley state
 //
@@ -143,13 +136,6 @@ void board_drawEx(PBOARD const board, BOOL update);
 #define board_draw(board) board_drawEx(board, TRUE)
 #define board_update(board) board_drawEx(board, TRUE)
 
-//  board_click() : User "clicks" on the a box
-//
-//  @board : Pointer to the board
-//  @pos : Box coordinates in the current viewPort
-//  @action : action type
-//
-void board_click(PBOARD const board, PCOORD const pos, ACTION action);
 
 //  board_setGameStateEx() : Change the state of a game
 //
@@ -227,18 +213,18 @@ void board_drawTimeEx(PBOARD const board, BOOL update);
 void board_drawSmileyEx(PBOARD const board, BOOL update);
 #define board_drawSmiley(board) board_drawSmileyEx(board, TRUE)
 
-//  board_drawBoxEx() : Draw a single box
+//  board_drawBox() : Draw a single box
 //
 //      These 2 functions draw a given box.
 //      board_drawBox checks wether a rotation needs to be done
-//      whereas board_drawBoxEx assumes rotation has been done by the calling function
+//      whereas board_directDrawBox assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
 //  @pos : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
+void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy);
 
 //  board_drawBoxAtPos() : Draw the box at a given position
 //

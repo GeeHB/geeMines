@@ -275,7 +275,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             }
 #endif // TRACE_MODE
 */
-            board_drawBoxEx(board, &pos, rect.x, rect.y);
+            board_directDrawBox(board, &pos, rect.x, rect.y);
             offsetRect(&rect, offsetCol.x, offsetCol.y);
         }
 
@@ -417,17 +417,28 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
     }
 }
 
-//  board_drawBoxEx() : Draw a single box
+///  board_drawBox() : Draw a single box
 //
 //      These 2 functions draw a given box.
 //      board_drawBox checks wether a rotation needs to be done
-//      whereas board_drawBoxEx assumes rotation has been done by the calling function
+//      whereas board_directDrawBox assumes rotation has been done by the calling function
 //
 //  @board : Pointer to the board
 //  @pos : Box coordinates in the grid
 //  @dx, @dy : Screen coordinates of the top-left corner
 //
-void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
+void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
+    if (CALC_HORIZONTAL == board->orientation){
+        RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
+        rotateRect(&rect);
+        board_directDrawBox(board, pos, rect.x, rect.y);
+    }
+    else{
+        board_directDrawBox(board, pos, dx, dy);
+    }
+}
+
+void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
     PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
@@ -446,17 +457,6 @@ void board_drawBoxEx(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t
         printf("| %c ", box->state>BS_DICEY_DOWN?'0' + (15 - box->state):' ');
     }
 #endif // #ifdef DEST_CASIO_CALC
-}
-
-void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
-    if (CALC_HORIZONTAL == board->orientation){
-        RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
-        rotateRect(&rect);
-        board_drawBoxEx(board, pos, rect.x, rect.y);
-    }
-    else{
-        board_drawBoxEx(board, pos, dx, dy);
-    }
 }
 
 //  board_drawBoxAtPos() : Draw the box at a given position
