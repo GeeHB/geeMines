@@ -682,7 +682,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 #endif // #ifdef DEST_CASIO_CALC
     }
     else{
-        board_drawBoxEx(board, pos, base.x, base.y);
+        board_drawBox(board, pos, base.x, base.y);
     }
 
 #ifdef TRACE_MODE
