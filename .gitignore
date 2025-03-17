@@ -12,7 +12,6 @@ config.jhb
 # Outputs
 /build-cg
 /build-cg-push
-/*.g3a*
 *.o
 /build
 linuxMines/bin/Debug
