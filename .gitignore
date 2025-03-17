@@ -7,7 +7,6 @@
 *.xcf
 *.depend
 *.ico
-config.jhb
 
 # Outputs
 /build-cg
