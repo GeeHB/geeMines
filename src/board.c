@@ -72,8 +72,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     board_setOrientation(board, board->orientation);
 
     // New game !
-    board->gameState = STATE_WAITING;
-    board->smileyState = SMILEY_HAPPY;
+    board_setGameStateEx(board, STATE_WAITING, FALSE);
     board->minesLeft = (int8_t)board->grid->mines;
     board->time = 0;
     board->steps = 0;
@@ -114,7 +113,7 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         case STATE_WON:
         {
             PBOX box;
-            //ZeroMinesLeft();
+            board->minesLeft = 0;
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
             for (r = 0; r < board->grid->size.row; r++)
                 for (c = 0; c < board->grid->size.col; c++){
@@ -150,13 +149,10 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             break;
         }
 
+        case STATE_WAITING:
         case STATE_PLAYING:
             board_setSmileyEx(board, SMILEY_HAPPY, redraw);
             break;
-
-        default:
-            break;
-
     } // switch
 
     if (redrawGrid){
@@ -212,11 +208,13 @@ void board_drawEx(PBOARD const board, BOOL update){
     drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
+    // Stats
     board_drawBorder(board, &board->statRect, STAT_BORDER);
     board_drawMinesLeftEx(board, FALSE);
     board_drawSmileyEx(board, FALSE);
     board_drawTimeEx(board, FALSE);
 
+    // Grid
     board_drawBorder(board, &board->playgroundRect, PLAYGROUND_BORDER);
     board_drawGridEx(board, update);  // + update
 }
@@ -625,21 +623,52 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board){
         board->orientation = orientation;
 
-        // Play ground (grid + viewport buttons)
-        setRect(&board->playgroundRect,
-            GRID_VIEWPORT_LEFT,
-            GRID_VIEWPORT_TOP,
-            BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
-            BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT)));
+        if (board->orientation == CALC_VERTICAL){
+            // Playground (grid + viewport buttons)
+            setRect(&board->playgroundRect,
+                GRID_VIEWPORT_LEFT,
+                GRID_VIEWPORT_TOP,
+                BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
+                BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT)));
 
-        // Grid position
-        setRect(&board->gridRect,
-            GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH),
-            GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT),
-            BEGINNER_COLS * BOX_WIDTH,
-            BEGINNER_ROWS * BOX_HEIGHT);
+            // Grid position
+            setRect(&board->gridRect,
+                GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH),
+                GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT),
+                BEGINNER_COLS * BOX_WIDTH,
+                BEGINNER_ROWS * BOX_HEIGHT);
+
+            // Stat rect ( = [mines][smiley][timer] )
+            setRect(&board->statRect,
+                STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
+                STAT_TOP_V,
+                STAT_WIDTH, STAT_HEIGHT);
+        }
+        else{
+            // Stat rect ( = [mines][smiley][timer] )
+            setRect(&board->statRect,
+                (CASIO_HEIGHT - STAT_WIDTH) / 2,
+                STAT_TOP_V, STAT_WIDTH, STAT_HEIGHT);
+
+            // Playground (grid + viewport buttons)
+            setRect(&board->playgroundRect,
+                board->statRect.x,
+                board->statRect.y + STAT_HEIGHT + STAT_BORDER + PLAYGROUND_BORDER,
+                BEGINNER_COLS * BOX_WIDTH, BEGINNER_ROWS * BOX_HEIGHT);
+            copyRect(&board->gridRect, &board->playgroundRect);
+
+            if (!board->fullGrid){
+                board->statRect.x -= GRID_VIEWPORT_BUTTON_WIDTH;
+                board->statRect.w += 2 * GRID_VIEWPORT_BUTTON_WIDTH;
+                board->statRect.h += 2 * GRID_VIEWPORT_BUTTON_HEIGHT;
+
+                board->gridRect.y += GRID_VIEWPORT_BUTTON_HEIGHT;
+            }
+        }   // if (board->orientation == CALC_VERTICAL)
 
         // Viewport navigation buttons
+        //
+
         // top button
         setRect(&board->viewPort.navButtons[0],
             board->gridRect.x + (board->gridRect.w - GRID_VIEWPORT_BUTTON_WIDTH) / 2,
@@ -664,12 +693,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             board->viewPort.navButtons[1].y,
             GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
 
-        // Stat rect ( = [mines][smiley][timer] )
-        setRect(&board->statRect,
-            STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
-            STAT_TOP_V,
-            STAT_WIDTH, STAT_HEIGHT);
-    }
+    } // if (board)
 }
 
 //  board_selectBoxEx() : Select a box

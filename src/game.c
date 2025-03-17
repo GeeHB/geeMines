@@ -24,7 +24,6 @@ extern bopti_image_t g_pause;
 //
 void _onNewGame(PBOARD const board, uint8_t level){
     board_init(board, level);
-    board_setGameState(board, STATE_WAITING);
     board_update(board);
 }
 
@@ -48,27 +47,13 @@ POWNMENU _createGameMenu(){
     return menu;
 }
 
-#ifdef DEST_CASIO_CALC
-
-// __callbackTick() : Callback function for timer
-//
-//  This function is used during game to make selected box blink
-//
-//  @pTick : pointer to blinking state indicator
-//
-//  @return : TIMER_CONTINUE if valid
-//
-static int __callbackTick(volatile int *pTick){
-    *pTick = 1;
-    return TIMER_CONTINUE;
-}
-
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
 //
 //  @return : FALSE on error
 //
+#ifdef DEST_CASIO_CALC
 BOOL _onStartGame(PBOARD const board){
     if (!board){
         return FALSE;
@@ -108,12 +93,10 @@ BOOL _onStartGame(PBOARD const board){
             sleep();
         }
         tick = 0;
-
-        // Time to blink ?
         tickCount++;
 
         if (0 == (tickCount % BLINK_CURSOR)){
-            redraw |= REDRAW_SELECTION;
+            redraw |= REDRAW_SELECTION; // Time to blink ?
         }
 
         if (0 == (tickCount % TIMER_SECOND)){
@@ -156,6 +139,7 @@ BOOL _onStartGame(PBOARD const board){
                     }
                     else{
                         board_gameLost(board);
+                        redraw = REDRAW_UPDATE;
                     }
 
                     break;
@@ -241,7 +225,6 @@ BOOL _onStartGame(PBOARD const board){
     }
 
     // Display end status board
-    board_draw(board);
     menu_free(gMenu);
 
     return TRUE;
@@ -546,5 +529,24 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
         }
     }
 }
+
+//
+// Utils
+//
+
+// __callbackTick() : Callback function for timer
+//
+//  This function is used during game to make selected box blink
+//
+//  @pTick : pointer to blinking state indicator
+//
+//  @return : TIMER_CONTINUE if valid
+//
+#ifdef DEST_CASIO_CALC
+static int __callbackTick(volatile int *pTick){
+    *pTick = 1;
+    return TIMER_CONTINUE;
+}
+#endif // #ifdef DEST_CASIO_CALC
 
 // EOF
