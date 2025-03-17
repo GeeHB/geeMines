@@ -32,6 +32,11 @@
 #define IDM_START           2
 #define IDS_START           "Start"
 
+#ifdef _DEBUG_
+#define IDM_DEBUG           3
+#define IDS_DEBUG           "Debug"
+#endif // #ifdef _DEBUG_
+
 #define IDM_QUIT            6
 #define IDS_QUIT            "Quit"
 

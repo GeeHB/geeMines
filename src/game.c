@@ -81,7 +81,7 @@ BOOL _onStartGame(PBOARD const board){
 
     MENUACTION action;
     COORD pos = {0,0}, oPos = {0, 0};
-    BOOL cont = TRUE, navButtons = FALSE, hightLighted = FALSE;
+    BOOL navButtons = FALSE, hightLighted = FALSE;
     uint16_t redraw = NO_REDRAW;
 
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
@@ -99,10 +99,10 @@ BOOL _onStartGame(PBOARD const board){
         timer_start(timerID);   // set the timer
     }
     else{
-        cont = FALSE;   // No timer => no game
+        board->gameState = STATE_CANCELLED;   // No timer => no game
     }
 
-    while (cont){
+    while (board->gameState == STATE_PLAYING){
         // Time management
         while(!tick){
             sleep();
@@ -152,12 +152,10 @@ BOOL _onStartGame(PBOARD const board){
                     if (_onStep(board, &pos, &redraw)){
                         if (board->steps == board->grid->maxSteps){
                             board_gameWon(board);
-                            cont = FALSE;
                         }
                     }
                     else{
                         board_gameLost(board);
-                        cont = FALSE;
                     }
 
                     break;
@@ -179,8 +177,7 @@ BOOL _onStartGame(PBOARD const board){
 
                 // Cancel (end) the game
                 case IDM_CANCEL:
-                    board_setGameStateEx(board, STATE_LOST, TRUE);
-                    cont = FALSE;
+                    board_setGameStateEx(board, STATE_CANCELLED, TRUE);
                     break;
 
                 default:
@@ -227,7 +224,6 @@ BOOL _onStartGame(PBOARD const board){
                 if (redraw & REDRAW_TIME){
                     if (++board->time >= TIMER_MAX_VALUE){
                         board_gameLost(board);
-                        cont = FALSE;
                     }
 
                     board_drawTimeEx(board, FALSE);     // Time has changed
@@ -237,7 +233,7 @@ BOOL _onStartGame(PBOARD const board){
                 redraw = NO_REDRAW;
             } // if (reDraw)
         } // if (menu_handleKeyboard
-    } // while (cont)
+    } // while (board->gameState == STATE_PLAYING)
 
     // stop the timer
     if (timerID >= 0){

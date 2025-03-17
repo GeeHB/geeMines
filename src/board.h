@@ -68,7 +68,7 @@ extern "C" {
 // Game state
 //
 typedef enum {
-    STATE_WAITING, STATE_PLAYING, STATE_WON, STATE_LOST
+    STATE_WAITING, STATE_PLAYING, STATE_WON, STATE_LOST, STATE_CANCELLED
 } GAME_STATE;
 
 // Orientation
@@ -106,6 +106,9 @@ typedef struct __board{
     RECT playgroundRect;
     RECT gridRect;
     RECT statRect;
+#ifdef _DEBUG_
+    BOOL debug;
+#endif // #ifdef _DEBUG_
 } BOARD, * PBOARD;
 
 //
