@@ -169,30 +169,11 @@ void grid_display(PGRID const grid){
 //
 uint8_t grid_countMines(PGRID const grid, PCOORD const pos){
     uint8_t sMines = 0;
-    int8_t r, rmin, rmax;
-    int8_t c, cmin, cmax;
-
-    rmin = pos->row-1;
-    if (rmin<0){
-        rmin =0;
-    }
-    rmax = pos->row+1;
-    if (rmax>(int8_t)grid->size.row-1){
-        rmax = (int8_t)grid->size.row-1;
-    }
-
-    cmin = pos->col-1;
-    if (cmin<0){
-        cmin =0;
-    }
-    cmax = pos->col+1;
-    if (cmax>(int8_t)grid->size.col-1){
-        cmax = (int8_t)grid->size.col-1;
-    }
-
-    for (r = rmin; r <= rmax; r++){
-        for (c = cmin; c <= cmax; c++){
-            if (!(r == pos->row && c == pos->col) &&
+    int8_t r,c;
+    for (r = pos->row-1; r <= pos->row+1; r++){
+        for (c = pos->col-1; c <= pos->col+1; c++){
+            if (GRID_IS_VALID_POS(grid,r, c) &&
+                (r != pos->row || c != pos->col) &&
                 BOX_AT(grid, r, c)->mine){
                 sMines++;
             }

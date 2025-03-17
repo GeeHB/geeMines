@@ -78,7 +78,7 @@
 typedef uint8_t BOOL;
 
 // Ensure value is in the range
-#define IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
+#define SET_IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
 
 // Point coordinates
 //
