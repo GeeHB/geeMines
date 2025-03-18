@@ -168,18 +168,6 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
 // Utils
 //
 
-// __callbackTick() : Callback function for timer
-//
-//  This function is used during game to make selected box blink
-//
-//  @pTick : pointer to blinking state indicator
-//
-//  @return : TIMER_CONTINUE if valid
-//
-#ifdef DEST_CASIO_CALC
-static int __callbackTick(volatile int *pTick)
-#endif // #ifdef DEST_CASIO_CALC
-
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus
