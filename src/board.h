@@ -66,6 +66,7 @@ extern "C" {
 #define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
 #define STAT_HEIGHT         SMILEY_HEIGHT
 
+// 'led' IDs in the leds bitmap
 #define LED_MINUS_ID        11      // reverse order
 #define LED_EMPTY_ID        10
 
@@ -73,7 +74,7 @@ extern "C" {
 //
 #define TIMER_OFFSET_V      LED_ZONE_WIDTH + SMILEY_WIDTH
 
-#define TIMER_MAX_VALUE     99      // Max. game duration in sec.
+#define TIMER_MAX_VALUE     999      // Max. game duration in sec.
 
 // Game state
 //
@@ -97,7 +98,7 @@ typedef enum {
 //
 typedef struct __viewPort{
     DIMS dimensions;        // max. box count (w x h)
-    RECT visibleFrame;      // current visible boxes window
+    RECT visibleFrame;      // current visible boxes IDs
     RECT navButtons[4];
 }VIEWPORT, * PVIEWPORT;
 
@@ -148,7 +149,6 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level);
 void board_drawEx(PBOARD const board, BOOL update);
 #define board_draw(board) board_drawEx(board, TRUE)
 #define board_update(board) board_drawEx(board, TRUE)
-
 
 //  board_setGameStateEx() : Change the state of a game
 //
