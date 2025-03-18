@@ -123,11 +123,30 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     // Auto step surrounding boxes
     if (!minesAround){
         COORD nPos;
-        int8_t r,c;
-        for (r = pos->row-1; r <= pos->row+1; r++){
-            for (c = pos->col-1; c <= pos->col+1; c++){
-                 if (GRID_IS_VALID_POS(board->grid, r, c) &&
-                     (r != pos->row || c != pos->col)){
+        int8_t r, rmin, rmax;
+        int8_t c, cmin, cmax;
+
+        rmin = pos->row-1;
+        if (rmin<0){
+            rmin =0;
+        }
+        rmax = pos->row+1;
+        if (rmax>(int8_t)board->grid->size.row-1){
+            rmax = (int8_t)board->grid->size.row-1;
+        }
+
+        cmin = pos->col-1;
+        if (cmin<0){
+            cmin =0;
+        }
+        cmax = pos->col+1;
+        if (cmax>(int8_t)board->grid->size.col-1){
+            cmax = (int8_t)board->grid->size.col-1;
+        }
+
+        for (r = rmin; r <= rmax; r++){
+            for (c = cmin; c <= cmax; c++){
+                if (r != pos->row || c != pos->col){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
                 }
@@ -176,7 +195,7 @@ int main()
                     case IDM_GAME_BEGINNER :{
                         PBOARD board = board_create();
                         COORD pos;
-                        uint16_t redraw = 0;
+                        //uint16_t redraw = 0;
                         board_init(board, LEVEL_BEGINNER);
 
                         grid_display(board->grid);
@@ -184,10 +203,9 @@ int main()
 
                         pos.col = 6;
                         pos.row = 4;
-                        _onStep(board, &pos, &redraw);
+                        pos.col++;
+                        //_onStep(board, &pos, &redraw);
                         board_drawGridEx(board, FALSE);
-                        board_drawBorder(board, &board->statRect, STAT_BORDER);
-                        board_drawMinesLeftEx(board, FALSE);
 
                         board_free(board, TRUE);
 

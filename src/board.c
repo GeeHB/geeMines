@@ -77,6 +77,10 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     board->time = 0;
     board->steps = 0;
 
+#ifdef _DEBUG_
+    board->debug = TRUE;
+#endif // #ifdef _DEBUG_
+
     return TRUE;
 }
 

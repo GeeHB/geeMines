@@ -282,10 +282,11 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     if (!minesAround){
         COORD nPos;
         int8_t r,c;
-        for (r = pos->row-1; r <= pos->row+1; r++){
-            for (c = pos->col-1; c <= pos->col+1; c++){
-                 if (GRID_IS_VALID_POS(board->grid, r, c) &&
-                     (r != pos->row || c != pos->col)){
+        for (r = SET_IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
+            r <= SET_IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
+            for (c = SET_IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
+                c <= SET_IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1); c++){
+                if (! (r == pos->row && c == pos->col)){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
                 }
