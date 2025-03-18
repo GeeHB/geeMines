@@ -202,7 +202,7 @@ BOOL _onStartGame(PBOARD const board){
                     menu_updateEx(gMenu, FALSE);
 
                     if (!board->fullGrid){
-                        board_drawViewPortButtonsEx(board, TRUE, FALSE);
+                        board_drawNavButtonsEx(board, TRUE, FALSE);
                     }
                 }
 
@@ -213,7 +213,7 @@ BOOL _onStartGame(PBOARD const board){
 
                 if (redraw & REDRAW_NAV_BUTTONS){
                     navButtons = !navButtons;
-                    board_drawViewPortButtonsEx(board, navButtons, FALSE); // Blink nav buttons
+                    board_drawNavButtonsEx(board, navButtons, FALSE); // Blink nav buttons
                 }
 
                 if (redraw & REDRAW_MINES_LEFT){

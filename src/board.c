@@ -63,12 +63,6 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     // Mines
     grid_layMines(board->grid);
 
-    // Initial viewport
-    setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
-    board->viewPort.dimensions.col = board->grid->size.col;
-    board->viewPort.dimensions.row = board->grid->size.row;
-    board->fullGrid = (LEVEL_BEGINNER == level);
-
     board_setOrientation(board, board->orientation);
 
     // New game !
@@ -294,7 +288,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     }
 
     if (!board->fullGrid){
-        board_drawViewPortButtonsEx(board, FALSE, FALSE);
+        board_drawNavButtonsEx(board, FALSE, FALSE);
     }
 
     if (update){
@@ -478,13 +472,13 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
     board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
-// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
+// board_drawNavButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update){
+void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update){
     uint8_t sequence[4];    // Img IDs
     BOOL showButton;
     if (CALC_HORIZONTAL == board->orientation){
@@ -533,8 +527,8 @@ void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update){
 #ifdef DEST_CASIO_CALC
             dsubimage(
                 board->viewPort.navButtons[id].x, board->viewPort.navButtons[id].y,
-                &g_viewport, 0, id * GRID_VIEWPORT_BUTTON_WIDTH,
-                GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT,
+                &g_viewport, 0, id * NAV_BUTTON_HEIGHT,
+                NAV_BUTTON_HEIGHT, NAV_BUTTON_HEIGHT,
                 DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
            }
@@ -627,26 +621,36 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board){
         board->orientation = orientation;
 
+        // no nav. buttons on 'beginner' mode
+        board->fullGrid = (LEVEL_BEGINNER == board->grid->level);
+
+        board->viewPort.dimensions.col = board->grid->size.col;
+        board->viewPort.dimensions.row = board->grid->size.row;
+
+        // Put widgets on the screen
         if (board->orientation == CALC_VERTICAL){
             // Playground (grid + viewport buttons)
             setRect(&board->playgroundRect,
                 GRID_VIEWPORT_LEFT,
                 GRID_VIEWPORT_TOP,
-                BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
-                BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_HEIGHT)));
+                BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * NAV_BUTTON_WIDTH)),
+                BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * NAV_BUTTON_HEIGHT)));
 
             // Grid position
             setRect(&board->gridRect,
-                GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_WIDTH),
-                GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : GRID_VIEWPORT_BUTTON_HEIGHT),
+                GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : NAV_BUTTON_WIDTH),
+                GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : NAV_BUTTON_HEIGHT),
                 BEGINNER_COLS * BOX_WIDTH,
                 BEGINNER_ROWS * BOX_HEIGHT);
 
             // Stat rect ( = [mines][smiley][timer] )
             setRect(&board->statRect,
-                STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * GRID_VIEWPORT_BUTTON_WIDTH)),
+                STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * NAV_BUTTON_WIDTH)),
                 STAT_TOP_V,
                 STAT_WIDTH, STAT_HEIGHT);
+
+            // Viewport (only one grid size in vertical mode)
+            setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
         }
         else{
             // Stat rect ( = [mines][smiley][timer] )
@@ -662,40 +666,57 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             copyRect(&board->gridRect, &board->playgroundRect);
 
             if (!board->fullGrid){
-                board->statRect.x -= GRID_VIEWPORT_BUTTON_WIDTH;
-                board->statRect.w += 2 * GRID_VIEWPORT_BUTTON_WIDTH;
-                board->statRect.h += 2 * GRID_VIEWPORT_BUTTON_HEIGHT;
+                board->statRect.x -= NAV_BUTTON_WIDTH;
+                board->statRect.w += 2 * NAV_BUTTON_WIDTH;
+                board->statRect.h += 2 * NAV_BUTTON_HEIGHT;
 
-                board->gridRect.y += GRID_VIEWPORT_BUTTON_HEIGHT;
+                board->gridRect.y += NAV_BUTTON_HEIGHT;
             }
+
+            // Viewport
+            switch (board->grid->level){
+                case LEVEL_BEGINNER:
+                    setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
+                    break;
+
+                case LEVEL_MEDIUM:
+                case LEVEL_EXPERT:
+                    setRect(&board->viewPort.visibleFrame, 0, 0,
+                        MIN_VAL(board->grid->size.col, BUTTON_H_MAX),
+                        MIN_VAL(board->grid->size.row, BUTTON_V_MAX));
+                    break;
+            }
+
+            setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
         }   // if (board->orientation == CALC_VERTICAL)
 
         // Viewport navigation buttons
         //
+        if (!board->fullGrid){
+            // top button
+            setRect(&board->viewPort.navButtons[0],
+                board->gridRect.x + (board->gridRect.w - NAV_BUTTON_WIDTH) / 2,
+                board->gridRect.y - NAV_BUTTON_HEIGHT,
+                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
 
-        // top button
-        setRect(&board->viewPort.navButtons[0],
-            board->gridRect.x + (board->gridRect.w - GRID_VIEWPORT_BUTTON_WIDTH) / 2,
-            board->gridRect.y - GRID_VIEWPORT_BUTTON_HEIGHT,
-            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+            // right btton
+            setRect(&board->viewPort.navButtons[1],
+                board->gridRect.x + board->gridRect.w,
+                board->gridRect.y + (board->gridRect.h - NAV_BUTTON_HEIGHT) / 2,
+                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
 
-        // right btton
-        setRect(&board->viewPort.navButtons[1],
-            board->gridRect.x + board->gridRect.w,
-            board->gridRect.y + (board->gridRect.h - GRID_VIEWPORT_BUTTON_HEIGHT) / 2,
-            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+            // bottom button
+            setRect(&board->viewPort.navButtons[2],
+                board->viewPort.navButtons[0].x,
+                board->gridRect.y + board->gridRect.h,
+                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
 
-        // bottom button
-        setRect(&board->viewPort.navButtons[2],
-            board->viewPort.navButtons[0].x,
-            board->gridRect.y + board->gridRect.h,
-            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
-
-        // left button
-        setRect(&board->viewPort.navButtons[3],
-            board->gridRect.x - GRID_VIEWPORT_BUTTON_WIDTH,
-            board->viewPort.navButtons[1].y,
-            GRID_VIEWPORT_BUTTON_WIDTH, GRID_VIEWPORT_BUTTON_HEIGHT);
+            // left button
+            setRect(&board->viewPort.navButtons[3],
+                board->gridRect.x - NAV_BUTTON_WIDTH,
+                board->viewPort.navButtons[1].y,
+                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
+        }
 
     } // if (board)
 }

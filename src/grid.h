@@ -74,7 +74,7 @@ typedef struct __grid{
     uint8_t     mines;     // count of mines
     DIMS        size;
     PBOX        boxes;
-    uint8_t     maxSteps;
+    uint8_t     maxSteps;   // # of boxes free of mines
 } GRID, * PGRID;
 
 // Helpers for box access in the grid

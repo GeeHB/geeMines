@@ -32,11 +32,21 @@ extern "C" {
 #define SMILEY_WIDTH        0x0018  // 24
 #define SMILEY_HEIGHT       SMILEY_WIDTH
 
-// Positions & dims.
+// Navigation (scroll) buttons
 //
-#define GRID_VIEWPORT_BUTTON_WIDTH  0x000C      // 12
-#define GRID_VIEWPORT_BUTTON_HEIGHT GRID_VIEWPORT_BUTTON_WIDTH
-#
+
+#define NAV_BUTTON_WIDTH  0x000C      // 12
+#define NAV_BUTTON_HEIGHT NAV_BUTTON_WIDTH
+
+// Counts of buttons in Horizontal mode when nav. buttons are in place
+//
+#define BUTTON_H_MAX    21      // # max of button in horz. mode
+#define BUTTON_V_MAX    8
+
+//
+// Positions & dims
+//
+
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 
@@ -236,14 +246,14 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-// board_drawViewPortButtonsEx() : Draw buttons for viewport scrolling
+// board_drawNavButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawViewPortButtonsEx(PBOARD board, BOOL highLight, BOOL update);
-#define board_drawViewPortButtons(board, highLight) board_drawViewPortButtonsEx(board, highLight, TRUE)
+void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update);
+#define board_drawNavButtons(board, highLight) board_drawNavButtonsEx(board, highLight, TRUE)
 
 // board_drawLed() : Draw a led digit
 //

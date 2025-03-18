@@ -29,14 +29,8 @@ PGRID grid_create(){
     size_t size = sizeof(GRID);
     PGRID grid = (PGRID)malloc(size);
     if (grid){
-        /*
-        grid->minesCount_ = 0;     // count of mines at startup
-        grid->cols_ = 0;           // Grid dimensions
-        grid->rows_ = 0;
-        grid->boxes_ = NULL;
-        */
         memset(grid, 0, size);
-        grid->level = LEVEL_BEGINNER;
+        //grid->level = LEVEL_BEGINNER;
     }
     return grid;
 }

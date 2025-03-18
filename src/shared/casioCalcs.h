@@ -80,6 +80,9 @@ typedef uint8_t BOOL;
 // Ensure value is in the range
 #define SET_IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
 
+// Min.
+#define MIN_VAL(a,b)    (a<=b?a:b)
+
 // Point coordinates
 //
 typedef struct __point{
