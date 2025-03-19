@@ -122,7 +122,7 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_NAV_BUTTONS;
         }
 
-        // A keyboard event ?
+        // A keyboard or menu event ?
         if (menu_handleKeyboard(gMenu, &action)){
             switch (action.value){
                 // Change cursor pos

@@ -61,9 +61,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
         return FALSE;
     }
 
-    // Mines
-    grid_layMines(board->grid);
-
+    grid_layMines(board->grid); // Put mines
     board_setOrientation(board, board->orientation);
 
     // New game !
@@ -255,7 +253,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         origin =rect.x;
     }
 
-    for (r = 0; r < board->grid->size.row; r++){
+    for (r = 0; r < board->viewPort.visibleFrame.h; r++){
         // aligned with first "col"
         if (CALC_HORIZONTAL == board->orientation){
             rect.y = origin;
@@ -264,7 +262,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             rect.x = origin;
         }
 
-        for (c = 0; c < board->grid->size.col; c++){
+        for (c = 0; c < board->viewPort.visibleFrame.w; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
 
 /*
@@ -612,17 +610,17 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         if (board->orientation == CALC_VERTICAL){
             // Playground (grid + viewport buttons)
             setRect(&board->playgroundRect,
-                GRID_VIEWPORT_LEFT,
-                GRID_VIEWPORT_TOP,
-                BEGINNER_COLS * BOX_WIDTH + (int)(board->fullGrid ? 0 : (2 * NAV_BUTTON_WIDTH)),
-                BEGINNER_ROWS * BOX_HEIGHT +(int) (board->fullGrid ? 0 : (2 * NAV_BUTTON_HEIGHT)));
+                GRID_VIEWPORT_LEFT, GRID_VIEWPORT_TOP,
+                BEGINNER_COLS * BOX_WIDTH, BEGINNER_ROWS * BOX_HEIGHT);
+            copyRect(&board->gridRect, &board->playgroundRect);
 
-            // Grid position
-            setRect(&board->gridRect,
-                GRID_VIEWPORT_LEFT + (int)(board->fullGrid ? 0 : NAV_BUTTON_WIDTH),
-                GRID_VIEWPORT_TOP + (int)(board->fullGrid ? 0 : NAV_BUTTON_HEIGHT),
-                BEGINNER_COLS * BOX_WIDTH,
-                BEGINNER_ROWS * BOX_HEIGHT);
+            if (!board->fullGrid){
+                board->playgroundRect.w += 2 * NAV_BUTTON_WIDTH;
+                board->playgroundRect.h += 2 * NAV_BUTTON_HEIGHT;
+
+                board->gridRect.x += NAV_BUTTON_WIDTH;
+                board->gridRect.y += NAV_BUTTON_HEIGHT;
+            }
 
             // Stat rect ( = [mines][smiley][timer] )
             setRect(&board->statRect,
@@ -630,7 +628,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 STAT_TOP_V,
                 STAT_WIDTH, STAT_HEIGHT);
 
-            // Viewport (only one grid size in vertical mode)
+            // Viewport (only 'beginner' size in vertical mode)
             setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
         }
         else{
