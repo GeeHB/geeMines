@@ -170,11 +170,15 @@ BOOL _onStartGame(PBOARD const board){
                     redraw = _onQuestion(board, gMenu, &pos);
                     break;
 
-                // Pause
                 case KEY_CODE_PAUSE:
                     _onPause();
                     board_update(board);    // update screen and menu
                     menu_update(gMenu);
+                    break;
+
+                case KEY_CODE_ROTATE_DISPLAY:
+                    board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
+                    redraw = REDRAW_UPDATE;
                     break;
 
                 // Cancel (end) the game
@@ -286,18 +290,6 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     if (!minesAround){
         COORD nPos;
         int8_t r,c;
-        /*
-        for (r = SET_IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
-            r <= SET_IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
-            for (c = SET_IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
-                c <= SET_IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1); c++){
-                if (! (r == pos->row && c == pos->col)){
-                    nPos = (COORD){.col = c, .row = r};
-                    _onStep(board, &nPos, redraw);
-                }
-            }
-        }
-        */
         for (r=-1; r<=1; r++){
             for (c=-1; c<=1; c++){
                 nPos = (COORD){.col = pos->col + c, .row = pos->row + r};
@@ -551,9 +543,7 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
         else{
             menubar_activateItem(menuBar, IDM_STEP, SEARCH_BY_ID, step);
             menubar_activateItem(menuBar, IDM_FLAG, SEARCH_BY_ID, flag);
-            //menubar_checkMenuItem(menuBar, IDM_FLAG, SEARCH_BY_ID, fState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
             menubar_activateItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, question);
-            //menubar_checkMenuItem(menuBar, IDM_QUESTION, SEARCH_BY_ID, qState?ITEM_STATE_CHECKED:ITEM_STATE_UNCHECKED);
         }
 
         if (current != smiley){

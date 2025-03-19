@@ -124,11 +124,15 @@ int main(void){
                         break;
 #endif // #ifdef _DEBUG_
 
-                    // Pause
                     case KEY_CODE_PAUSE:
                         _onPause();
                         board_update(board);    // update screen and menu
                         menu_update(menu);
+                        break;
+
+                    case KEY_CODE_ROTATE_DISPLAY:
+                        board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
+                        board_update(board);
                         break;
 
                     // End app.
