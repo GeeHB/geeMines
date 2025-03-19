@@ -282,9 +282,7 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness);
 //
 //  @board : Pointer to the board
 //
-//  @return TRUE if done
-//
-BOOL board_changeOrientation(PBOARD const board);
+void board_changeOrientation(PBOARD const board);
 
 //  board_setOrientation() : Set drawing orientation
 //

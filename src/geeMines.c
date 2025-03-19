@@ -116,7 +116,7 @@ int main(void){
 
 #ifdef _DEBUG_
                     case IDM_DEBUG:
-                        board->debug = ! board->debug;
+                        board->debug = !board->debug;
                         menubar_checkMenuItem(menu_getMenuBar(menu), IDM_DEBUG, SEARCH_BY_ID, board->debug?ITEM_CHECKED:ITEM_UNCHECKED);
                         menu_update(menu);
                         break;
