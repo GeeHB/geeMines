@@ -38,13 +38,14 @@ PBOARD board_create(){
         return NULL;
     }
 
-#ifdef _DEBUG_
-    board->debug = TRUE;
-#endif // #ifdef _DEBUG_
-
     // Board is empty !
     memset(board, 0, size);
     board->grid = grid_create();
+
+#ifdef _DEBUG_
+    board->debug = TRUE;    // In debug mode, show mines by default !
+#endif // #ifdef _DEBUG_
+
     return board;
 }
 

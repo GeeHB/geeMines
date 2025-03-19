@@ -34,7 +34,7 @@
 #define REDRAW_NAV_BUTTONS      32      // viewport navigation buttons
 #define REDRAW_GRID             64
 
-#define REDRAW_UPDATE           256     // Just update
+#define REDRAW_UPDATE           128     // Just update
 
 #ifdef DEST_CASIO_CALC
 #include <gint/timer.h>

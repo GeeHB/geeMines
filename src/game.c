@@ -151,10 +151,13 @@ BOOL _onStartGame(PBOARD const board){
                         if (board->steps == board->grid->maxSteps){
                             board_gameWon(board);
                         }
+                        else{
+                            _updateMenuItemsStates(board, gMenu, &pos);
+                            menu_updateEx(gMenu, FALSE);
+                        }
                     }
                     else{
                         board_gameLost(board);
-                        redraw = REDRAW_UPDATE;
                     }
 
                     break;
@@ -240,6 +243,7 @@ BOOL _onStartGame(PBOARD const board){
     }
 
     // Display end status board
+    board_update(board);
     menu_free(gMenu);
 
     return TRUE;
@@ -264,7 +268,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
         return TRUE;
     }
 
-    (*redraw) =REDRAW_UPDATE;
+    (*redraw) = REDRAW_UPDATE;
 
     if (box->mine){
         // stepped on a mine!
@@ -294,10 +298,10 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
             }
         }
         */
-        for (r=-1; r<1; r++){
-            for (c=-1; c<1; c++){
+        for (r=-1; r<=1; r++){
+            for (c=-1; c<=1; c++){
                 nPos = (COORD){.col = pos->col + c, .row = pos->row + r};
-                if (r && c &&
+                if ((r || c) &&
                     nPos.col < board->grid->size.col &&
                     nPos.row < board->grid->size.row){
                         _onStep(board, &nPos, redraw);
