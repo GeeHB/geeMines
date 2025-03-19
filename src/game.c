@@ -243,7 +243,7 @@ BOOL _onStartGame(PBOARD const board){
     }
 
     // Display end status board
-    board_update(board);
+    //board_update(board);
     menu_free(gMenu);
 
     return TRUE;
