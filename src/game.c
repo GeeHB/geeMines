@@ -282,6 +282,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     if (!minesAround){
         COORD nPos;
         int8_t r,c;
+        /*
         for (r = SET_IN_RANGE(pos->row - 1, 0, board->grid->size.row - 1);
             r <= SET_IN_RANGE(pos->row + 1, 0, board->grid->size.row - 1); r++){
             for (c = SET_IN_RANGE(pos->col - 1, 0, board->grid->size.col - 1);
@@ -289,6 +290,17 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
                 if (! (r == pos->row && c == pos->col)){
                     nPos = (COORD){.col = c, .row = r};
                     _onStep(board, &nPos, redraw);
+                }
+            }
+        }
+        */
+        for (r=-1; r<1; r++){
+            for (c=-1; c<1; c++){
+                nPos = (COORD){.col = pos->col + c, .row = pos->row + r};
+                if (r && c &&
+                    nPos.col < board->grid->size.col &&
+                    nPos.row < board->grid->size.row){
+                        _onStep(board, &nPos, redraw);
                 }
             }
         }

@@ -159,6 +159,9 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
 
 int main()
 {
+    uint8_t a = 2;
+    a-=3;
+
     // Création d'un menu
     //
     POWNMENU menu = menu_create();
