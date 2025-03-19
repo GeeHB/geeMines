@@ -14,7 +14,7 @@
 *.o
 /build
 linuxMines/bin/Debug
-
+geeMines.g3a
 
 # Common IDE files
 /linux
