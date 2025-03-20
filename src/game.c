@@ -178,6 +178,7 @@ BOOL _onStartGame(PBOARD const board){
 
                 case KEY_CODE_ROTATE_DISPLAY:
                     board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
+                    board_drawEx(board, FALSE);
                     redraw = REDRAW_UPDATE;
                     break;
 

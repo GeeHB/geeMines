@@ -9,10 +9,10 @@
 #include "board.h"
 #include "grid.h"
 #include <stdint.h>
+#include "shared/menu.h"
 
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
-#include "shared/menu.h"
 #else
 #include <stdio.h>
 #endif // #ifdef DEST_CASIO_CALC
@@ -632,13 +632,14 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
         }
         else{
+            int16_t gridWidth;
 
             // In horizontal mode, stats and grids are aligned (just like in the original game)
             // and centered "horizontally"
 
             // Stat rect ( = [mines][smiley][timer] )
             setRect(&board->statRect,
-                (CASIO_HEIGHT - STAT_WIDTH) / 2,
+                (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - STAT_WIDTH) / 2,
                 STAT_TOP_V, STAT_WIDTH, STAT_HEIGHT);
 
             // 1 - Viewport <= count of visible boxes
@@ -656,10 +657,11 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             }
 
             // 2 - Dimensions of playground and grid rects
+            gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
             setRect(&board->playgroundRect,
-                (CASIO_HEIGHT - BOX_WIDTH * board->playgroundRect.w) / 2,
+                (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - gridWidth) / 2,
                 board->statRect.y + STAT_HEIGHT + STAT_BORDER + PLAYGROUND_BORDER,
-                board->viewPort.visibleFrame.w * BOX_WIDTH,
+                gridWidth,
                 board->viewPort.visibleFrame.h * BOX_HEIGHT);
             copyRect(&board->gridRect, &board->playgroundRect);
 
@@ -738,7 +740,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 //  @pos : Pointer to point coordinates
 //
 void rotatePoint(PPOINT const pos){
-    int16_t ny = CASIO_HEIGHT - pos->x;
+    int16_t ny = CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - pos->x;
     pos->x = pos->y;
     pos->y = ny;
 }
@@ -748,19 +750,22 @@ void rotatePoint(PPOINT const pos){
 //  @rect : Pointer to the rect
 //
 void rotateRect(PRECT const rect){
-    // rect is valid !!!!
-    // assert(rect)
-
     POINT topLeft = {rect->x, rect->y};
     POINT bottomRight = {rect->x + rect->w - 1, rect->y + rect->h - 1};
+    int16_t ow = rect->w;
 
     rotatePoint(&topLeft);
     rotatePoint(&bottomRight);
 
     rect->x = topLeft.x;
     rect->y = bottomRight.y;
+    rect->w = rect->h;
+    rect->h = ow;
+
+    /*
     rect->w = bottomRight.x - rect->x + 1;
     rect->h = topLeft.y - rect->y + 1;
+    */
 }
 
 // EOF

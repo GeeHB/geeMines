@@ -40,7 +40,7 @@ extern "C" {
 
 // Counts of buttons in Horizontal mode when nav. buttons are in place
 //
-#define BUTTON_H_MAX    21      // # max of button in horz. mode
+#define BUTTON_H_MAX    20      // # max of button in horz. mode
 #define BUTTON_V_MAX    8
 
 //
