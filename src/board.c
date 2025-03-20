@@ -563,15 +563,20 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 //
 void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
     RECT rc;
+    BOOL vertical;
 
 #ifdef DEST_CASIO_CALC
-    BOOL vertical = (board->orientation == CALC_VERTICAL);
+    vertical = (board->orientation == CALC_VERTICAL);
     int light, dark;
     light = COLOUR_LT_GREY;
     dark = COLOUR_GREY;
 #endif // #ifdef DEST_CASIO_CALC
 
     copyRect(&rc, rect);
+
+    if (vertical){
+        rotateRect(&rc);
+    }
 
     for (uint8_t count = 0; count < thickness; count++){
         inflateRect(&rc, 1, 1);
@@ -651,8 +656,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 case LEVEL_MEDIUM:
                 case LEVEL_EXPERT:
                     setRect(&board->viewPort.visibleFrame, 0, 0,
-                        MIN_VAL(board->grid->size.col, BUTTON_H_MAX),
-                        MIN_VAL(board->grid->size.row, BUTTON_V_MAX));
+                        MIN_VAL(board->grid->size.col, BUTTON_V_MAX),
+                        MIN_VAL(board->grid->size.row, BUTTON_H_MAX));
                     break;
             }
 
@@ -662,7 +667,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - gridWidth) / 2,
                 board->statRect.y + STAT_HEIGHT + STAT_BORDER + PLAYGROUND_BORDER,
                 gridWidth,
-                board->viewPort.visibleFrame.h * BOX_HEIGHT);
+                board->viewPort.visibleFrame.w * BOX_HEIGHT);
             copyRect(&board->gridRect, &board->playgroundRect);
 
             if (!board->fullGrid){

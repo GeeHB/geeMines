@@ -37,9 +37,7 @@ POWNMENU _createGameMenu(){
         // Create menu bar
         PMENUBAR bar = menu_getMenuBar(menu);
         menubar_appendItem(bar, IDM_STEP, IDS_STEP, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-        //menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
         menubar_appendItem(bar, IDM_FLAG, IDS_FLAG, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-        //menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_CHECKBOX);
         menubar_appendItem(bar, IDM_QUESTION, IDS_QUESTION, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
         menubar_addItem(bar, MENU_POS_RIGHT, IDM_CANCEL, IDS_CANCEL, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
     }
@@ -239,7 +237,7 @@ BOOL _onStartGame(PBOARD const board){
                 dupdate();      // (redraw & REDRAW_UPDATE)
                 redraw = NO_REDRAW;
             } // if (reDraw)
-        } // if (menu_handleKeyboard
+        } // if (menu_handleKeyboard)
     } // while (board->gameState == STATE_PLAYING)
 
     // stop the timer

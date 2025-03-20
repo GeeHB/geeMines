@@ -14,7 +14,7 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.0.1 - beta 3"
+#define APP_VERSION         "0.0.1 - beta 4"
 #define APP_AUTHOR          "GeeHB"
 
 // "About" / Splash screen
