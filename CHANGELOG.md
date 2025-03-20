@@ -7,3 +7,4 @@
     * 'Déplacements' KO en mode horizontal
   * 4 nav bars => 2 scroll bars
     * BUG : pas de rotation des boutons
+    * Changement des noms des ressources, variables et constantes (nav -> scroll)

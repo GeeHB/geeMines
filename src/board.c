@@ -24,7 +24,7 @@
     extern bopti_image_t g_boxes;
     extern bopti_image_t g_smileys;
     extern bopti_image_t g_leds;
-    extern bopti_image_t g_viewport;
+    extern bopti_image_t g_scroll;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_create() : Create an empty board
@@ -476,17 +476,16 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //  @update : Update screen ?
 //
 void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
-    //uint8_t sequence[4];    // Img IDs
+    uint8_t sequence[4];    // Img IDs
     BOOL showButton;
     RECT rect;
-    /*
+
     if (CALC_HORIZONTAL == board->orientation){
         memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
     }
     else{
         memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
     }
-    */
 
     for (uint8_t id=0; id<4; id++){
         // is the button visible ?
@@ -522,17 +521,16 @@ void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
         if (highLight || !showButton){
 #ifdef DEST_CASIO_CALC
             drect(
-                board->viewPort.scrollButtons[id].x, board->viewPort.scrollButtons[id].y,
-                board->viewPort.scrollButtons[id].x + board->viewPort.scrollButtons[id].w - 1,
-                board->viewPort.scrollButtons[id].y + board->viewPort.scrollButtons[id].h - 1,
+                rect.x, rect.y,
+                rect.x + rect.w - 1, rect.y + rect.h - 1,
                 COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
         }
         else{
 #ifdef DEST_CASIO_CALC
             dsubimage(
-                board->viewPort.scrollButtons[id].x, board->viewPort.scrollButtons[id].y,
-                &g_viewport, 0, id * SCROLL_BUTTON_HEIGHT,
+                rect.x, rect.y,
+                &g_scroll, 0, sequence[id] * SCROLL_BUTTON_HEIGHT,
                 SCROLL_BUTTON_HEIGHT, SCROLL_BUTTON_HEIGHT,
                 DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
