@@ -285,7 +285,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     }
 
     if (!board->fullGrid){
-        board_drawNavButtonsEx(board, FALSE, FALSE);
+        board_drawScrollButtonsEx(board, FALSE, FALSE);
     }
 
     if (update){
@@ -428,7 +428,7 @@ void board_drawSmileyEx(PBOARD const board, BOOL update){
 //
 void board_drawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint16_t dy){
     if (CALC_HORIZONTAL == board->orientation){
-        RECT rect = {dx, dy, dx + BOX_WIDTH - 1, dy + BOX_HEIGHT - 1};
+        RECT rect = {dx, dy, BOX_WIDTH, BOX_HEIGHT};
         rotateRect(&rect);
         board_directDrawBox(board, pos, rect.x, rect.y);
     }
@@ -469,13 +469,13 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
     board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
-// board_drawNavButtonsEx() : Draw buttons for viewport scrolling
+// board_drawScrollButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update){
+void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
     uint8_t sequence[4];    // Img IDs
     BOOL showButton;
     if (CALC_HORIZONTAL == board->orientation){
@@ -513,9 +513,9 @@ void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update){
         if (highLight || !showButton){
 #ifdef DEST_CASIO_CALC
             drect(
-                board->viewPort.navButtons[id].x, board->viewPort.navButtons[id].y,
-                board->viewPort.navButtons[id].x + board->viewPort.navButtons[id].w - 1,
-                board->viewPort.navButtons[id].y + board->viewPort.navButtons[id].h - 1,
+                board->viewPort.scrollButtons[id].x, board->viewPort.scrollButtons[id].y,
+                board->viewPort.scrollButtons[id].x + board->viewPort.scrollButtons[id].w - 1,
+                board->viewPort.scrollButtons[id].y + board->viewPort.scrollButtons[id].h - 1,
                 //showButton?C_INVERT:COL_BKGROUND);
                 COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
@@ -523,9 +523,9 @@ void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update){
         else{
 #ifdef DEST_CASIO_CALC
             dsubimage(
-                board->viewPort.navButtons[id].x, board->viewPort.navButtons[id].y,
-                &g_viewport, 0, id * NAV_BUTTON_HEIGHT,
-                NAV_BUTTON_HEIGHT, NAV_BUTTON_HEIGHT,
+                board->viewPort.scrollButtons[id].x, board->viewPort.scrollButtons[id].y,
+                &g_viewport, 0, id * SCROLL_BUTTON_HEIGHT,
+                SCROLL_BUTTON_HEIGHT, SCROLL_BUTTON_HEIGHT,
                 DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
            }
@@ -574,7 +574,7 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
 
     copyRect(&rc, rect);
 
-    if (vertical){
+    if (!vertical){
         rotateRect(&rc);
     }
 
@@ -605,7 +605,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board && board->grid){
         board->orientation = orientation;
 
-        // no nav. buttons on 'beginner' mode
+        // no scroll buttons on 'beginner' mode
         board->fullGrid = (LEVEL_BEGINNER == board->grid->level);
 
         board->viewPort.dimensions.col = board->grid->size.col;
@@ -620,16 +620,13 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             copyRect(&board->gridRect, &board->playgroundRect);
 
             if (!board->fullGrid){
-                board->playgroundRect.w += 2 * NAV_BUTTON_WIDTH;
-                board->playgroundRect.h += 2 * NAV_BUTTON_HEIGHT;
-
-                board->gridRect.x += NAV_BUTTON_WIDTH;
-                board->gridRect.y += NAV_BUTTON_HEIGHT;
+                board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
+                board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
             }
 
             // Stat rect ( = [mines][smiley][timer] )
             setRect(&board->statRect,
-                STAT_LEFT_V + (int)(board->fullGrid ? 0 : (2 * NAV_BUTTON_WIDTH)),
+                STAT_LEFT_V + (int)(board->fullGrid ? 0 : SCROLL_BUTTON_WIDTH),
                 STAT_TOP_V,
                 STAT_WIDTH, STAT_HEIGHT);
 
@@ -637,7 +634,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
         }
         else{
-            int16_t gridWidth;
+            int16_t gridWidth, gridHeight;
 
             // In horizontal mode, stats and grids are aligned (just like in the original game)
             // and centered "horizontally"
@@ -663,49 +660,46 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
             // 2 - Dimensions of playground and grid rects
             gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
+            gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
             setRect(&board->playgroundRect,
                 (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - gridWidth) / 2,
-                board->statRect.y + STAT_HEIGHT + STAT_BORDER + PLAYGROUND_BORDER,
-                gridWidth,
-                board->viewPort.visibleFrame.w * BOX_HEIGHT);
+                board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
+                gridWidth, gridHeight);
             copyRect(&board->gridRect, &board->playgroundRect);
 
             if (!board->fullGrid){
-                board->playgroundRect.x -= NAV_BUTTON_WIDTH;
-                board->playgroundRect.w += 2 * NAV_BUTTON_WIDTH;
-                board->playgroundRect.h += 2 * NAV_BUTTON_HEIGHT;
-
-                board->gridRect.y += NAV_BUTTON_HEIGHT;
+                board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
+                board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
             }
 
         }   // if (board->orientation == CALC_VERTICAL)
 
-        // Viewport navigation buttons
+        // Viewport scroll buttons
         //
         if (!board->fullGrid){
             // top button
-            setRect(&board->viewPort.navButtons[0],
-                board->gridRect.x + (board->gridRect.w - NAV_BUTTON_WIDTH) / 2,
-                board->gridRect.y - NAV_BUTTON_HEIGHT,
-                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
-
-            // right btton
-            setRect(&board->viewPort.navButtons[1],
+            setRect(&board->viewPort.scrollButtons[0],
                 board->gridRect.x + board->gridRect.w,
-                board->gridRect.y + (board->gridRect.h - NAV_BUTTON_HEIGHT) / 2,
-                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
+                board->gridRect.y + 1,
+                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+
+            // right button
+            setRect(&board->viewPort.scrollButtons[1],
+                board->gridRect.x + board->gridRect.w - 2 - SCROLL_BUTTON_WIDTH,
+                board->gridRect.y + board->gridRect.h,
+                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
 
             // bottom button
-            setRect(&board->viewPort.navButtons[2],
-                board->viewPort.navButtons[0].x,
-                board->gridRect.y + board->gridRect.h,
-                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
+            setRect(&board->viewPort.scrollButtons[2],
+                board->gridRect.x + board->gridRect.w,
+                board->gridRect.y + board->gridRect.h - 2 - SCROLL_BUTTON_HEIGHT,
+                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
 
             // left button
-            setRect(&board->viewPort.navButtons[3],
-                board->gridRect.x - NAV_BUTTON_WIDTH,
-                board->viewPort.navButtons[1].y,
-                NAV_BUTTON_WIDTH, NAV_BUTTON_HEIGHT);
+            setRect(&board->viewPort.scrollButtons[3],
+                board->gridRect.x + 1,
+                board->gridRect.y + board->gridRect.h,
+                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
         }
     } // if (grid)
 }
@@ -722,7 +716,14 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 
     if (select){
 #ifdef DEST_CASIO_CALC
-        drect(base.x + 2, base.y + 2, base.x + BOX_WIDTH - 3, base.y + BOX_HEIGHT - 3, C_INVERT);
+        if (CALC_HORIZONTAL == board->orientation){
+            RECT rect = {base.x, base.y, BOX_WIDTH, BOX_HEIGHT};
+            rotateRect(&rect);
+            drect(rect.x + 2, rect.y + 2, rect.x + BOX_WIDTH - 3, rect.y.y + BOX_HEIGHT - 3, C_INVERT);
+        }
+        else{
+            drect(base.x + 2, base.y + 2, base.x + BOX_WIDTH - 3, base.y + BOX_HEIGHT - 3, C_INVERT);
+        }
 #endif // #ifdef DEST_CASIO_CALC
     }
     else{

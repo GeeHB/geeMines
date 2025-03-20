@@ -1,2 +1,8 @@
-#### v0.1.1 - Première version 'testable'
-* 13 mars 2025
+#### v0.0.1 - beta 4
+* 20 mars 2025
+* Corrections
+  * Rotation des affichages
+    * Bordures 3D : pas de prise en compte de la rotation
+    * viewPort : mauvaise matrice de rotation et erreur calcul largeur
+    * 'Déplacements' KO en mode horizontal
+  * 4 nav bars => 2 scroll bars

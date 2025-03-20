@@ -79,7 +79,7 @@ BOOL _onStartGame(PBOARD const board){
 
     MENUACTION action;
     COORD pos = {0,0}, oPos = {0, 0};
-    BOOL navButtons = FALSE, hightLighted = FALSE;
+    BOOL showScroll = FALSE, hightLighted = FALSE;
     uint16_t redraw = NO_REDRAW;
 
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
@@ -116,8 +116,8 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (!board->fullGrid && 0 == (tickCount % BLINK_NAV_BUTTONS)){
-            redraw |= REDRAW_NAV_BUTTONS;
+        if (!board->fullGrid && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
+            redraw |= REDRAW_SCROLL_BUTTONS;
         }
 
         // A keyboard or menu event ?
@@ -208,7 +208,7 @@ BOOL _onStartGame(PBOARD const board){
                     menu_updateEx(gMenu, FALSE);
 
                     if (!board->fullGrid){
-                        board_drawNavButtonsEx(board, TRUE, FALSE);
+                        board_drawScrollButtonsEx(board, TRUE, FALSE);
                     }
                 }
 
@@ -217,9 +217,9 @@ BOOL _onStartGame(PBOARD const board){
                     board_selectBoxEx(board, &pos, hightLighted);
                 }
 
-                if (redraw & REDRAW_NAV_BUTTONS){
-                    navButtons = !navButtons;
-                    board_drawNavButtonsEx(board, navButtons, FALSE); // Blink nav buttons
+                if (redraw & REDRAW_SCOLL_BUTTONS){
+                    showScroll = !showScroll;
+                    board_drawScrollButtonsEx(board, showScroll, FALSE); // Blink scroll buttons
                 }
 
                 if (redraw & REDRAW_MINES_LEFT){

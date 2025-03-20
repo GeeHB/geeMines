@@ -32,13 +32,13 @@ extern "C" {
 #define SMILEY_WIDTH        0x0018  // 24
 #define SMILEY_HEIGHT       SMILEY_WIDTH
 
-// Navigation (scroll) buttons
+// Scroll buttons
 //
 
-#define NAV_BUTTON_WIDTH  0x000C      // 12
-#define NAV_BUTTON_HEIGHT NAV_BUTTON_WIDTH
+#define SCROLL_BUTTON_WIDTH  0x000C      // 12
+#define SCROLL_BUTTON_HEIGHT SCROLL_BUTTON_WIDTH
 
-// Counts of buttons in Horizontal mode when nav. buttons are in place
+// Counts of buttons in Horizontal mode when scroll buttons are in place
 //
 #define BUTTON_H_MAX    20      // # max of button in horz. mode
 #define BUTTON_V_MAX    8
@@ -47,10 +47,11 @@ extern "C" {
 // Positions & dims
 //
 
+#define EMPTY_SPACE         0x0002
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 
-#define GRID_VIEWPORT_LEFT  (STAT_BORDER + 2)
+#define GRID_VIEWPORT_LEFT  (STAT_BORDER + EMPTY_SPACE)
 #define GRID_VIEWPORT_TOP   GRID_VIEWPORT_LEFT
 
 // LED images
@@ -99,7 +100,7 @@ typedef enum {
 typedef struct __viewPort{
     DIMS dimensions;        // max. box count (w x h)
     RECT visibleFrame;      // current visible boxes IDs
-    RECT navButtons[4];
+    RECT scrollButtons[4];
 }VIEWPORT, * PVIEWPORT;
 
 // Game board
@@ -246,14 +247,14 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-// board_drawNavButtonsEx() : Draw buttons for viewport scrolling
+// board_drawScrollButtonsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawNavButtonsEx(PBOARD board, BOOL highLight, BOOL update);
-#define board_drawNavButtons(board, highLight) board_drawNavButtonsEx(board, highLight, TRUE)
+void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update);
+#define board_drawScrollButtons(board, highLight) board_drawScrollButtonsEx(board, highLight, TRUE)
 
 // board_drawLed() : Draw a led digit
 //

@@ -20,7 +20,7 @@
 #define TIMER_HALF_SECOND       5
 
 #define BLINK_CURSOR            TIMER_HALF_SECOND   // "duration" of cursor blinking
-#define BLINK_NAV_BUTTONS       8
+#define BLINK_SCROLL_BUTTONS    8
 
 // Redraw mode (any combinaison of)
 //
@@ -31,7 +31,7 @@
 #define REDRAW_TIME             4
 #define REDRAW_BOX              8       // Redraw current box and menu
 #define REDRAW_SELECTION        16
-#define REDRAW_NAV_BUTTONS      32      // viewport navigation buttons
+#define REDRAW_SCROLL_BUTTONS   32
 #define REDRAW_GRID             64
 
 #define REDRAW_UPDATE           128     // Just update
