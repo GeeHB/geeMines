@@ -6,3 +6,4 @@
     * viewPort : mauvaise matrice de rotation et erreur calcul largeur
     * 'Déplacements' KO en mode horizontal
   * 4 nav bars => 2 scroll bars
+    * BUG : pas de rotation des boutons

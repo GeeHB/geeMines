@@ -217,7 +217,7 @@ BOOL _onStartGame(PBOARD const board){
                     board_selectBoxEx(board, &pos, hightLighted);
                 }
 
-                if (redraw & REDRAW_SCOLL_BUTTONS){
+                if (redraw & REDRAW_SCROLL_BUTTONS){
                     showScroll = !showScroll;
                     board_drawScrollButtonsEx(board, showScroll, FALSE); // Blink scroll buttons
                 }

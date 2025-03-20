@@ -476,14 +476,17 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //  @update : Update screen ?
 //
 void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
-    uint8_t sequence[4];    // Img IDs
+    //uint8_t sequence[4];    // Img IDs
     BOOL showButton;
+    RECT rect;
+    /*
     if (CALC_HORIZONTAL == board->orientation){
         memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
     }
     else{
         memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
     }
+    */
 
     for (uint8_t id=0; id<4; id++){
         // is the button visible ?
@@ -509,6 +512,12 @@ void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
                 break;
         } // switch
 
+        copyRect(&rect, &board->viewPort.scrollButtons[id]);
+
+        if (board->orientation == CALC_HORIZONTAL){
+            rotateRect(&rect);
+        }
+
         // Show / hide the button
         if (highLight || !showButton){
 #ifdef DEST_CASIO_CALC
@@ -516,7 +525,6 @@ void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
                 board->viewPort.scrollButtons[id].x, board->viewPort.scrollButtons[id].y,
                 board->viewPort.scrollButtons[id].x + board->viewPort.scrollButtons[id].w - 1,
                 board->viewPort.scrollButtons[id].y + board->viewPort.scrollButtons[id].h - 1,
-                //showButton?C_INVERT:COL_BKGROUND);
                 COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
         }
@@ -719,7 +727,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
         if (CALC_HORIZONTAL == board->orientation){
             RECT rect = {base.x, base.y, BOX_WIDTH, BOX_HEIGHT};
             rotateRect(&rect);
-            drect(rect.x + 2, rect.y + 2, rect.x + BOX_WIDTH - 3, rect.y.y + BOX_HEIGHT - 3, C_INVERT);
+            drect(rect.x + 2, rect.y + 2, rect.x + BOX_WIDTH - 3, rect.y + BOX_HEIGHT - 3, C_INVERT);
         }
         else{
             drect(base.x + 2, base.y + 2, base.x + BOX_WIDTH - 3, base.y + BOX_HEIGHT - 3, C_INVERT);
