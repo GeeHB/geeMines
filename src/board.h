@@ -25,50 +25,43 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
-// Images dims.
-//
-#define BOX_WIDTH           0x0010  // 16
-#define BOX_HEIGHT          BOX_WIDTH
-#define SMILEY_WIDTH        0x0018  // 24
-#define SMILEY_HEIGHT       SMILEY_WIDTH
-
-// Scroll buttons
-//
-
-#define SCROLL_BUTTON_WIDTH  0x000C      // 12
-#define SCROLL_BUTTON_HEIGHT SCROLL_BUTTON_WIDTH
-
-// Counts of buttons in Horizontal mode when scroll buttons are in place
-//
-#define BUTTON_H_MAX    20      // # max of button in horz. mode
-#define BUTTON_V_MAX    8
-
-//
-// Positions & dims
+// Positions et dimensions
 //
 
 #define EMPTY_SPACE         0x0002
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 
-#define GRID_VIEWPORT_LEFT  (STAT_BORDER + EMPTY_SPACE)
-#define GRID_VIEWPORT_TOP   GRID_VIEWPORT_LEFT
+#define SCROLL_BUTTON_WIDTH  0x000C      // 12
+#define SCROLL_BUTTON_HEIGHT SCROLL_BUTTON_WIDTH
 
-// LED images
-//
+#define BOX_WIDTH           0x0010  // 16
+#define BOX_HEIGHT          BOX_WIDTH
+
+#define SMILEY_WIDTH        0x0018  // 24
+#define SMILEY_HEIGHT       SMILEY_WIDTH
+
 #define LED_WIDTH           0x000D  // 13
 #define LED_HEIGHT          0x0017  // 23
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
 
-#define SMILEY_OFFSET_V     LED_ZONE_WIDTH
+// Counts of buttons when scroll buttons are in place
+//
 
-#define STAT_LEFT_V         0x00D4     // (212) Centered in the right part of the screen
-#define STAT_TOP_V          GRID_VIEWPORT_TOP
+#define BUTTON_VERT_COL_MAX    9      // # max of button in vert. mode
+#define BUTTON_VERT_ROW_MAX    22
+
+#define BUTTON_HORZ_COL_MAX    11     // # max of button in horz. mode
+#define BUTTON_HORZ_ROW_MAX    21
+
+// LED images
+//
+#define SMILEY_OFFSET_V     LED_ZONE_WIDTH
 #define STAT_WIDTH          (6*LED_WIDTH + SMILEY_WIDTH)
 #define STAT_HEIGHT         SMILEY_HEIGHT
 
-// 'led' IDs in the leds bitmap
-#define LED_MINUS_ID        11      // reverse order
+// LED digits IDs in the leds bitmap in reverse order
+#define LED_MINUS_ID        11
 #define LED_EMPTY_ID        10
 
 // Time
@@ -108,7 +101,7 @@ typedef struct __viewPort{
 typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
-    BOOL fullGrid;            // Is the whole grid visible ?
+    BOOL showScroll;
     CALC_ORIENTATION orientation;
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
@@ -247,14 +240,14 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-// board_drawScrollButtonsEx() : Draw buttons for viewport scrolling
+// board_drawScrollBarsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update);
-#define board_drawScrollButtons(board, highLight) board_drawScrollButtonsEx(board, highLight, TRUE)
+void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update);
+#define board_drawScrollBars(board, highLight) board_drawScrollBarsEx(board, highLight, TRUE)
 
 // board_drawLed() : Draw a led digit
 //
@@ -268,7 +261,7 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 
 // board_drawBorder() : Draw a border
 //
-//  Draw a 3-d border with the specified thickness around a rect
+//  Draw a 3D border with the specified thickness around a rect
 //  borders are outside the rectangle
 //
 //  @board : Pointer to the board

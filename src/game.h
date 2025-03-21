@@ -10,7 +10,6 @@
 #define __GEE_MINES_GAME_h__    1
 
 #include "consts.h"
-#include "shared/menu.h"
 #include "board.h"
 
 // Blinking
@@ -26,7 +25,6 @@
 //
 #define NO_REDRAW               0
 #define REDRAW_MINES_LEFT       1
-//#define REDRAW_SMILEY           2
 #define REDRAW_MOVE             2
 #define REDRAW_TIME             4
 #define REDRAW_BOX              8       // Redraw current box and menu
@@ -51,12 +49,6 @@ extern "C" {
 //
 void _onNewGame(PBOARD const board, uint8_t level);
 
-// _createGameMenu : Create the game menu
-//
-//  return : Pointer the the menu (or NULL on error)
-//
-POWNMENU _createGameMenu();
-
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
@@ -80,22 +72,20 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw);
 // _onFlag() : Put / remove a flag
 //
 //  @board : pointer to the current board
-//  @menu : Pointer to the menu
 //  @pos : Current position in the grid
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint16_t _onFlag(PBOARD const board, POWNMENU const menu, PCOORD const pos);
+uint16_t _onFlag(PBOARD const board, PCOORD const pos);
 
 // _onQuestion() : Put / remove a 'question' attribute to the box
 //
 //  @board : pointer to the current board
 //  @pos : Current position in the grid
-//  @menu : Pointer to the menu
 //
 //  @return drawing action to perform or NO_DRAWING
 //
-uint16_t _onQuestion(PBOARD const board, POWNMENU const menu, PCOORD const pos);
+uint16_t _onQuestion(PBOARD const board, PCOORD const pos);
 
 // _onPause() : Show pause screen
 //
@@ -145,14 +135,6 @@ uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
 uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyUp(board, pos) _onKeyUpEx(board, pos, TRUE)
 
-// _updateMenuItemsStates() : Update state of items in the menu
-//
-//  @board : pointer to the game board
-//  @menu : Pointer to the menu
-//  @pos : position of cursor
-//
-void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD const pos);
-
 #ifdef DEST_CASIO_CALC
 // __callbackTick() : Call back function for timer
 // This function is used during edition to make selected item blink
@@ -163,10 +145,6 @@ void _updateMenuItemsStates(PBOARD const board, POWNMENU const menu, PCOORD cons
 //
 //static int __callbackTick(volatile int *pTick);
 #endif // #ifdef DEST_CASIO_CALC
-
-//
-// Utils
-//
 
 #ifdef __cplusplus
 }

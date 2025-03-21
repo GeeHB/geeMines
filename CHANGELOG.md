@@ -1,3 +1,11 @@
+#### v0.1.1
+* xxx
+* Ajouts
+  * Retrait du menu en mode jeu
+    * Les grilles sont toujours centrées (hors scrolling)
+
+* Corrections
+
 #### v0.0.1 - beta 4
 * 20 mars 2025
 * Corrections

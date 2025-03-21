@@ -9,7 +9,6 @@
 #include "board.h"
 #include "grid.h"
 #include <stdint.h>
-#include "shared/menu.h"
 
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
@@ -284,8 +283,8 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 #endif // #ifndef DEST_CASIO_CALC
     }
 
-    if (!board->fullGrid){
-        board_drawScrollButtonsEx(board, FALSE, FALSE);
+    if (board->showScroll){
+        board_drawScrollBarsEx(board, FALSE, FALSE);
     }
 
     if (update){
@@ -469,13 +468,13 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
     board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
-// board_drawScrollButtonsEx() : Draw buttons for viewport scrolling
+// board_drawScrollBarsEx() : Draw buttons for viewport scrolling
 //
 //  @board : pointer to the board
 //  @highLight : Draw buttons in hightlighted state
 //  @update : Update screen ?
 //
-void board_drawScrollButtonsEx(PBOARD board, BOOL highLight, BOOL update){
+void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update){
     uint8_t sequence[4];    // Img IDs
     BOOL showButton;
     RECT rect;
@@ -609,80 +608,54 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
 //
 void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
     if (board && board->grid){
+        int16_t gridWidth, gridHeight;
+
         board->orientation = orientation;
 
         // no scroll buttons on 'beginner' mode
-        board->fullGrid = (LEVEL_BEGINNER == board->grid->level);
+        board->showScroll = (board->grid->level != LEVEL_BEGINNER);
 
-        board->viewPort.dimensions.col = board->grid->size.col;
+        board->viewPort.dimensions.col = board->grid->size.col;     // Real dims of the grid
         board->viewPort.dimensions.row = board->grid->size.row;
 
-        // Put widgets on the screen
-        if (board->orientation == CALC_VERTICAL){
-            // Playground (grid + viewport buttons)
-            setRect(&board->playgroundRect,
-                GRID_VIEWPORT_LEFT, GRID_VIEWPORT_TOP,
-                BEGINNER_COLS * BOX_WIDTH, BEGINNER_ROWS * BOX_HEIGHT);
-            copyRect(&board->gridRect, &board->playgroundRect);
+        // Count of visible boxes
+        switch (board->grid->level){
+            case LEVEL_BEGINNER:
+                setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
+                break;
 
-            if (!board->fullGrid){
-                board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
-                board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
-            }
-
-            // Stat rect ( = [mines][smiley][timer] )
-            setRect(&board->statRect,
-                STAT_LEFT_V + (int)(board->fullGrid ? 0 : SCROLL_BUTTON_WIDTH),
-                STAT_TOP_V,
-                STAT_WIDTH, STAT_HEIGHT);
-
-            // Viewport (only 'beginner' size in vertical mode)
-            setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
+            case LEVEL_MEDIUM:
+            case LEVEL_EXPERT:
+                setRect(&board->viewPort.visibleFrame, 0, 0,
+                    MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL)?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX),
+                    MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL)?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX));
+                break;
         }
-        else{
-            int16_t gridWidth, gridHeight;
 
-            // In horizontal mode, stats and grids are aligned (just like in the original game)
-            // and centered "horizontally"
-
-            // Stat rect ( = [mines][smiley][timer] )
-            setRect(&board->statRect,
-                (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - STAT_WIDTH) / 2,
-                STAT_TOP_V, STAT_WIDTH, STAT_HEIGHT);
-
-            // 1 - Viewport <= count of visible boxes
-            switch (board->grid->level){
-                case LEVEL_BEGINNER:
-                    setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
-                    break;
-
-                case LEVEL_MEDIUM:
-                case LEVEL_EXPERT:
-                    setRect(&board->viewPort.visibleFrame, 0, 0,
-                        MIN_VAL(board->grid->size.col, BUTTON_V_MAX),
-                        MIN_VAL(board->grid->size.row, BUTTON_H_MAX));
-                    break;
-            }
-
-            // 2 - Dimensions of playground and grid rects
-            gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
-            gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
-            setRect(&board->playgroundRect,
-                (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - gridWidth) / 2,
-                board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
-                gridWidth, gridHeight);
-            copyRect(&board->gridRect, &board->playgroundRect);
-
-            if (!board->fullGrid){
-                board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
-                board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
-            }
-
-        }   // if (board->orientation == CALC_VERTICAL)
-
-        // Viewport scroll buttons
+        // Rectangles positions
         //
-        if (!board->fullGrid){
+
+        // 1 - Stat rect ( = [mines][smiley][timer] )
+        setRect(&board->statRect,
+            (CASIO_HEIGHT - STAT_WIDTH - 2*STAT_BORDER ) / 2,
+            EMPTY_SPACE + STAT_BORDER,
+            STAT_WIDTH, STAT_HEIGHT);
+
+        // 2 - Dimensions of playground and grid rects
+        gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
+        gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
+        setRect(&board->playgroundRect,
+            (CASIO_HEIGHT - gridWidth -2*PLAYGROUND_BORDER) / 2,
+            board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
+            gridWidth, gridHeight);
+        copyRect(&board->gridRect, &board->playgroundRect);
+
+        // 3 - Viewport scroll buttons
+        if (board->showScroll){
+
+            board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
+            board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
+
             // top button
             setRect(&board->viewPort.scrollButtons[0],
                 board->gridRect.x + board->gridRect.w,
@@ -752,7 +725,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 //  @pos : Pointer to point coordinates
 //
 void rotatePoint(PPOINT const pos){
-    int16_t ny = CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - pos->x;
+    int16_t ny = CASIO_HEIGHT - pos->x;
     pos->x = pos->y;
     pos->y = ny;
 }

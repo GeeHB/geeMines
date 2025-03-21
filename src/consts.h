@@ -14,7 +14,7 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.0.1 - beta 4"
+#define APP_VERSION         "0.1.1"
 #define APP_AUTHOR          "GeeHB"
 
 // "About" / Splash screen
@@ -88,7 +88,9 @@ enum GAME_KEY{
     KEY_CODE_ROTATE_DISPLAY = KEY_XOT,
     KEY_CODE_PAUSE = KEY_OPTN,
     KEY_CODE_EXIT = KEY_EXIT,
-    KEY_CODE_EXE = KEY_EXE
+    KEY_CODE_STEP = KEY_EXE,
+    KEY_CODE_FLAG = KEY_ADD,
+    KEY_CODE_QUESTION = KEY_SUB
 };
 #else
 enum GAME_KEY{
@@ -102,7 +104,9 @@ enum GAME_KEY{
     KEY_CODE_ROTATE_DISPLAY = 'r',
     KEY_CODE_PAUSE = 'p',
     KEY_CODE_EXIT = 'q',
-    KEY_CODE_EXE = 13
+    KEY_CODE_STEP = 13,
+    KEY_CODE_FLAG = '+',
+    KEY_CODE_QUESTION = '-'
 };
 #endif // #ifdef DEST_CASIO_CALC
 
