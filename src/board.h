@@ -187,6 +187,17 @@ void board_free(PBOARD const board, BOOL freeAll);
 //
 BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
 
+// board_isBoxVisible() : Check is box is visible 
+//
+// Check that the box at the given position is in the viewPort visible frame
+//
+//  @board : pointer to the board
+//  @pos : Coordindate of the box in the grid
+//
+//  @return TRUE the box is visible
+//
+BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos);
+
 //  board_drawGridEx() : Draw the visible grid
 //
 //  @board : Pointer to the board

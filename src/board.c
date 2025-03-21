@@ -183,6 +183,22 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
     return FALSE;
 }
 
+// board_isBoxVisible() : Check is box is visible 
+//
+// Check that the box at the given position is in the viewPort visible frame
+//
+//  @board : pointer to the board
+//  @pos : Coordindate of the box in the grid
+//
+//  @return TRUE the box is visible
+//
+BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){  
+    return (pos->col >= board->viewPort.visibleFrame.x &&
+            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&    
+            pos->row >= board->viewPort.visibleFrame.y &&
+            pos->row < (board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h));
+}
+
 //  board_drawEx() : Draw the whole board
 //
 //  @board : Pointer to the board

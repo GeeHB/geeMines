@@ -163,6 +163,7 @@ BOOL _onStartGame(PBOARD const board){
                 }
                 else{
                     capture_install();
+		            board_drawEx(board, FALSE, TRUE);
                 }
 
                 captureOn = !captureOn;
@@ -263,7 +264,10 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     minesAround = grid_countMines(board->grid, pos);
     board->steps++;
     box->state =  BS_DOWN - minesAround;
-    board_drawBoxAtPos(board, pos);
+    
+    if (board_isBoxVisible(board, pos)){
+        board_drawBoxAtPos(board, pos);
+    }
 
     // Auto step surrounding boxes
     if (!minesAround){

@@ -111,6 +111,7 @@ int main(void){
                     // Start the game
                     case IDM_START:
                         _onStartGame(board);
+                        menubar_activateItem(menu_getMenuBar(menu), IDM_START, SEARCH_BY_ID, FALSE);
                         menu_update(menu);  // back to current menu
                         break;
 
