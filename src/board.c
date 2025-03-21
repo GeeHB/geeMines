@@ -42,11 +42,6 @@ PBOARD board_create(){
     memset(board, 0, size);
     board->grid = grid_create();
     board_setGameStateEx(board, STATE_WAITING, TRUE);
-
-#ifdef _DEBUG_
-    board->debug = TRUE;    // In debug mode, show mines by default !
-#endif // #ifdef _DEBUG_
-
     return board;
 }
 
@@ -199,7 +194,7 @@ void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
     drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
-    if (board->grid){
+    if (board->grid && board->grid->boxes){
         // Stats
         board_drawBorder(board, &board->statRect, STAT_BORDER);
         board_drawMinesLeftEx(board, FALSE);
@@ -224,7 +219,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     COORD pos;
     uint8_t r, c;
 
-    if (!board || !board->grid){
+    if (!board || !board->grid || !board->grid->boxes){
         return;
     }
 

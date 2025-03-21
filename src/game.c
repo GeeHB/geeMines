@@ -24,8 +24,9 @@ extern bopti_image_t g_pause;
 //  @level : game difficulty level
 //
 void _onNewGame(PBOARD const board, uint8_t level){
-    board_init(board, level);
-    board_update(board, TRUE);
+    if (board_init(board, level)){
+        board_update(board, TRUE);
+    }
 }
 
 // __callbackTick() : Callback function for timer

@@ -7,6 +7,7 @@
 
 * Corrections
     * BUG : Rotation => pos = {0,0}
+    * BUG : en mode DEBUG, affichage des statss même lorsque la 'grid' est vide
 
 #### v0.0.1 - beta 4
 * 20 mars 2025
