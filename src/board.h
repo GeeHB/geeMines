@@ -48,8 +48,8 @@ extern "C" {
 // Counts of buttons when scroll buttons are in place
 //
 
-#define BUTTON_VERT_COL_MAX    9      // # max of button in vert. mode
-#define BUTTON_VERT_ROW_MAX    22
+#define BUTTON_VERT_COL_MAX    22     // # max of button in vert. mode
+#define BUTTON_VERT_ROW_MAX    10
 
 #define BUTTON_HORZ_COL_MAX    11     // # max of button in horz. mode
 #define BUTTON_HORZ_ROW_MAX    21
@@ -138,11 +138,12 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level);
 //  board_draw() : Draw the whole board
 //
 //  @board : Pointer to the board
+//  @menu : Meu on the screen ?
 //  @update : update the screen ?
 //
-void board_drawEx(PBOARD const board, BOOL update);
-#define board_draw(board) board_drawEx(board, TRUE)
-#define board_update(board) board_drawEx(board, TRUE)
+void board_drawEx(PBOARD const board, BOOL menu, BOOL update);
+#define board_draw(board, menu) board_drawEx(board, menu, TRUE)
+#define board_update(board, menu) board_drawEx(board, menu, TRUE)
 
 //  board_setGameStateEx() : Change the state of a game
 //

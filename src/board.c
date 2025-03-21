@@ -12,6 +12,7 @@
 
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
+#include "shared/menu.h"
 #else
 #include <stdio.h>
 #endif // #ifdef DEST_CASIO_CALC
@@ -40,6 +41,7 @@ PBOARD board_create(){
     // Board is empty !
     memset(board, 0, size);
     board->grid = grid_create();
+    board_setGameStateEx(board, STATE_WAITING, TRUE);
 
 #ifdef _DEBUG_
     board->debug = TRUE;    // In debug mode, show mines by default !
@@ -64,7 +66,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     board_setOrientation(board, board->orientation);
 
     // New game !
-    board_setGameStateEx(board, STATE_WAITING, FALSE);
+    board_setGameStateEx(board, STATE_WAITING, TRUE);
     board->minesLeft = (int8_t)board->grid->mines;
     board->time = 0;
     board->steps = 0;
@@ -92,10 +94,6 @@ void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw){
 //  @redraw : update screen
 //
 void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
-    if (state == board->gameState){
-        return;
-    }
-
     uint8_t r,c;
     BOOL redrawGrid = FALSE;
 
@@ -193,11 +191,12 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
 //  board_drawEx() : Draw the whole board
 //
 //  @board : Pointer to the board
+//  @menu : Menu present ?
 //  @update : update the screen ?
 //
-void board_drawEx(PBOARD const board, BOOL update){
+void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
 #ifdef DEST_CASIO_CALC
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, COL_BKGROUND);
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), COL_BKGROUND);
 #endif // #ifdef DEST_CASIO_CALC
 
     if (board->grid){
@@ -627,8 +626,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             case LEVEL_MEDIUM:
             case LEVEL_EXPERT:
                 setRect(&board->viewPort.visibleFrame, 0, 0,
-                    MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL)?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX),
-                    MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL)?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX));
+                    MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
+                    MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
                 break;
         }
 
@@ -637,7 +636,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // 1 - Stat rect ( = [mines][smiley][timer] )
         setRect(&board->statRect,
-            (CASIO_HEIGHT - STAT_WIDTH - 2*STAT_BORDER ) / 2,
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+                - STAT_WIDTH - 2*STAT_BORDER ) / 2,
             EMPTY_SPACE + STAT_BORDER,
             STAT_WIDTH, STAT_HEIGHT);
 
@@ -645,7 +645,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
         gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
         setRect(&board->playgroundRect,
-            (CASIO_HEIGHT - gridWidth -2*PLAYGROUND_BORDER) / 2,
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+               - gridWidth -2*PLAYGROUND_BORDER) / 2,
             board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
             gridWidth, gridHeight);
         copyRect(&board->gridRect, &board->playgroundRect);
@@ -746,11 +747,6 @@ void rotateRect(PRECT const rect){
     rect->y = bottomRight.y;
     rect->w = rect->h;
     rect->h = ow;
-
-    /*
-    rect->w = bottomRight.x - rect->x + 1;
-    rect->h = topLeft.y - rect->y + 1;
-    */
 }
 
 // EOF

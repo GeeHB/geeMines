@@ -25,7 +25,7 @@ extern bopti_image_t g_pause;
 //
 void _onNewGame(PBOARD const board, uint8_t level){
     board_init(board, level);
-    board_update(board);
+    board_update(board, TRUE);
 }
 
 // __callbackTick() : Callback function for timer
@@ -61,6 +61,7 @@ BOOL _onStartGame(PBOARD const board){
     uint16_t redraw = NO_REDRAW;
 
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
+    board_drawEx(board, FALSE, FALSE);
     board_selectBox(board, &pos);
 
     // Timer for blinking effect
@@ -91,7 +92,7 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (!board->fullGrid && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
+        if (board->showScroll && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
             redraw |= REDRAW_SCROLL_BUTTONS;
         }
 
@@ -140,13 +141,14 @@ BOOL _onStartGame(PBOARD const board){
 
             case KEY_CODE_PAUSE:
                 _onPause();
-                board_update(board);    // update screen
+                board_update(board, FALSE);    // update screen
                 break;
 
             case KEY_CODE_ROTATE_DISPLAY:
                 board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
-                board_drawEx(board, FALSE);
-                redraw = REDRAW_UPDATE;
+                board_drawEx(board, FALSE, FALSE);
+                oPos = pos = (COORD){.row=0,.col=0};
+                redraw = REDRAW_UPDATE | REDRAW_SELECTION | REDRAW_SCROLL_BUTTONS;
                 break;
 
             // Cancel (end) the game
@@ -162,6 +164,10 @@ BOOL _onStartGame(PBOARD const board){
 
             if (redraw & REDRAW_GRID){
                 board_drawGridEx(board, FALSE); // no screen update
+
+                if (board->showScroll){
+                    redraw |= REDRAW_SCROLL_BUTTONS;
+                }
             }
 
             if (redraw & REDRAW_BOX){
@@ -172,10 +178,6 @@ BOOL _onStartGame(PBOARD const board){
                 board_unselectBox(board, &oPos);
                 board_selectBox(board, &pos);
                 oPos = (COORD){.row = pos.row, .col = pos.col}; // oPos = pos
-
-                if (!board->fullGrid){
-                    board_drawScrollBarsEx(board, TRUE, FALSE);
-                }
             }
 
             if (redraw & REDRAW_SELECTION){

@@ -5,6 +5,7 @@
     * Les grilles sont toujours centrées (hors scrolling)
 
 * Corrections
+    * BUG : Rotation => pos = {0,0}
 
 #### v0.0.1 - beta 4
 * 20 mars 2025

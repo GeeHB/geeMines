@@ -117,7 +117,7 @@ int main(void){
 #ifdef _DEBUG_
                     case IDM_DEBUG:
                         board->debug = !board->debug;
-                        board_update(board);
+                        board_update(board, TRUE);
 
                         menubar_checkMenuItem(menu_getMenuBar(menu), IDM_DEBUG, SEARCH_BY_ID, board->debug?ITEM_CHECKED:ITEM_UNCHECKED);
                         menu_update(menu);
@@ -126,13 +126,14 @@ int main(void){
 
                     case KEY_CODE_PAUSE:
                         _onPause();
-                        board_update(board);    // update screen and menu
+                        board_update(board, TRUE);    // update screen and menu
                         menu_update(menu);
                         break;
 
                     case KEY_CODE_ROTATE_DISPLAY:
                         board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
-                        board_update(board);
+                        board_drawEx(board, TRUE, FALSE);
+                        menu_update(menu);
                         break;
 
                     // End app.
