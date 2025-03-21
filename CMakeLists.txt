@@ -31,7 +31,7 @@ set(ASSETS_cg
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(geeMines ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
-target_compile_options(geeMines PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC -D=NO_CAPTURE -D=_DEBUG_ -D=TRACE_MODE)
+target_compile_options(geeMines PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC -D=SCREEN_CAPTURE -D=_DEBUG_)
 target_link_libraries(geeMines Gint::Gint)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)

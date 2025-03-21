@@ -107,12 +107,43 @@ BOOL deflateRect(PRECT const rect, int dx, int dy){
     return FALSE;
 }
 
+#ifdef SCREEN_CAPTURE
+#ifdef DEST_CASIO_CALC
+
+//
+// Screen capture for casio calculator : if  SCREEN_CAPTURE defined
+//
+//      using fxlink command -[ fxlink -iw ]
+//
+
+// capture_install() : Set/install screen capture
+//
+void capture_install(){
+    // List of interfaces
+    usb_interface_t const *intf[] = { &usb_ff_bulk, NULL };
+
+    // Waiting for connexion
+    usb_open((usb_interface_t const **)&intf, GINT_CALL_NULL);
+    usb_open_wait();
+
+    // Set the hook
+    dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
+}
+
+// capture_remove() : Remove screen capture
+//
+void capture_remove(){
+    dupdate_set_hook(GINT_CALL_NULL);
+}
+
+#endif // #ifdef DEST_CASIO_CALC
+#endif // #ifdef  SCREEN_CAPTURE
+
 #ifdef TRACE_MODE
 
 //
 // Debug & trace primitives
 //
-
 
 // __coordtoa() : Format point coord. to an output string
 //

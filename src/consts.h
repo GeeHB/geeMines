@@ -14,7 +14,7 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.1.1"
+#define APP_VERSION         "0.1.2"
 #define APP_AUTHOR          "GeeHB"
 
 // "About" / Splash screen
@@ -100,7 +100,7 @@ enum GAME_KEY{
     KEY_CODE_DOWN = '2',
     KEY_CODE_LEFT = '4',
     KEY_CODE_RIGHT = '6',
-    KEY_CODE_CAPTURE = '*',
+    KEY_CODE_CAPTURE = '7',
     KEY_CODE_ROTATE_DISPLAY = 'r',
     KEY_CODE_PAUSE = 'p',
     KEY_CODE_EXIT = 'q',

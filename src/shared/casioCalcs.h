@@ -139,6 +139,27 @@ BOOL copyRect(PRECT const dest, PRECT const src);
 //
 BOOL inflateRect(PRECT const rect, int dx, int dy);
 
+#ifdef SCREEN_CAPTURE
+#ifdef DEST_CASIO_CALC
+    #include <gint/usb.h>
+    #include <gint/usb-ff-bulk.h>
+
+    //
+    // Screen capture for casio calculator : if  SCREEN_CAPTURE defined
+    //
+    //      using fxlink command -[ fxlink -iw ]
+    //
+
+    // capture_install() : Set/install screen capture
+    //
+    void capture_install();
+
+    // capture_remove() : Remove screen capture
+    //
+    void capture_remove();
+#endif // #ifdef DEST_CASIO_CALC
+#endif // #ifdef  SCREEN_CAPTURE
+
 #ifdef TRACE_MODE
 
 //

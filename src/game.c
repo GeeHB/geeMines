@@ -60,6 +60,10 @@ BOOL _onStartGame(PBOARD const board){
     BOOL showScroll = FALSE, hightLighted = FALSE;
     uint16_t redraw = NO_REDRAW;
 
+#ifdef SCREEN_CAPTURE
+    BOOL captureOn = FALSE;
+#endif // #ifdef SCREEN_CAPTURE
+
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
     board_drawEx(board, FALSE, FALSE);
     board_selectBox(board, &pos);
@@ -150,6 +154,19 @@ BOOL _onStartGame(PBOARD const board){
                 oPos = pos = (COORD){.row=0,.col=0};
                 redraw = REDRAW_UPDATE | REDRAW_SELECTION | REDRAW_SCROLL_BUTTONS;
                 break;
+
+#ifdef SCREEN_CAPTURE
+            case KEY_CODE_CAPTURE:
+                if (captureOn){
+                    capture_remove();
+                }
+                else{
+                    capture_install();
+                }
+
+                captureOn = !captureOn;
+                break;
+#endif // #ifdef SCREEN_CAPTURE
 
             // Cancel (end) the game
             case KEY_CODE_EXIT:

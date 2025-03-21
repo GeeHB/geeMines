@@ -1,8 +1,9 @@
-#### v0.1.1
+#### v0.1.2
 * xxx
 * Ajouts
   * Retrait du menu en mode jeu
     * Les grilles sont toujours centrées (hors scrolling)
+  * Capture d'écran si SCREEN_CAPTURE défini
 
 * Corrections
     * BUG : Rotation => pos = {0,0}
