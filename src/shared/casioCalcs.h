@@ -147,7 +147,7 @@ BOOL inflateRect(PRECT const rect, int dx, int dy);
     //
     // Screen capture for casio calculator : if  SCREEN_CAPTURE defined
     //
-    //      using fxlink command -[ fxlink -iw ]
+    //      using as root fxlink command -[ fxlink -iw ]
     //
 
     // capture_install() : Set/install screen capture
