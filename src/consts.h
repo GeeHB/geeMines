@@ -9,12 +9,10 @@
 #ifndef __GEE_MINES_CONSTS_h__
 #define __GEE_MINES_CONSTS_h__    1
 
-#define _DEBUG_
-
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.1.2"
+#define APP_VERSION         "0.2.1"
 #define APP_AUTHOR          "GeeHB"
 
 // "About" / Splash screen
@@ -32,10 +30,10 @@
 #define IDM_START           2
 #define IDS_START           "Start"
 
-#ifdef _DEBUG_
-#define IDM_DEBUG           3
+#ifdef DEBUG
+#define IDM_DEBUG           3           // "Debug" option in main menu
 #define IDS_DEBUG           "Debug"
-#endif // #ifdef _DEBUG_
+#endif // #ifdef DEBUG
 
 #define IDM_QUIT            6
 #define IDS_QUIT            "Quit"

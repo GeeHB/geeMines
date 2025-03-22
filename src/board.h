@@ -111,9 +111,9 @@ typedef struct __board{
     RECT playgroundRect;
     RECT gridRect;
     RECT statRect;
-#ifdef _DEBUG_
+#ifdef DEBUG
     BOOL debug;
-#endif // #ifdef _DEBUG_
+#endif // #ifdef DEBUG
 } BOARD, * PBOARD;
 
 //
@@ -187,7 +187,7 @@ void board_free(PBOARD const board, BOOL freeAll);
 //
 BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
 
-// board_isBoxVisible() : Check is box is visible 
+// board_isBoxVisible() : Check is box is visible
 //
 // Check that the box at the given position is in the viewPort visible frame
 //

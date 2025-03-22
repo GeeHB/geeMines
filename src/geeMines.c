@@ -68,9 +68,9 @@ POWNMENU _createMenu(){
             PMENUBAR bar = menu_getMenuBar(menu);
             menubar_appendSubMenu(bar, sub, IDM_NEW, IDS_NEW, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
             menubar_appendItem(bar, IDM_START, IDS_START, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
-#ifdef _DEBUG_
+#ifdef DEBUG
             menubar_appendItem(bar, IDM_DEBUG, IDS_DEBUG, ITEM_STATE_UNCHECKED, ITEM_STATUS_CHECKBOX);
-#endif // #ifdef _DEBUG_
+#endif // #ifdef DEBUG
             menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
         else{
@@ -115,7 +115,7 @@ int main(void){
                         menu_update(menu);  // back to current menu
                         break;
 
-#ifdef _DEBUG_
+#ifdef DEBUG
                     case IDM_DEBUG:
                         board->debug = !board->debug;
                         board_update(board, TRUE);
@@ -123,7 +123,7 @@ int main(void){
                         menubar_checkMenuItem(menu_getMenuBar(menu), IDM_DEBUG, SEARCH_BY_ID, board->debug?ITEM_CHECKED:ITEM_UNCHECKED);
                         menu_update(menu);
                         break;
-#endif // #ifdef _DEBUG_
+#endif // #ifdef DEBUG
 
                     case KEY_CODE_PAUSE:
                         _onPause();

@@ -183,7 +183,7 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
     return FALSE;
 }
 
-// board_isBoxVisible() : Check is box is visible 
+// board_isBoxVisible() : Check is box is visible
 //
 // Check that the box at the given position is in the viewPort visible frame
 //
@@ -192,9 +192,9 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
 //
 //  @return TRUE the box is visible
 //
-BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){  
+BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){
     return (pos->col >= board->viewPort.visibleFrame.x &&
-            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&    
+            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&
             pos->row >= board->viewPort.visibleFrame.y &&
             pos->row < (board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h));
 }
@@ -450,12 +450,12 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
     PBOX box = BOX_AT_POS(board->grid, pos);
 
 #ifdef DEST_CASIO_CALC
-#ifdef _DEBUG_
+#ifdef DEBUG
     int ID = ((board->debug && box->mine && box->state!=BS_BLAST)?BS_MINE:box->state);  // Always show mines in DEBUG mode
     dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #else
     dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
-#endif // #ifdef _DEBUG_
+#endif // #ifdef DEBUG
 #else
     //printf("| %c ", box->mine?'x':'0' + grid_countMines(board->grid, pos));
     if (box->mine){
@@ -647,7 +647,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // 1 - Stat rect ( = [mines][smiley][timer] )
         setRect(&board->statRect,
-            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT)
                 - STAT_WIDTH - 2*STAT_BORDER ) / 2,
             EMPTY_SPACE + STAT_BORDER,
             STAT_WIDTH, STAT_HEIGHT);
@@ -656,7 +656,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
         gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
         setRect(&board->playgroundRect,
-            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT)
                - gridWidth -2*PLAYGROUND_BORDER) / 2,
             board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
             gridWidth, gridHeight);
