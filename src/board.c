@@ -539,8 +539,8 @@ void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update){
 #ifdef DEST_CASIO_CALC
             dsubimage(
                 rect.x, rect.y,
-                &g_scroll, 0, sequence[id] * SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_HEIGHT, SCROLL_BUTTON_HEIGHT,
+                &g_scroll, 0, sequence[id] * SCROLL_HEIGHT,
+                SCROLL_HEIGHT, SCROLL_HEIGHT,
                 DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
            }
@@ -665,32 +665,32 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         // 3 - Viewport scroll buttons
         if (board->showScroll){
 
-            board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
-            board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
+            board->playgroundRect.w += SCROLL_WIDTH;
+            board->playgroundRect.h += SCROLL_HEIGHT;
 
             // top button
             setRect(&board->viewPort.scrollButtons[0],
                 board->gridRect.x + board->gridRect.w,
                 board->gridRect.y + 1,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+                SCROLL_WIDTH, SCROLL_HEIGHT);
 
             // right button
             setRect(&board->viewPort.scrollButtons[1],
-                board->gridRect.x + board->gridRect.w - 2 - SCROLL_BUTTON_WIDTH,
+                board->gridRect.x + board->gridRect.w - 2 - SCROLL_WIDTH,
                 board->gridRect.y + board->gridRect.h,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+                SCROLL_WIDTH, SCROLL_HEIGHT);
 
             // bottom button
             setRect(&board->viewPort.scrollButtons[2],
                 board->gridRect.x + board->gridRect.w,
-                board->gridRect.y + board->gridRect.h - 2 - SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+                board->gridRect.y + board->gridRect.h - 2 - SCROLL_HEIGHT,
+                SCROLL_WIDTH, SCROLL_HEIGHT);
 
             // left button
             setRect(&board->viewPort.scrollButtons[3],
                 board->gridRect.x + 1,
                 board->gridRect.y + board->gridRect.h,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+                SCROLL_WIDTH, SCROLL_HEIGHT);
         }
     } // if (grid)
 }

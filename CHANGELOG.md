@@ -1,5 +1,8 @@
 ### v0.2.1
 * xxx.yyy
+* Ajouts
+  *
+* Corrections
 
 #### v0.1.2
 * 22 mars 2025

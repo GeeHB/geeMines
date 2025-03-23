@@ -50,7 +50,7 @@ typedef struct __box{
 #define EXPERT_COLS         30
 #define EXPERT_ROWS         16
 
-// Box coordinates (in the grid)
+// Coordinates, simple dims.
 //
 typedef struct __coord{
     uint8_t col;

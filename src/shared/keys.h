@@ -2,7 +2,7 @@
 //--
 //--    keys.h
 //--
-//--    Keybor management functions and consts
+//--    Keyboard management functions and consts
 //--
 //----------------------------------------------------------------------
 

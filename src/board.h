@@ -12,6 +12,7 @@
 #include "shared/casioCalcs.h"
 #include "consts.h"
 #include "grid.h"
+#include "viewPort.h"
 
 #ifdef TRACE_MODE
 #include "shared/trace.h"
@@ -31,9 +32,6 @@ extern "C" {
 #define EMPTY_SPACE         0x0002
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
-
-#define SCROLL_BUTTON_WIDTH  0x000C      // 12
-#define SCROLL_BUTTON_HEIGHT SCROLL_BUTTON_WIDTH
 
 #define BOX_WIDTH           0x0010  // 16
 #define BOX_HEIGHT          BOX_WIDTH
@@ -87,14 +85,6 @@ typedef enum {
 typedef enum {
     SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
 } SMILEY_STATE;
-
-// A viewport - defines visible part of the grid
-//
-typedef struct __viewPort{
-    DIMS dimensions;        // max. box count (w x h)
-    RECT visibleFrame;      // current visible boxes IDs
-    RECT scrollButtons[4];
-}VIEWPORT, * PVIEWPORT;
 
 // Game board
 //
