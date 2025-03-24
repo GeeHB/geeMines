@@ -32,8 +32,8 @@ extern "C" {
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 
-#define SCROLL_BUTTON_WIDTH  0x000C      // 12
-#define SCROLL_BUTTON_HEIGHT SCROLL_BUTTON_WIDTH
+#define SCROLL_WIDTH        0x000C      // 12
+#define SCROLL_HEIGHT       SCROLL_WIDTH
 
 #define BOX_WIDTH           0x0010  // 16
 #define BOX_HEIGHT          BOX_WIDTH
@@ -88,12 +88,20 @@ typedef enum {
     SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
 } SMILEY_STATE;
 
+// Scrollbar management
+//
+#define NO_SCROLL       0
+#define HORZ_SCROLL     1
+#define VERT_SCROLL     2
+#define BOTH_SCROLL     (HORZ_SCROLL | VERT_SCROLL)
+
 // A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
     DIMS dimensions;        // max. box count (w x h)
     RECT visibleFrame;      // current visible boxes IDs
-    RECT scrollButtons[4];
+    uint8_t scrolls:2;
+    RECT scrollBars[2];     // 0=>horz , 1=>vert
 }VIEWPORT, * PVIEWPORT;
 
 // Game board
@@ -101,7 +109,6 @@ typedef struct __viewPort{
 typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
-    BOOL showScroll;
     CALC_ORIENTATION orientation;
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
@@ -187,7 +194,7 @@ void board_free(PBOARD const board, BOOL freeAll);
 //
 BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
 
-// board_isBoxVisible() : Check is box is visible 
+// board_isBoxVisible() : Check if box is visible
 //
 // Check that the box at the given position is in the viewPort visible frame
 //

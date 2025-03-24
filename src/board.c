@@ -183,7 +183,7 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
     return FALSE;
 }
 
-// board_isBoxVisible() : Check is box is visible 
+// board_isBoxVisible() : Check if box is visible
 //
 // Check that the box at the given position is in the viewPort visible frame
 //
@@ -192,9 +192,9 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
 //
 //  @return TRUE the box is visible
 //
-BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){  
+BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){
     return (pos->col >= board->viewPort.visibleFrame.x &&
-            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&    
+            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&
             pos->row >= board->viewPort.visibleFrame.y &&
             pos->row < (board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h));
 }
@@ -293,7 +293,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 #endif // #ifndef DEST_CASIO_CALC
     }
 
-    if (board->showScroll){
+    if (board->viewPort.scrolls != NO_SCROLL){
         board_drawScrollBarsEx(board, FALSE, FALSE);
     }
 
@@ -520,7 +520,7 @@ void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update){
                 break;
         } // switch
 
-        copyRect(&rect, &board->viewPort.scrollButtons[id]);
+        copyRect(&rect, &board->viewPort.scrollBars[id]);
 
         if (board->orientation == CALC_HORIZONTAL){
             rotateRect(&rect);
@@ -539,8 +539,8 @@ void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update){
 #ifdef DEST_CASIO_CALC
             dsubimage(
                 rect.x, rect.y,
-                &g_scroll, 0, sequence[id] * SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_HEIGHT, SCROLL_BUTTON_HEIGHT,
+                &g_scroll, 0, sequence[id] * SCROLL_HEIGHT,
+                SCROLL_HEIGHT, SCROLL_HEIGHT,
                 DIMAGE_NOCLIP);
 #endif // #ifdef DEST_CASIO_CALC
            }
@@ -622,20 +622,25 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         board->orientation = orientation;
 
-        // no scroll buttons on 'beginner' mode
-        board->showScroll = (board->grid->level != LEVEL_BEGINNER);
-
         board->viewPort.dimensions.col = board->grid->size.col;     // Real dims of the grid
         board->viewPort.dimensions.row = board->grid->size.row;
 
         // Count of visible boxes
         switch (board->grid->level){
             case LEVEL_BEGINNER:
+                board->viewPort.scrolls = NO_SCROLL;    // no scroll buttons on 'beginner' mode
                 setRect(&board->viewPort.visibleFrame, 0, 0, BEGINNER_COLS, BEGINNER_ROWS);
                 break;
 
             case LEVEL_MEDIUM:
+                board->viewPort.scrolls = (board->orientation==CALC_HORIZONTAL?VERT_SCROLL:HORZ_SCROLL);
+                setRect(&board->viewPort.visibleFrame, 0, 0,
+                    MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
+                    MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
+                break;
+
             case LEVEL_EXPERT:
+                board->viewPort.scrolls = BOTH_SCROLL;
                 setRect(&board->viewPort.visibleFrame, 0, 0,
                     MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
                     MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
@@ -647,7 +652,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // 1 - Stat rect ( = [mines][smiley][timer] )
         setRect(&board->statRect,
-            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT)
                 - STAT_WIDTH - 2*STAT_BORDER ) / 2,
             EMPTY_SPACE + STAT_BORDER,
             STAT_WIDTH, STAT_HEIGHT);
@@ -656,41 +661,32 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
         gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
         setRect(&board->playgroundRect,
-            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT) 
+            ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT)
                - gridWidth -2*PLAYGROUND_BORDER) / 2,
             board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
             gridWidth, gridHeight);
         copyRect(&board->gridRect, &board->playgroundRect);
 
-        // 3 - Viewport scroll buttons
-        if (board->showScroll){
+        // 3 - Viewport scrollbars
+        if (board->viewPort.scrolls != NO_SCROLL){
+            if (board->viewPort.scrolls & HORZ_SCROLL){
+                board->playgroundRect.w += SCROLL_WIDTH;
 
-            board->playgroundRect.w += SCROLL_BUTTON_WIDTH;
-            board->playgroundRect.h += SCROLL_BUTTON_HEIGHT;
+                // Horz scroll pos
+                setRect(&board->viewPort.scrollBars[0],
+                    board->gridRect.x,
+                    board->gridRect.y + board->gridRect.h,
+                    board->gridRect.w, SCROLL_HEIGHT);
+            }
 
-            // top button
-            setRect(&board->viewPort.scrollButtons[0],
-                board->gridRect.x + board->gridRect.w,
-                board->gridRect.y + 1,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+            if (board->viewPort.scrolls & VERT_SCROLL){
+                board->playgroundRect.h += SCROLL_HEIGHT;
 
-            // right button
-            setRect(&board->viewPort.scrollButtons[1],
-                board->gridRect.x + board->gridRect.w - 2 - SCROLL_BUTTON_WIDTH,
-                board->gridRect.y + board->gridRect.h,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
-
-            // bottom button
-            setRect(&board->viewPort.scrollButtons[2],
-                board->gridRect.x + board->gridRect.w,
-                board->gridRect.y + board->gridRect.h - 2 - SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
-
-            // left button
-            setRect(&board->viewPort.scrollButtons[3],
-                board->gridRect.x + 1,
-                board->gridRect.y + board->gridRect.h,
-                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT);
+                setRect(&board->viewPort.scrollBars[1],
+                    board->gridRect.x + board->gridRect.w,
+                    board->gridRect.y,
+                    SCROLL_WIDTH, board->gridRect.h);
+            }
         }
     } // if (grid)
 }
