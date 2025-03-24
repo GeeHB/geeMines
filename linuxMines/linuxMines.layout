@@ -2,49 +2,9 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="../src/shared/keys.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1153" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../src/grid.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4580" topLine="157" />
-		</Cursor>
-	</File>
-	<File name="main.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4421" topLine="168" />
-		</Cursor>
-	</File>
-	<File name="../src/shared/keys.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1579" topLine="60" />
-		</Cursor>
-	</File>
-	<File name="../src/shared/casioCalcs.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="670" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="../src/grid.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1699" topLine="66" />
-		</Cursor>
-	</File>
-	<File name="../src/board.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="22314" topLine="735" />
-		</Cursor>
-	</File>
-	<File name="../src/shared/casioCalcs.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="707" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="../src/board.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8631" topLine="283" />
 		</Cursor>
 	</File>
 	<File name="../src/consts.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -52,14 +12,54 @@
 			<Cursor1 position="1368" topLine="45" />
 		</Cursor>
 	</File>
-	<File name="../src/shared/menu.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/grid.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="17510" topLine="555" />
+			<Cursor1 position="1699" topLine="66" />
 		</Cursor>
 	</File>
 	<File name="../src/shared/menu.c" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2726" topLine="98" />
+		</Cursor>
+	</File>
+	<File name="../src/board.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8631" topLine="283" />
+		</Cursor>
+	</File>
+	<File name="../src/shared/casioCalcs.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="707" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="../src/grid.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4580" topLine="157" />
+		</Cursor>
+	</File>
+	<File name="../src/shared/casioCalcs.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="670" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="../src/shared/keys.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1579" topLine="60" />
+		</Cursor>
+	</File>
+	<File name="../src/shared/menu.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17510" topLine="555" />
+		</Cursor>
+	</File>
+	<File name="../src/board.c" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15412" topLine="556" />
+		</Cursor>
+	</File>
+	<File name="../src/shared/keys.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1153" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

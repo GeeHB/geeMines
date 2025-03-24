@@ -10,6 +10,7 @@
     - [ ] [col. foncé] / [col claire]
     - [ ] Gestion de la position
     - [ ] Gestion de la taille
+    - [ ] Clignottement ?
 
 #### Corrections
 - [ ] Tailles max. des grilles selon l'orientation

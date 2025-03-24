@@ -206,7 +206,7 @@ BOOL _onStartGame(PBOARD const board){
 
             if (redraw & REDRAW_SCROLL_BUTTONS){
                 showScroll = !showScroll;
-                board_drawScrollBarsEx(board, showScroll, FALSE); // Blink scroll buttons
+                board_drawScrollBars(board, showScroll); // Blink scroll buttons
             }
 
             if (redraw & REDRAW_MINES_LEFT){
@@ -264,7 +264,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     minesAround = grid_countMines(board->grid, pos);
     board->steps++;
     box->state =  BS_DOWN - minesAround;
-    
+
     if (board_isBoxVisible(board, pos)){
         board_drawBoxAtPos(board, pos);
     }

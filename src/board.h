@@ -32,9 +32,6 @@ extern "C" {
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 
-#define SCROLL_WIDTH        0x000C      // 12
-#define SCROLL_HEIGHT       SCROLL_WIDTH
-
 #define BOX_WIDTH           0x0010  // 16
 #define BOX_HEIGHT          BOX_WIDTH
 
@@ -94,6 +91,13 @@ typedef enum {
 #define HORZ_SCROLL     1
 #define VERT_SCROLL     2
 #define BOTH_SCROLL     (HORZ_SCROLL | VERT_SCROLL)
+
+#define SCROLL_RADIUS   0x0005
+#define SCROLL_WIDTH    2*(SCROLL_RADIUS+1)      // 12
+#define SCROLL_HEIGHT   SCROLL_WIDTH
+
+#define SCROLL_COLOUR           C_RGB(19,24,27)
+#define SCROLL_COLOUR_HILITE    C_RGB(13, 16, 18)
 
 // A viewport - defines visible part of the grid
 //
@@ -259,14 +263,12 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-// board_drawScrollBarsEx() : Draw buttons for viewport scrolling
+// board_drawScrollBarsEx() : Draw viewport's scrollbars
 //
 //  @board : pointer to the board
-//  @highLight : Draw buttons in hightlighted state
-//  @update : Update screen ?
+//  @highLight : Highlight scroll bars ?
 //
-void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update);
-#define board_drawScrollBars(board, highLight) board_drawScrollBarsEx(board, highLight, TRUE)
+void board_drawScrollBars(PBOARD board, BOOL highLight);
 
 // board_drawLed() : Draw a led digit
 //

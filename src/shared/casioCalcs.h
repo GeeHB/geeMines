@@ -139,6 +139,15 @@ BOOL copyRect(PRECT const dest, PRECT const src);
 //
 BOOL inflateRect(PRECT const rect, int dx, int dy);
 
+// deflateRect() : deflate a rect
+//
+//  @rect : pointer to the rect.
+//  @dx, @dy : Deflation units
+//
+//  @return : TRUE if successfully deflated
+//
+BOOL deflateRect(PRECT const rect, int dx, int dy);
+
 #ifdef SCREEN_CAPTURE
 #ifdef DEST_CASIO_CALC
     #include <gint/usb.h>

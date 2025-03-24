@@ -207,7 +207,7 @@ BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){
 //
 void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
 #ifdef DEST_CASIO_CALC
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), COL_BKGROUND);
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), BKGROUND_COLOUR);
 #endif // #ifdef DEST_CASIO_CALC
 
     if (board->grid && board->grid->boxes){
@@ -279,7 +279,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
             if (!r && !c){
                 char trace[250];
                 __coordtoa("Pos : ", rect.x, rect.y, trace);
-                TRACE(trace, C_BLACK, COL_BKGROUND);
+                TRACE(trace, C_BLACK, BKGROUND_COLOUR);
             }
 #endif // TRACE_MODE
 */
@@ -294,7 +294,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     }
 
     if (board->viewPort.scrolls != NO_SCROLL){
-        board_drawScrollBarsEx(board, FALSE, FALSE);
+        board_drawScrollBars(board, FALSE);
     }
 
     if (update){
@@ -478,79 +478,43 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
     board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
-// board_drawScrollBarsEx() : Draw buttons for viewport scrolling
+// board_drawScrollBars() : Draw viewport's scrollbars
 //
 //  @board : pointer to the board
-//  @highLight : Draw buttons in hightlighted state
-//  @update : Update screen ?
+//  @highLight : Highlight scroll bars ?
 //
-void board_drawScrollBarsEx(PBOARD board, BOOL highLight, BOOL update){
-    uint8_t sequence[4];    // Img IDs
-    BOOL showButton;
+void board_drawScrollBars(PBOARD board, BOOL highLight){
+#ifdef DEST_CASIO_CALC
     RECT rect;
+    POINT ptTo, ptOffset;
+    int colour = (highLight?SCROLL_COLOUR_HILITE:SCROLL_COLOUR);
 
-    if (CALC_HORIZONTAL == board->orientation){
-        memcpy(sequence, (uint8_t[]) {3, 0, 1, 2}, 4 * sizeof(uint8_t));
-    }
-    else{
-        memcpy(sequence, (uint8_t[]) {0, 1, 2, 3}, 4 * sizeof(uint8_t));
-    }
+    for (uint8_t id=1; id <=2; id++){
+        if (board->viewPort.scrolls & id){
+            copyRect(&rect, &board->viewPort.scrollBars[id - 1]);
+            deflateRect(&rect, 1, 1);
 
-    for (uint8_t id=0; id<4; id++){
-        // is the button visible ?
-        switch (id){
-            // top
-            case 0:
-                showButton = (board->viewPort.visibleFrame.y>0);
-                break;
+            if (board->orientation == CALC_HORIZONTAL){
+                rotateRect(&rect);
+            }
 
-            // right
-            case 1:
-                showButton = ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) < board->viewPort.dimensions.col);
-                break;
+            ptTo = (POINT){.x= rect.x + rect.w - 1, .y = rect.y + rect.h - 1 };
+            ptOffset = ((id & HORZ_SCROLL)?(POINT){.x = SCROLL_RADIUS, .y = 0}:(POINT){.x = 0, .y = SCROLL_RADIUS});
 
-            // bottom
-            case 2:
-                showButton = ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h) < board->viewPort.dimensions.row);
-                break;
+            dellipse(rect.x, rect.y,
+                rect.x + 2*SCROLL_RADIUS - 1, rect.x + 2*SCROLL_RADIUS - 1,
+                colour, colour);
+            dellipse(ptTo.x - 2*SCROLL_RADIUS + 1 , ptTo.y - 2*SCROLL_RADIUS + 1,
+                ptTo.x, ptTo.y,
+                colour, colour);
 
-            // left
-            case 3:
-                showButton = (board->viewPort.visibleFrame.x>0);
-                break;
-        } // switch
-
-        copyRect(&rect, &board->viewPort.scrollBars[id]);
-
-        if (board->orientation == CALC_HORIZONTAL){
-            rotateRect(&rect);
-        }
-
-        // Show / hide the button
-        if (highLight || !showButton){
-#ifdef DEST_CASIO_CALC
-            drect(
-                rect.x, rect.y,
-                rect.x + rect.w - 1, rect.y + rect.h - 1,
-                COL_BKGROUND);
+            drect(rect.x + ptOffset.x, rect.y + ptOffset.y ,
+                rect.x + rect.w - 1 - 2 * ptOffset.x,
+                rect.y + rect.h - 1 -2 * ptOffset.y,
+                colour);
+        } // if (board->viewPort.scrolls & id){
+    }   // for (id)
 #endif // #ifdef DEST_CASIO_CALC
-        }
-        else{
-#ifdef DEST_CASIO_CALC
-            dsubimage(
-                rect.x, rect.y,
-                &g_scroll, 0, sequence[id] * SCROLL_HEIGHT,
-                SCROLL_HEIGHT, SCROLL_HEIGHT,
-                DIMAGE_NOCLIP);
-#endif // #ifdef DEST_CASIO_CALC
-           }
-    } // if
-
-    if (update){
-#ifdef DEST_CASIO_CALC
-        dupdate();
-#endif // #ifdef DEST_CASIO_CALC
-    }
 }
 
 // board_drawLed() : Draw a led digit
@@ -578,10 +542,9 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 //
 void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
     RECT rc;
-    BOOL vertical;
+    BOOL vertical = (board->orientation == CALC_VERTICAL);
 
 #ifdef DEST_CASIO_CALC
-    vertical = (board->orientation == CALC_VERTICAL);
     int light, dark;
     light = COLOUR_LT_GREY;
     dark = COLOUR_GREY;
@@ -670,9 +633,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         // 3 - Viewport scrollbars
         if (board->viewPort.scrolls != NO_SCROLL){
             if (board->viewPort.scrolls & HORZ_SCROLL){
+                // Horizontal scroll
                 board->playgroundRect.w += SCROLL_WIDTH;
-
-                // Horz scroll pos
                 setRect(&board->viewPort.scrollBars[0],
                     board->gridRect.x,
                     board->gridRect.y + board->gridRect.h,
@@ -680,8 +642,8 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             }
 
             if (board->viewPort.scrolls & VERT_SCROLL){
+                // Vertical scroll
                 board->playgroundRect.h += SCROLL_HEIGHT;
-
                 setRect(&board->viewPort.scrollBars[1],
                     board->gridRect.x + board->gridRect.w,
                     board->gridRect.y,
@@ -720,7 +682,7 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
 #ifdef TRACE_MODE
         //char trace[250];
         //__coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
-        //TRACE(trace, C_BLACK, COL_BKGROUND);
+        //TRACE(trace, C_BLACK, BKGROUND_COLOUR);
 #endif // TRACE_MODE
 }
 
