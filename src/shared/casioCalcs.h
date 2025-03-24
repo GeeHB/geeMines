@@ -77,6 +77,15 @@
 
 typedef uint8_t BOOL;
 
+// Calc. orientation
+typedef enum {
+    CALC_VERTICAL = 0, CALC_HORIZONTAL
+} ORIENTATION;
+
+//
+// Utils
+//
+
 // Ensure value is in the range
 #define SET_IN_RANGE(val, min, max) ((val < min)?min:((val > max)?max:val))
 

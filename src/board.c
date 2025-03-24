@@ -17,14 +17,13 @@
 #include <stdio.h>
 #endif // #ifdef DEST_CASIO_CALC
 
-#include <string.h>
+//#include <string.h>
 
 #ifdef DEST_CASIO_CALC
     // Images
     extern bopti_image_t g_boxes;
     extern bopti_image_t g_smileys;
     extern bopti_image_t g_leds;
-    extern bopti_image_t g_scroll;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_create() : Create an empty board
@@ -181,22 +180,6 @@ BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt){
     }
 
     return FALSE;
-}
-
-// board_isBoxVisible() : Check is box is visible
-//
-// Check that the box at the given position is in the viewPort visible frame
-//
-//  @board : pointer to the board
-//  @pos : Coordindate of the box in the grid
-//
-//  @return TRUE the box is visible
-//
-BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){
-    return (pos->col >= board->viewPort.visibleFrame.x &&
-            pos->col < (board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w) &&
-            pos->row >= board->viewPort.visibleFrame.y &&
-            pos->row < (board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h));
 }
 
 //  board_drawEx() : Draw the whole board
@@ -616,7 +599,7 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
 //  @board : Pointer to the board
 //  @orientation : Drawing orientation
 //
-void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
+void board_setOrientation(PBOARD const board, ORIENTATION orientation){
     if (board && board->grid){
         int16_t gridWidth, gridHeight;
 

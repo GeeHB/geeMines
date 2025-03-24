@@ -76,9 +76,7 @@ typedef enum {
 
 // Orientation
 //
-typedef enum {
-    CALC_VERTICAL = 0, CALC_HORIZONTAL
-} CALC_ORIENTATION;
+
 
 // Smiley state
 //
@@ -92,7 +90,7 @@ typedef struct __board{
     PGRID grid;
     VIEWPORT viewPort;
     BOOL showScroll;
-    CALC_ORIENTATION orientation;
+    ORIENTATION orientation;
     GAME_STATE gameState;
     SMILEY_STATE smileyState;
     int8_t minesLeft;   // could be < 0 !
@@ -176,17 +174,6 @@ void board_free(PBOARD const board, BOOL freeAll);
 //  @return TRUE if doone successfully
 //
 BOOL board_Pos2Point(PBOARD const board, PCOORD const pos, PPOINT pt);
-
-// board_isBoxVisible() : Check is box is visible
-//
-// Check that the box at the given position is in the viewPort visible frame
-//
-//  @board : pointer to the board
-//  @pos : Coordindate of the box in the grid
-//
-//  @return TRUE the box is visible
-//
-BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos);
 
 //  board_drawGridEx() : Draw the visible grid
 //
@@ -277,7 +264,7 @@ void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness);
 //  @board : Pointer to the board
 //  @orientation : Drawing orientation
 //
-void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation);
+void board_setOrientation(PBOARD const board, ORIENTATION orientation);
 
 //  board_selectBoxEx() : Select a box
 //

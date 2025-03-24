@@ -8,6 +8,7 @@
 
 #include "game.h"
 #include "board.h"
+#include "viewPort.h"
 
 #include <stdint.h>
 
@@ -264,8 +265,8 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     minesAround = grid_countMines(board->grid, pos);
     board->steps++;
     box->state =  BS_DOWN - minesAround;
-    
-    if (board_isBoxVisible(board, pos)){
+
+    if (viewport_isBoxVisible(&board->viewPort, pos)){
         board_drawBoxAtPos(board, pos);
     }
 

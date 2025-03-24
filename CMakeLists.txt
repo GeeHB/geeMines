@@ -8,6 +8,7 @@ find_package(Gint 2.9 REQUIRED)
 set(SOURCES
   src/geeMines.c
   src/grid.c
+  src/viewPort.c
   src/board.c
   src/game.c
   src/shared/casioCalcs.c
