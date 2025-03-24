@@ -97,7 +97,7 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (board->showScroll && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
+        if (board->viewPort.scrolls && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
             redraw |= REDRAW_SCROLL_BUTTONS;
         }
 
@@ -184,7 +184,7 @@ BOOL _onStartGame(PBOARD const board){
             if (redraw & REDRAW_GRID){
                 board_drawGridEx(board, FALSE); // no screen update
 
-                if (board->showScroll){
+                if (board->viewPort.scrolls){
                     redraw |= REDRAW_SCROLL_BUTTONS;
                 }
             }
