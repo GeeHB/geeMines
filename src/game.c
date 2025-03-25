@@ -8,14 +8,16 @@
 
 #include "game.h"
 #include "board.h"
+#include "shared/keys.h"
 
 #include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
-#include "shared/keys.h"
-#include <gint/clock.h>
+    #include <gint/clock.h>
+    #include <string.h>
 
-extern bopti_image_t g_pause;
+    extern bopti_image_t g_mine;   // "about" image
+    extern bopti_image_t g_pause;
 #endif // #ifdef DEST_CASIO_CALC
 
 // _onNewGame() : Create a new game
@@ -27,6 +29,74 @@ void _onNewGame(PBOARD const board, uint8_t level){
     if (board_init(board, level)){
         board_update(board, TRUE);
     }
+}
+
+// _onAbout() : Show "about" informations
+//
+void _onAbout(){
+#ifdef DEST_CASIO_CALC
+    int w, h;
+    char copyright[255];    // Should be enough !
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
+
+    // Draw the logo
+    dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2,
+            (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2,
+            &g_mine);
+
+    // Copyright
+    strcpy(copyright, APP_NAME);
+    strcat(copyright, " par ");
+    strcat(copyright, APP_AUTHOR);
+    strcat(copyright, " v");
+    strcat(copyright, APP_VERSION);
+    dsize(copyright, NULL, &w, &h);
+
+    dtext(CASIO_WIDTH - w - 5,
+            CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - h - 10,
+            COLOUR_BLACK, copyright);
+
+    dupdate();
+#endif // #ifdef DEST_CASIO_CALC
+}
+
+// _onPause() : Show pause screen
+//
+void _onPause(){
+#ifdef DEST_CASIO_CALC
+    uint car = KEY_NONE;
+    uint16_t y;
+
+    // Top of image
+    dsubimage(0, 0, &g_pause,
+            0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
+
+    // "middle"
+    for (y = IMG_PAUSE_COPY_Y;
+        y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
+        dsubimage(0, y, &g_pause,
+            0, IMG_PAUSE_COPY_Y,
+            IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
+    }
+
+    // bottom
+    y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
+    dsubimage(0, y, &g_pause,
+            0, IMG_PAUSE_COPY_Y + 1,
+            IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
+            DIMAGE_NOCLIP);
+
+    dupdate();
+
+    do{
+        car = getKey();
+    }while (KEY_CODE_PAUSE != car && KEY_CODE_EXIT != car);
+
+    if (KEY_CODE_EXIT == car){
+        // Close app.
+        gint_osmenu();
+    }
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 // __callbackTick() : Callback function for timer
@@ -50,7 +120,6 @@ static int __callbackTick(volatile int *pTick){
 //
 //  @return : FALSE on error
 //
-#ifdef DEST_CASIO_CALC
 BOOL _onStartGame(PBOARD const board){
     if (!board){
         return FALSE;
@@ -72,6 +141,8 @@ BOOL _onStartGame(PBOARD const board){
     // Timer for blinking effect
     int tickCount = 0;
     static volatile int tick = 1;
+
+#ifdef DEST_CASIO_CALC
     int timerID = timer_configure(TIMER_ANY, TIMER_TICK_DURATION * 1000,
                                     GINT_CALL(__callbackTick, &tick));
     if (timerID >= 0){
@@ -80,12 +151,15 @@ BOOL _onStartGame(PBOARD const board){
     else{
         board->gameState = STATE_CANCELLED;   // No timer => no game
     }
+#endif // #ifdef DEST_CASIO_CALC
 
     while (board->gameState == STATE_PLAYING){
         // Time management
+#ifdef DEST_CASIO_CALC
         while(!tick){
             sleep();
         }
+#endif // #ifdef DEST_CASIO_CALC
         tick = 0;
         tickCount++;
 
@@ -221,18 +295,21 @@ BOOL _onStartGame(PBOARD const board){
                 board_drawTimeEx(board, FALSE);     // Time has changed
             }
 
+#ifdef DEST_CASIO_CALC
             dupdate();      // (redraw & REDRAW_UPDATE)
+#endif // #ifdef DEST_CASIO_CALC
             redraw = NO_REDRAW;
         } // if (reDraw)
     } // while (board->gameState == STATE_PLAYING)
 
+#ifdef DEST_CASIO_CALC
     if (timerID >= 0){
         timer_stop(timerID);
     }
+#endif // #ifdef DEST_CASIO_CALC
 
     return TRUE;
 }
-#endif // #ifdef DEST_CASIO_CALC
 
 //  _onStep : User steps on a box
 //
@@ -327,45 +404,6 @@ uint16_t _onQuestion(PBOARD const board, PCOORD const pos){
     }
 
     return NO_REDRAW;
-}
-
-// _onPause() : Show pause screen
-//
-void _onPause(){
-#ifdef DEST_CASIO_CALC
-    uint car = KEY_NONE;
-    uint16_t y;
-
-    // Top of image
-    dsubimage(0, 0, &g_pause,
-            0, 0, IMG_PAUSE_W, IMG_PAUSE_COPY_Y, DIMAGE_NOCLIP);
-
-    // "middle"
-    for (y = IMG_PAUSE_COPY_Y;
-        y < (IMG_PAUSE_COPY_Y + IMG_PAUSE_LINES); y++){
-        dsubimage(0, y, &g_pause,
-            0, IMG_PAUSE_COPY_Y,
-            IMG_PAUSE_W, 1, DIMAGE_NOCLIP);
-    }
-
-    // bottom
-    y = CASIO_HEIGHT - IMG_PAUSE_H + IMG_PAUSE_COPY_Y - 1;
-    dsubimage(0, y, &g_pause,
-            0, IMG_PAUSE_COPY_Y + 1,
-            IMG_PAUSE_W, IMG_PAUSE_H - IMG_PAUSE_COPY_Y - 1,
-            DIMAGE_NOCLIP);
-
-    dupdate();
-
-    do{
-        car = getKey();
-    }while (KEY_CODE_PAUSE != car && KEY_CODE_EXIT != car);
-
-    if (KEY_CODE_EXIT == car){
-        // Close app.
-        gint_osmenu();
-    }
-#endif // #ifdef DEST_CASIO_CALC
 }
 
 // _onKeyLeftEx() : User press "left" key

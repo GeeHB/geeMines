@@ -8,47 +8,11 @@
 
 #include "consts.h"
 #include "shared/menu.h"
-
-#ifdef DEST_CASIO_CALC
-    #include "game.h"
-    //#include "shared/casioCalcs.h"
-    #include <string.h>
-
-    extern bopti_image_t g_mine;   // "about" image
-#endif // #ifdef DEST_CASIO_CALC
+#include "game.h"
 
 //
 // Functions
 //
-
-// _about() : Show "about" informations
-//
-void _about(){
-#ifdef DEST_CASIO_CALC
-    int w, h;
-    char copyright[255];    // Should be enough !
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
-
-    // Draw the logo
-    dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2,
-            (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2,
-            &g_mine);
-
-    // Copyright
-    strcpy(copyright, APP_NAME);
-    strcat(copyright, " par ");
-    strcat(copyright, APP_AUTHOR);
-    strcat(copyright, " v");
-    strcat(copyright, APP_VERSION);
-    dsize(copyright, NULL, &w, &h);
-
-    dtext(CASIO_WIDTH - w - 5,
-            CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - h - 10,
-            COLOUR_BLACK, copyright);
-
-    dupdate();
-#endif // #ifdef DEST_CASIO_CALC
-}
 
 // _createMenu : Create the applicaiton menu
 //
@@ -83,14 +47,14 @@ POWNMENU _createMenu(){
 }
 
 int main(void){
-#ifdef DEST_CASIO_CALC
+//#ifdef DEST_CASIO_CALC
     POWNMENU menu = _createMenu();
     PBOARD board = board_create();
     if (menu && board){
         BOOL end = FALSE;
         MENUACTION action;
 
-        _about();
+        _onAbout();
 
         // Main menu
         menu_update(menu);
@@ -157,10 +121,12 @@ int main(void){
         board_free(board, TRUE);
     }
 
+#ifdef DEST_CASIO_CALC
     //gint_setrestart(0);
     gint_osmenu();
-
 #endif // #ifdef DEST_CASIO_CALC
+
+//#endif // #ifdef DEST_CASIO_CALC
 	return 1;
 }
 

@@ -14,12 +14,12 @@ https://minesweeper.online/fr/game/4289190080
 
 ### Informations de version
 
-| Dépôt          | https://gitea.planet-casio.com/Jhb/geeTetris     |
+| Dépôt          | https://gitea.planet-casio.com/Jhb/geeMines     |
 |----------------|--------------------------------------------------|
-| **Date**           | 7 mars 2024                                      |
-| **Version stable** | **0.7.1** - branche `main`                             |
+| **Date**           | xx mars 2025                                      |
+| **Version stable** | **0.2.1** - branche `dev`                             |
 | **Dépendances**    | **Casio / gint**                                     |
-| **Testé sur**      | *Linux* (Fedora 39) avec `code::blocks`              |
+| **Testé sur**      | *Linux* (Fedora 41) avec `code::blocks` et *Zed*              |
 |                | *Casio Graph90+E*  et Casio Grapg35+E ii avec `gint` |
 
 ### Utilisation du clavier
@@ -76,40 +76,15 @@ Les contrôles "suivent" le mouvement de la calculatrice :
 
 ### Copies d'écran
 
-Ecran d'accueil de `geeTetris` :
+Ecran d'accueil :
 
 ![Accueil](assets/welcome.png)
 
-![Accueil](assets/welcome_fx.png)
+Grilles :
 
-Choix du niveau de démarrage :
+![Débutant - Vert](assets/9x9_vert.png)
+![Débutant - Vert](assets/9x9_horz.png)
 
-![Level](assets/levels.png)
+![Medium - Vert](assets/16x16_horz.png)
 
-![Level](assets/levels_fx.png)
-
-Choix du nombre de ligne 'sales' à ajouter en début de partie :
-
-![Dirty lines](assets/dirty.png)
-
-![Dirty lines](assets/dirty_fx.png)
-
-Affichage ou masquage de l'ombre des pièces :
-
-![Shdow](assets/shadow.png)
-
-Jeu en mode normal :
-
-![Horz](assets/horz.png)
-
-![Horz](assets/horz_fx.png)
-
-... la même partie continue en affichage vertical :
-
-![Vertical](assets/vert.png)
-
-![Vertical](assets/vert_fx.png)
-
-Affichage des meilleurs scores à partir de la page principale :
-
-![high](assets/best.png)
+![Expert - Vert](assets/expert_vert.png)

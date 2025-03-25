@@ -6,7 +6,7 @@
     - [ ] Ecran + menu
 - [ ] Barre(s) de défilement
     - [ ] none, vert, horz, both
-    - [ ] Largeur prop.
+    - [ ] Largeur | hauteur prop.
     - [ ] [col. foncé] / [col claire]
     - [ ] Gestion de la position
     - [ ] Gestion de la taille

@@ -1,5 +1,13 @@
+#### v0.2.1
+* ww mars 2025
+* Ajouts
+  * Rempalcement des boutons de navigation par des barres de défilement
+
+* Corrections
+    * Réorganisation des sources
+
 #### v0.1.2
-* xxx
+* 21 mars 2025
 * Ajouts
   * Retrait du menu en mode jeu
     * Les grilles sont toujours centrées (hors scrolling)

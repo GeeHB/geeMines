@@ -49,15 +49,21 @@ extern "C" {
 //
 void _onNewGame(PBOARD const board, uint8_t level);
 
+// _onAbout() : Show "about" informations
+//
+void _onAbout();
+
+// _onPause() : Show pause screen
+//
+void _onPause();
+
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
 //
 //  @return : FALSE on error
 //
-#ifdef DEST_CASIO_CALC
 BOOL _onStartGame(PBOARD const board);
-#endif // #ifdef DEST_CASIO_CALC
 
 //  _onStep : User steps on a box
 //
@@ -86,10 +92,6 @@ uint16_t _onFlag(PBOARD const board, PCOORD const pos);
 //  @return drawing action to perform or NO_DRAWING
 //
 uint16_t _onQuestion(PBOARD const board, PCOORD const pos);
-
-// _onPause() : Show pause screen
-//
-void _onPause();
 
 // _onKeyLeftEx() : User press "left" key
 //
