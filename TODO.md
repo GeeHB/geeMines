@@ -1,5 +1,5 @@
 #### Ajouts
-- [x] Affichage en mode horizontal
+- [x] Affichages en mode horizontal
 - [x] Copies d'écrans
 - [ ] Gestion des scores
     - [ ] Duréee par niveau

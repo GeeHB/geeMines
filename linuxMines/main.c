@@ -3,6 +3,7 @@
 #include "../src/consts.h"
 
 #include "../src/board.h"
+#include "../src/scores.h"
 
 // Menu de test
 //
@@ -157,39 +158,8 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
     return TRUE;    // No mine at this pos
 }
 
-// (trigonometric) rotations
-//  ... of a single point
-void rotate(int16_t* x, int16_t* y){
-    int16_t ny = (CASIO_HEIGHT - 22 - *x);
-    *x = *y;
-    *y = ny;
-}
-
-// ... of a rect
-void rotateR(int16_t* xFrom, int16_t* yFrom, int16_t* xTo, int16_t* yTo){
-    rotate(xFrom, yFrom);
-    rotate(xTo, yTo);
-
-    // The rect (xFrom, yFrom) -> (xTo, yTo)
-    // turns and becomes (xFrom, yTo) -> (xTo, yFrom)
-    int16_t oFrom = (*yFrom);
-    *yFrom = *yTo;
-    *yTo = oFrom;
-}
-
 int main()
 {
-    int16_t xfrom = 110 , yfrom = 5;
-    int16_t xto = 155 , yto = 120;
-
-    rotateR(&xfrom, &yfrom, &xto, &yto);
-
-    //(5,15) -> (120,60) : w = 116 x h = 46
-
-    RECT r = {110,5, 46, 116};
-    rotateRect(&r);
-
-
     // Création d'un menu
     //
     POWNMENU menu = menu_create();

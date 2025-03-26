@@ -11,6 +11,11 @@
 
 #include "consts.h"
 #include "board.h"
+#include "scores.h"
+
+#ifdef DEST_CASIO_CALC
+#include <gint/timer.h>
+#endif // #ifdef DEST_CASIO_CALC
 
 // Blinking
 //
@@ -19,7 +24,7 @@
 #define TIMER_HALF_SECOND       5
 
 #define BLINK_CURSOR            TIMER_HALF_SECOND   // "duration" of cursor blinking
-#define BLINK_SCROLL_BUTTONS    8
+#define BLINK_SCROLLBARS        12
 
 // Redraw mode (any combinaison of)
 //
@@ -29,14 +34,10 @@
 #define REDRAW_TIME             4
 #define REDRAW_BOX              8       // Redraw current box and menu
 #define REDRAW_SELECTION        16
-#define REDRAW_SCROLL_BUTTONS   32
+#define REDRAW_SCROLLBARS       32
 #define REDRAW_GRID             64
 
 #define REDRAW_UPDATE           128     // Just update
-
-#ifdef DEST_CASIO_CALC
-#include <gint/timer.h>
-#endif // #ifdef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +45,7 @@ extern "C" {
 
 // _onNewGame() : Create a new game
 //
-//  @baord : pointer to the game board
+//  @board : pointer to the game board
 //  @level : game difficulty level
 //
 void _onNewGame(PBOARD const board, uint8_t level);
@@ -60,10 +61,11 @@ void _onPause();
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
+//  @scores : Array of scores
 //
 //  @return : FALSE on error
 //
-BOOL _onStartGame(PBOARD const board);
+BOOL _onStartGame(PBOARD const board, PSCORE scores);
 
 //  _onStep : User steps on a box
 //
@@ -137,16 +139,13 @@ uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check);
 uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check);
 #define _onKeyUp(board, pos) _onKeyUpEx(board, pos, TRUE)
 
-#ifdef DEST_CASIO_CALC
-// __callbackTick() : Call back function for timer
-// This function is used during edition to make selected item blink
+// _gameWon() : The user won the game
 //
-//  @pTick : pointer to blinking state indicator
+//  @board : pointer to the game board
+//  @scores : Array of scores
+//  @level, @time : new score
 //
-//  @return : TIMER_CONTINUE if valid
-//
-//static int __callbackTick(volatile int *pTick);
-#endif // #ifdef DEST_CASIO_CALC
+void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time);
 
 #ifdef __cplusplus
 }

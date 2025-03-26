@@ -12,6 +12,10 @@ projet pédagogique : https://www.codeproject.com/Articles/183582/Adapted-WinMin
 https://github.com/reactos/reactos/tree/master/base/applications/games/winmine
 https://minesweeper.online/fr/game/4289190080
 
+
+Ecran d'accueil :
+
+
 ### Informations de version
 
 | Dépôt          | https://gitea.planet-casio.com/Jhb/geeMines     |
@@ -21,6 +25,16 @@ https://minesweeper.online/fr/game/4289190080
 | **Dépendances**    | **Casio / gint**                                     |
 | **Testé sur**      | *Linux* (Fedora 41) avec `code::blocks` et *Zed*              |
 |                | *Casio Graph90+E*  et Casio Grapg35+E ii avec `gint` |
+
+### Copies d'écran
+
+![Débutant - Vertical](assets/9x9_vert.png)
+![Débutant - Horizontal](assets/9x9_horz.png)
+
+![Medium - Horizontal](assets/16x16_horz.png)
+
+![Expert - Vertical](assets/expert_vert.png)
+
 
 ### Utilisation du clavier
 
@@ -73,18 +87,3 @@ Les contrôles "suivent" le mouvement de la calculatrice :
 | ![Bas](assets/key_right.png) | **Descente** de la pièce d'un rang             |
 | ![Rotation](assets/key_left.png) | **Rotation** de la pièce                       |
 | ![Descente](assets/key_0.png) | Faire **tomber** la pièce le plus bas possible |
-
-### Copies d'écran
-
-Ecran d'accueil :
-
-![Accueil](assets/welcome.png)
-
-Grilles :
-
-![Débutant - Vert](assets/9x9_vert.png)
-![Débutant - Vert](assets/9x9_horz.png)
-
-![Medium - Vert](assets/16x16_horz.png)
-
-![Expert - Vert](assets/expert_vert.png)

@@ -48,7 +48,7 @@ extern "C" {
 #define BUTTON_VERT_COL_MAX    22     // # max of button in vert. mode
 #define BUTTON_VERT_ROW_MAX    10
 
-#define BUTTON_HORZ_COL_MAX    11     // # max of button in horz. mode
+#define BUTTON_HORZ_COL_MAX    12     // # max of button in horz. mode
 #define BUTTON_HORZ_ROW_MAX    21
 
 // LED images
@@ -164,8 +164,6 @@ void board_drawEx(PBOARD const board, BOOL menu, BOOL update);
 //
 void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw);
 #define board_setGameState(board, state) board_setGameStateEx(board, state, FALSE)
-#define board_gameLost(board) board_setGameStateEx(board, STATE_LOST, FALSE)
-#define board_gameWon(board) board_setGameStateEx(board, STATE_WON, FALSE)
 
 //  board_setSmileyEx() : Change the state of a game
 //
@@ -285,11 +283,11 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos);
 //  Draw a 3D border with the specified thickness around a rect
 //  borders are outside the rectangle
 //
-//  @board : Pointer to the board
+//  @orientation : Rectangle's orientation
 //  @rect : Rect. whose borders will be drawn
 //  @thickness : Border thickness
 //
-void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness);
+void board_drawBorder(CALC_ORIENTATION orientation, PRECT const rect, uint8_t thickness);
 
 //  board_setOrientation() : Set drawing orientation
 //

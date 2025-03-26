@@ -40,6 +40,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/grid.h" />
+		<Unit filename="../src/scores.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/scores.h" />
 		<Unit filename="../src/shared/casioCalcs.c">
 			<Option compilerVar="CC" />
 		</Unit>

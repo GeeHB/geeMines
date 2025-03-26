@@ -117,10 +117,11 @@ static int __callbackTick(volatile int *pTick){
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board
+//  @scores : Array of scores
 //
 //  @return : FALSE on error
 //
-BOOL _onStartGame(PBOARD const board){
+BOOL _onStartGame(PBOARD const board, PSCORE scores){
     if (!board){
         return FALSE;
     }
@@ -171,8 +172,8 @@ BOOL _onStartGame(PBOARD const board){
             redraw |= REDRAW_TIME;
         }
 
-        if (board->viewPort.scrolls && 0 == (tickCount % BLINK_SCROLL_BUTTONS)){
-            redraw |= REDRAW_SCROLL_BUTTONS;
+        if (board->viewPort.scrolls && 0 == (tickCount % BLINK_SCROLLBARS)){
+            redraw |= REDRAW_SCROLLBARS;
         }
 
         // A keyboard event ?
@@ -201,11 +202,11 @@ BOOL _onStartGame(PBOARD const board){
             case KEY_CODE_STEP:
                 if (_onStep(board, &pos, &redraw)){
                     if (board->steps == board->grid->maxSteps){
-                        board_gameWon(board);
+                        board_setGameState(board, STATE_WON);
                     }
                 }
                 else{
-                    board_gameLost(board);
+                    board_setGameState(board, STATE_LOST);
                 }
 
                 break;
@@ -227,7 +228,7 @@ BOOL _onStartGame(PBOARD const board){
                 board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
                 board_drawEx(board, FALSE, FALSE);
                 oPos = pos = (COORD){.row=0,.col=0};
-                redraw = REDRAW_UPDATE | REDRAW_SELECTION | REDRAW_SCROLL_BUTTONS;
+                redraw = REDRAW_UPDATE | REDRAW_SELECTION | REDRAW_SCROLLBARS;
                 break;
 
 #ifdef SCREEN_CAPTURE
@@ -259,7 +260,7 @@ BOOL _onStartGame(PBOARD const board){
                 board_drawGridEx(board, FALSE); // no screen update
 
                 if (board->viewPort.scrolls){
-                    redraw |= REDRAW_SCROLL_BUTTONS;
+                    redraw |= REDRAW_SCROLLBARS;
                 }
             }
 
@@ -278,7 +279,7 @@ BOOL _onStartGame(PBOARD const board){
                 board_selectBoxEx(board, &pos, hightLighted);
             }
 
-            if (redraw & REDRAW_SCROLL_BUTTONS){
+            if (redraw & REDRAW_SCROLLBARS){
                 showScroll = !showScroll;
                 board_drawScrollBars(board, showScroll); // Blink scroll buttons
             }
@@ -289,7 +290,7 @@ BOOL _onStartGame(PBOARD const board){
 
             if (redraw & REDRAW_TIME){
                 if (++board->time >= TIMER_MAX_VALUE){
-                    board_gameLost(board);
+                    board_setGameState(board, STATE_LOST);
                 }
 
                 board_drawTimeEx(board, FALSE);     // Time has changed
@@ -307,6 +308,10 @@ BOOL _onStartGame(PBOARD const board){
         timer_stop(timerID);
     }
 #endif // #ifdef DEST_CASIO_CALC
+
+    if (board->gameState == STATE_WON){
+        _gameWon(board, scores, board->grid->level, tickCount);
+    }
 
     return TRUE;
 }
@@ -518,6 +523,43 @@ uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
     }
 
     return action;
+}
+
+// _gameWon() : The user won the game
+//
+//  @board : pointer to the game board
+//  @scores : Array of scores
+//  @level, @time : new score
+//
+void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
+    BOOL added = scores_add(scores, level, time);
+
+    uint car = KEY_NONE;
+    RECT rect = {0,0,188,94};
+    centerRect(&rect, CASIO_WIDTH, CASIO_HEIGHT);
+
+#ifdef DEST_CASIO_CALC
+
+    drect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h, WINDOW_COLOUR, C_NONE);
+    dimage(rect.x + 7, rect.y + 7, &g_mine);
+    board_drawBorder(CALC_VERTICAL, &rect, 2);
+
+    dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 40, COLOUR_BLACK, "Congratulations !!!");
+
+    if (added){
+        char out[100], scrore[10];    // Should be enough !
+        strcpy(out, "New score : ");
+        strcat(out, scores_score2a(time, score));
+        strcat(out,"s");
+        dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 60, COLOUR_RED, out);
+    }
+
+    while (car == KEY_NONE{
+        car = getKey();
+    }
+
+    board_update(board);
+#endif // #ifdef DEST_CASIO_CALC
 }
 
 // EOF

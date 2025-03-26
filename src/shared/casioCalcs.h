@@ -148,16 +148,23 @@ BOOL inflateRect(PRECT const rect, int dx, int dy);
 //
 BOOL deflateRect(PRECT const rect, int dx, int dy);
 
+// centerRect() : center a rect
+//
+//  @rect : pointer to the rect.
+//  @width, @height : Screen dimensions
+//
+void centerRect(PRECT const rect, int width, int height);
+
+//
+// Screen capture functions for casio calculator : if  SCREEN_CAPTURE defined
+//
+//      using as root fxlink command : fxlink -iw
+//
+
 #ifdef SCREEN_CAPTURE
 #ifdef DEST_CASIO_CALC
     #include <gint/usb.h>
     #include <gint/usb-ff-bulk.h>
-
-    //
-    // Screen capture for casio calculator : if  SCREEN_CAPTURE defined
-    //
-    //      using as root fxlink command -[ fxlink -iw ]
-    //
 
     // capture_install() : Set/install screen capture
     //
@@ -169,11 +176,11 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 #endif // #ifdef DEST_CASIO_CALC
 #endif // #ifdef  SCREEN_CAPTURE
 
-#ifdef TRACE_MODE
-
 //
 // Debug & trace primitives
 //
+
+#ifdef TRACE_MODE
 
 // __coordtoa() : Format a point coord. to an output string
 //
@@ -193,22 +200,22 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 //
 char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str);
 
-// __atoi() : Convert a num. val to a string
+#endif // TRACE_MODE
+
+// __itoa() : Convert a num. val to a string
 //
 //  @num : Numeric value to convert
-//  @str : String to reverse
+//  @str : destination buffer
 //
 //  @return : a pointer to the string
 //
-char* __atoi(int num, char *str);
+char* __itoa(int num, char *str);
 
 // __strrev() : Reverse a string
 //
 //  @str : String to reverse
 //
 void __strrev(char *str);
-
-#endif // TRACE_MODE
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 

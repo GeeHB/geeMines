@@ -8,6 +8,7 @@
 
 #include "consts.h"
 #include "shared/menu.h"
+
 #include "game.h"
 
 //
@@ -35,6 +36,7 @@ POWNMENU _createMenu(){
 #ifdef _DEBUG_
             menubar_appendItem(bar, IDM_DEBUG, IDS_DEBUG, ITEM_STATE_UNCHECKED, ITEM_STATUS_CHECKBOX);
 #endif // #ifdef _DEBUG_
+            menubar_addItem(bar, MENU_POS_RIGHT - 1, IDM_START, IDS_START, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
             menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
         else{
@@ -53,11 +55,16 @@ int main(void){
     if (menu && board){
         BOOL end = FALSE;
         MENUACTION action;
+        PSCORE scores = NULL;
 
         _onAbout();
 
-        // Main menu
+        if (NULL != (scores = scores_load())){
+            menubar_activateItem(menu_getMenuBar(menu), IDM_SCORES, SEARCH_BY_ID, TRUE);
+        }
+
         menu_update(menu);
+
         while (!end){
             if (menu_handleKeyboard(menu, &action)){
                 switch (action.value){
@@ -101,6 +108,11 @@ int main(void){
                         menu_update(menu);
                         break;
 
+                    // Show high scores
+                    case IDM_SCORES:
+                        scores_display(scores);
+                        break;
+
                     // End app.
                     case IDM_QUIT :
                         end = TRUE;
@@ -112,9 +124,13 @@ int main(void){
             } // menu_handleKeyboard
         } // while (!end)
 
-        // Quit app.
-        //
         menu_free(menu);
+
+        if (scores){
+            scores_save(scores);
+            scores_free(scores);
+        }
+
     }   // if (menu)
 
     if (board){

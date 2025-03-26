@@ -1,7 +1,11 @@
 #### v0.2.1
 * ww mars 2025
 * Ajouts
-  * Rempalcement des boutons de navigation par des barres de défilement
+  * Remplacement des boutons de navigation par des barres de défilement
+  * Gestion des scores
+    * Chargement / Enregistrement / increment
+    * affichage
+  * Message si partie gagnée
 
 * Corrections
     * Réorganisation des sources
@@ -16,7 +20,7 @@
 
 * Corrections
     * BUG : Rotation => pos = {0,0}
-    * BUG : en mode DEBUG, affichage des statss même lorsque la 'grid' est vide
+    * BUG : en mode DEBUG, affichage des stats même lorsque la 'grid' est vide
     * BUG : _onStep => affichage en dehors du viewPort possible
 
 #### v0.0.1 - beta 4

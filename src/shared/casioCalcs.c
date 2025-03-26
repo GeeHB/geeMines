@@ -107,9 +107,25 @@ BOOL deflateRect(PRECT const rect, int dx, int dy){
     return FALSE;
 }
 
+// centerRect() : center a rect
+//
+//  @rect : pointer to the rect.
+//  @width, @height : Screen dimensions
+//
+void centerRect(PRECT const rect, int width, int height){
+    if (rect){
+        if (rect->w < width){
+            rect->x =(width - rect->w)/2;
+        }
+
+        if (rect->h < height){
+            rect->y =(height - rect->h)/2;
+        }
+    }
+}
+
 #ifdef SCREEN_CAPTURE
 #ifdef DEST_CASIO_CALC
-
 //
 // Screen capture for casio calculator : if  SCREEN_CAPTURE defined
 //
@@ -182,14 +198,16 @@ char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str){
     return str;
 }
 
-// __atoi() : Convert a num. val to a string
+#endif // TRACE_MODE
+
+// __itoa() : Convert a num. val to a string
 //
 //  @num : Numeric value to convert
-//  @str : String to reverse
+//  @str : destination buffer
 //
 //  @return : a pointer to the string
 //
-char* __atoi(int num, char *str){
+char* __itoa(int num, char *str){
     char* strVal = str;
     int sum= ((num < 0)?-1*num:num);
     uint8_t i = 0, digit, dCount = 0;
@@ -227,7 +245,5 @@ void __strrev(char *str){
         str[j] = a;
     }
 }
-
-#endif // TRACE_MODE
 
 // EOF

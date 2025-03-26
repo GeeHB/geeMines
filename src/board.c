@@ -212,13 +212,13 @@ void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
 
     if (board->grid && board->grid->boxes){
         // Stats
-        board_drawBorder(board, &board->statRect, STAT_BORDER);
+        board_drawBorder(board->orientation, &board->statRect, STAT_BORDER);
         board_drawMinesLeftEx(board, FALSE);
         board_drawSmileyEx(board, FALSE);
         board_drawTimeEx(board, FALSE);
 
         // Grid
-        board_drawBorder(board, &board->playgroundRect, PLAYGROUND_BORDER);
+        board_drawBorder(board->orientation, &board->playgroundRect, PLAYGROUND_BORDER);
         board_drawGridEx(board, update);  // + update
     }
 }
@@ -273,16 +273,6 @@ void board_drawGridEx(PBOARD const board, BOOL update){
 
         for (c = 0; c < board->viewPort.visibleFrame.w; c++){
             pos = (COORD){.col = c + board->viewPort.visibleFrame.x , .row = r + board->viewPort.visibleFrame.y};
-
-/*
-#ifdef TRACE_MODE
-            if (!r && !c){
-                char trace[250];
-                __coordtoa("Pos : ", rect.x, rect.y, trace);
-                TRACE(trace, C_BLACK, BKGROUND_COLOUR);
-            }
-#endif // TRACE_MODE
-*/
             board_directDrawBox(board, &pos, rect.x, rect.y);
             offsetRect(&rect, offsetCol.x, offsetCol.y);
         }
@@ -346,7 +336,7 @@ void board_drawMinesLeftEx(PBOARD const board, BOOL update){
 
     // A sign ?
     if (negative){
-        ids[ids[1]?0:1] =LED_MINUS_ID;
+        ids[ids[1]?0:1] = LED_MINUS_ID;
     }
 
     for (uint8_t id = 0; id < 3; id++){
@@ -536,13 +526,13 @@ void board_drawLed(PBOARD board, uint8_t digit, PRECT pos){
 //  Draw a 3D border with the specified thickness around a rect
 //  borders are outside the rectangle
 //
-//  @board : Pointer to the board
+//  @orientation : Rectangle's orientation
 //  @rect : Rect. whose borders will be drawn
 //  @thickness : Border thickness
 //
-void board_drawBorder(PBOARD board, PRECT const rect, uint8_t thickness){
+void board_drawBorder(CALC_ORIENTATION orientation, PRECT const rect, uint8_t thickness){
     RECT rc;
-    BOOL vertical = (board->orientation == CALC_VERTICAL);
+    BOOL vertical = (orientation == CALC_VERTICAL);
 
 #ifdef DEST_CASIO_CALC
     int light, dark;
@@ -680,9 +670,9 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
     }
 
 #ifdef TRACE_MODE
-        //char trace[250];
-        //__coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
-        //TRACE(trace, C_BLACK, BKGROUND_COLOUR);
+        char trace[250];
+        __coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
+        TRACE(trace, C_BLACK, BKGROUND_COLOUR);
 #endif // TRACE_MODE
 }
 
