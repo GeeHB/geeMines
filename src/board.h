@@ -42,9 +42,8 @@ extern "C" {
 #define LED_HEIGHT          0x0017  // 23
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
 
-// Counts of buttons when scroll buttons are in place
+// Counts of buttons when scrollbars are in place
 //
-
 #define BUTTON_VERT_COL_MAX    22     // # max of button in vert. mode
 #define BUTTON_VERT_ROW_MAX    10
 
@@ -92,7 +91,7 @@ typedef enum {
 #define VERT_SCROLL     2
 #define BOTH_SCROLL     (HORZ_SCROLL | VERT_SCROLL)
 
-#define SCROLL_RADIUS   0x0005
+#define SCROLL_RADIUS   0x0002
 #define SCROLL_WIDTH    2*(SCROLL_RADIUS+1)      // 12
 #define SCROLL_HEIGHT   SCROLL_WIDTH
 

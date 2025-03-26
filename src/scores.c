@@ -10,6 +10,7 @@
 #include "grid.h"
 
 #include <fcntl.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -30,7 +31,7 @@ PSCORE scores_load(){
         scores = (PSCORE)malloc(len);
         if (scores){
             memset(scores, 0, len);
-            if (read(fd, (void*)scores, len) != len){
+            if (read(fd, (void*)scores, len) != (ssize_t)len){
                 // set default values
                 for (uint8_t id=0; id < SCORE_COUNT; id++){
                     scores[id].level = id / SCORE_LEVEL_COUNT;
