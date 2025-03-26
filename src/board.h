@@ -28,7 +28,7 @@ extern "C" {
 // Positions et dimensions
 //
 
-#define EMPTY_SPACE         0x0002
+#define EMPTY_SPACE         0x0005
 #define PLAYGROUND_BORDER   0x0003
 #define STAT_BORDER         0x0003
 

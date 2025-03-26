@@ -555,6 +555,8 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
         dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 60, COLOUR_RED, out);
     }
 
+    dupdate();
+
     while (car == KEY_NONE){
         car = getKey();
     }

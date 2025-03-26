@@ -1,4 +1,4 @@
-## *geeMines* - Un jeu de *démineur* pour les Casio GRAPH90+E / FX-CG50 et GRAPH35+E ii
+## *geeMines* - Un jeu de *démineur* pour Casio GRAPH90+E / FX-CG50
 
 ### Présentation
 
@@ -7,11 +7,9 @@
 Il offre différentes options : affichage de l'ombre de la pièce, démarrage avec un handicap de lignes 'sales', démarrage sur un niveau plus rapide.
 Il permet aussi de jouer avec la calculatrice en mode horizontal (position standard) ou en mode vertical.
 
-basé sur :
-projet pédagogique : https://www.codeproject.com/Articles/183582/Adapted-WinMine-Source-for-Teaching-Win32-API-Prog
-https://github.com/reactos/reactos/tree/master/base/applications/games/winmine
-https://minesweeper.online/fr/game/4289190080
-
+(très) librement inspiré de 2 projets :
+* [reactos::minesweeper](https://github.com/reactos/reactos/tree/master/base/applications/games/winmine)
+* [WininMine-Source-for-Teaching](https://www.codeproject.com/Articles/183582/Adapted-WinMine-Source-for-Teaching-Win32-API-Prog)
 
 Ecran d'accueil :
 

@@ -9,6 +9,8 @@
 
 * Corrections
     * Réorganisation des sources
+    * Couleur du board
+    * BUG : pas d'affichage du msg en cas de victoire
 
 #### v0.1.2
 * 21 mars 2025
