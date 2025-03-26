@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
+    #include "shared/menu.h"
     #include <gint/clock.h>
     #include <string.h>
 
@@ -540,25 +541,25 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
 
 #ifdef DEST_CASIO_CALC
 
-    drect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h, WINDOW_COLOUR, C_NONE);
+    drect(rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1, WINDOW_COLOUR);
     dimage(rect.x + 7, rect.y + 7, &g_mine);
     board_drawBorder(CALC_VERTICAL, &rect, 2);
 
     dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 40, COLOUR_BLACK, "Congratulations !!!");
 
     if (added){
-        char out[100], scrore[10];    // Should be enough !
+        char out[100], score[10];    // Should be enough !
         strcpy(out, "New score : ");
-        strcat(out, scores_score2a(time, score));
+        strcat(out, scores_time2a(time, score));
         strcat(out,"s");
         dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 60, COLOUR_RED, out);
     }
 
-    while (car == KEY_NONE{
+    while (car == KEY_NONE){
         car = getKey();
     }
 
-    board_update(board);
+    board_update(board, FALSE);
 #endif // #ifdef DEST_CASIO_CALC
 }
 
