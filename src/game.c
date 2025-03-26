@@ -153,6 +153,8 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
     else{
         board->gameState = STATE_CANCELLED;   // No timer => no game
     }
+
+    dupdate();
 #endif // #ifdef DEST_CASIO_CALC
 
     while (board->gameState == STATE_PLAYING){

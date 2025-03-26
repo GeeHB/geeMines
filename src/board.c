@@ -441,7 +441,7 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 
 #ifdef DEST_CASIO_CALC
 #ifdef _DEBUG_
-    int ID = ((board->debug && box->mine && (box->state==BS_INITIAL || box->state>=BS_MINE )?BS_MINE:box->state);  // Always show mines in DEBUG mode
+    int ID = ((board->debug && box->mine && (box->state==BS_INITIAL || box->state>=BS_MINE ))?BS_MINE:box->state);  // Always show mines in DEBUG mode
     dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, ID * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
 #else
     dsubimage(dx, dy, &g_boxes, board->orientation * BOX_WIDTH, box->state * BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT, DIMAGE_NOCLIP);
@@ -502,7 +502,7 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
 
              dcircle(rect.x + SCROLL_RADIUS, rect.y + SCROLL_RADIUS,
                  SCROLL_RADIUS, colour, colour);
-             dicrcle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS,
+             dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS,
                  SCROLL_RADIUS, colour, colour);
 
             drect(rect.x + ptOffset.x, rect.y + ptOffset.y ,
