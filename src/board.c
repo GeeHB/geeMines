@@ -8,6 +8,7 @@
 
 #include "board.h"
 #include "grid.h"
+#include <cstdint>
 #include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
@@ -474,44 +475,50 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //  @highLight : Highlight scroll bars ?
 //
 void board_drawScrollBars(PBOARD board, BOOL highLight){
-#ifdef DEST_CASIO_CALC
     RECT rect;
-    POINT ptTo, ptOffset;
+    POINT ptFrom, ptTo;
     int colour = (highLight?SCROLL_COLOUR_HILITE:SCROLL_COLOUR);
+    uint16_t dimension;
 
-    for (uint8_t id=1; id <=2; id++){
-        if (board->viewPort.scrolls & id){
-            copyRect(&rect, &board->viewPort.scrollBars[id - 1]);
-            deflateRect(&rect, 1, 1);
+    // Horz. scroll. bar
+    if (board->viewPort.scrolls & HORZ_SCROLL){
+        copyRect(&rect, &board->viewPort.scrollBars[0]);
+        if (board->orientation == CALC_HORIZONTAL){
+            rotateRect(&rect);
+        }
+        deflateRect(&rect, 1, 1);
 
-            if (board->orientation == CALC_HORIZONTAL){
-                rotateRect(&rect);
-            }
+        dimension = rect.w * board->viewPort.dimensions.col / board->viewPort.visibleFrame.w;
+        ptFrom = (POINT){.x = rect.w * board->viewPort.dimensions.col / board->viewPort.visibleFrame.w, .y = rect.y};
+        ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptTo.y + rect.h - 1};
 
-            ptTo = (POINT){.x= rect.x + rect.w - 1, .y = rect.y + rect.h - 1 };
-            ptOffset = ((id & HORZ_SCROLL)?(POINT){.x = SCROLL_RADIUS, .y = 0}:(POINT){.x = 0, .y = SCROLL_RADIUS});
+#ifdef DEST_CASIO_CALC
+        dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
+        dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
 
-            /*
-            dellipse(rect.x, rect.y,
-                rect.x + 2*SCROLL_RADIUS - 1, rect.x + 2*SCROLL_RADIUS - 1,
-                colour, colour);
-            dellipse(ptTo.x - 2*SCROLL_RADIUS + 1 , ptTo.y - 2*SCROLL_RADIUS + 1,
-                ptTo.x, ptTo.y,
-                colour, colour);
-             */
-
-             dcircle(rect.x + SCROLL_RADIUS, rect.y + SCROLL_RADIUS,
-                 SCROLL_RADIUS, colour, colour);
-             dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS,
-                 SCROLL_RADIUS, colour, colour);
-
-            drect(rect.x + ptOffset.x, rect.y + ptOffset.y ,
-                rect.x + rect.w - 1 - 2 * ptOffset.x,
-                rect.y + rect.h - 1 -2 * ptOffset.y,
-                colour);
-        } // if (board->viewPort.scrolls & id){
-    }   // for (id)
+       drect(ptFrom.x + SCROLL_RADIUS, ptFrom.y, ptTo.x - SCROLL_RADIUS, ptTo.y, colour);
 #endif // #ifdef DEST_CASIO_CALC
+    } // if HORZ_SCROLL
+
+    // Vert. scroll. bar
+    if (board->viewPort.scrolls & VERT_SCROLL){
+        copyRect(&rect, &board->viewPort.scrollBars[1]);
+        if (board->orientation == CALC_HORIZONTAL){
+            rotateRect(&rect);
+        }
+        deflateRect(&rect, 1, 1);
+
+        dimension = rect.h * board->viewPort.dimensions.row / board->viewPort.visibleFrame.h;
+        ptFrom = (POINT){.x = rect.x , .y = rect.h * board->viewPort.dimensions.row / board->viewPort.visibleFrame.h};
+        ptTo = (POINT){.x = ptTo.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
+
+#ifdef DEST_CASIO_CALC
+        dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
+        dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
+
+       drect(ptFrom.x, ptFrom.y + SCROLL_RADIUS, ptTo.x, ptTo.y - SCROLL_RADIUS, colour);
+#endif // #ifdef DEST_CASIO_CALC
+    } // if VERT_SCROLL
 }
 
 // board_drawLed() : Draw a led digit
@@ -628,24 +635,20 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         copyRect(&board->gridRect, &board->playgroundRect);
 
         // 3 - Viewport scrollbars
-        if (board->viewPort.scrolls != NO_SCROLL){
-            if (board->viewPort.scrolls & HORZ_SCROLL){
-                // Horizontal scroll
-                board->playgroundRect.w += SCROLL_WIDTH;
-                setRect(&board->viewPort.scrollBars[0],
-                    board->gridRect.x,
-                    board->gridRect.y + board->gridRect.h,
-                    board->gridRect.w, SCROLL_HEIGHT);
-            }
+        if (HORZ_SCROLL == (board->viewPort.scrolls & HORZ_SCROLL)){
+            board->playgroundRect.h += SCROLL_HEIGHT;
+            setRect(&board->viewPort.scrollBars[0],
+                board->gridRect.x,
+                board->gridRect.y + board->gridRect.h,
+                board->gridRect.w, SCROLL_HEIGHT);
+        }
 
-            if (board->viewPort.scrolls & VERT_SCROLL){
-                // Vertical scroll
-                board->playgroundRect.h += SCROLL_HEIGHT;
-                setRect(&board->viewPort.scrollBars[1],
-                    board->gridRect.x + board->gridRect.w,
-                    board->gridRect.y,
-                    SCROLL_WIDTH, board->gridRect.h);
-            }
+        if (VERT_SCROLL == (board->viewPort.scrolls & VERT_SCROLL)){
+            board->playgroundRect.w += SCROLL_WIDTH;
+            setRect(&board->viewPort.scrollBars[1],
+                board->gridRect.x + board->gridRect.w,
+                board->gridRect.y,
+                SCROLL_WIDTH, board->gridRect.h);
         }
     } // if (grid)
 }

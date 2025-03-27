@@ -130,7 +130,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
     uint key = KEY_NONE;
     COORD pos = {0,0}, oPos = {0, 0};
     BOOL showScroll = FALSE, hightLighted = FALSE;
-    uint16_t redraw = NO_REDRAW;
+    uint16_t redraw = REDRAW_SELECTION;
 
 #ifdef SCREEN_CAPTURE
     BOOL captureOn = FALSE;
@@ -153,8 +153,6 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
     else{
         board->gameState = STATE_CANCELLED;   // No timer => no game
     }
-
-    dupdate();
 #endif // #ifdef DEST_CASIO_CALC
 
     while (board->gameState == STATE_PLAYING){
