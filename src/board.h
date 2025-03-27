@@ -92,12 +92,13 @@ typedef enum {
 #define SCROLL_VERTICAL     2
 #define SCROLL_BOTH         SCROLL_HORIZONTAL | SCROLL_VERTICAL
 
-#define SCROLL_RADIUS   0x0002
-#define SCROLL_WIDTH    2*(SCROLL_RADIUS+1)      // 12
-#define SCROLL_HEIGHT   SCROLL_WIDTH
+#define SCROLL_SPACE        2
+#define SCROLL_RADIUS       0x0002
+#define SCROLL_WIDTH        2*(SCROLL_RADIUS + SCROLL_SPACE)
+#define SCROLL_HEIGHT       SCROLL_WIDTH
 
-#define SCROLL_COLOUR           C_RGB(19,24,27)
-#define SCROLL_COLOUR_HILITE    C_RGB(23, 29, 31)
+#define SCROLL_COLOUR       C_RGB(19,24,27)
+#define SCROLL_COLOUR_HI    C_RGB(23, 29, 31)
 
 // A viewport - defines visible part of the grid
 //

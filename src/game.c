@@ -129,7 +129,8 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
 
     uint key = KEY_NONE;
     COORD pos = {0,0}, oPos = {0, 0};
-    BOOL showScroll = FALSE, hightLighted = FALSE;
+    //BOOL showScroll = FALSE;
+    BOOL hightLighted = FALSE;
     uint16_t redraw = REDRAW_SELECTION;
 
 #ifdef SCREEN_CAPTURE
@@ -170,12 +171,14 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
         }
 
         if (0 == (tickCount % TIMER_SECOND)){
-            redraw |= REDRAW_TIME;
+            redraw |= REDRAW_TIME;  // One more second
         }
 
+        /*
         if (board->viewPort.scrolls && 0 == (tickCount % BLINK_SCROLLBARS)){
             redraw |= REDRAW_SCROLLBARS;
         }
+        */
 
         // A keyboard event ?
         key = getKeyEx(NULL);
@@ -230,7 +233,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                 board_setOrientation(board, (CALC_VERTICAL == board->orientation)?CALC_HORIZONTAL:CALC_VERTICAL);
                 board_drawEx(board, FALSE, FALSE);
                 oPos = pos = (COORD){.row=0,.col=0};
-                redraw = REDRAW_UPDATE | REDRAW_SELECTION | REDRAW_SCROLLBARS;
+                redraw = REDRAW_UPDATE | REDRAW_SELECTION /*| REDRAW_SCROLLBARS*/;
                 break;
 
 #ifdef SCREEN_CAPTURE
@@ -260,10 +263,6 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
 
             if (redraw & REDRAW_GRID){
                 board_drawGridEx(board, FALSE); // no screen update
-
-                if (board->viewPort.scrolls){
-                    redraw |= REDRAW_SCROLLBARS;
-                }
             }
 
             if (redraw & REDRAW_BOX){
@@ -281,10 +280,12 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                 board_selectBoxEx(board, &pos, hightLighted);
             }
 
+            /*
             if (redraw & REDRAW_SCROLLBARS){
                 showScroll = !showScroll;
                 board_drawScrollBars(board, showScroll); // Blink scroll buttons
             }
+            */
 
             if (redraw & REDRAW_MINES_LEFT){
                 board_drawMinesLeftEx(board, FALSE);

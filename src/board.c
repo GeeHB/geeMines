@@ -476,7 +476,7 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 void board_drawScrollBars(PBOARD board, BOOL highLight){
     RECT rect;
     POINT ptFrom, ptTo;
-    int colour = (highLight?SCROLL_COLOUR_HILITE:SCROLL_COLOUR);
+    int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
     uint16_t dimension;
 
     // Horz. scroll. bar
@@ -485,8 +485,12 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
         if (board->orientation == CALC_HORIZONTAL){
             rotateRect(&rect);
         }
-        deflateRect(&rect, 1, 1);
 
+#ifdef DEST_CASIO_CALC
+        drect(rect.x, rect.y, rect.x + rect.w -1, rect.y + rect.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
+#endif // #ifdef DEST_CASIO_CALC
+
+        deflateRect(&rect, SCROLL_SPACE, SCROLL_SPACE);
         dimension = rect.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
         ptFrom = (POINT){.x = rect.x + rect.w * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col, .y = rect.y};
         ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptFrom.y + rect.h - 1};
@@ -634,7 +638,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         copyRect(&board->gridRect, &board->playgroundRect);
 
         // 3 - Viewport scrollbars
-        if (SCROLL_HORIZONTAL == (board->viewPort.scrolls & SCROLL_HORIZONTAL)){
+        if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
             board->playgroundRect.h += SCROLL_HEIGHT;
             setRect(&board->viewPort.scrollBars[0],
                 board->gridRect.x,
@@ -642,7 +646,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 board->gridRect.w, SCROLL_HEIGHT);
         }
 
-        if (SCROLL_VERTICAL == (board->viewPort.scrolls & SCROLL_VERTICAL)){
+        if (board->viewPort.scrolls & SCROLL_VERTICAL){
             board->playgroundRect.w += SCROLL_WIDTH;
             setRect(&board->viewPort.scrollBars[1],
                 board->gridRect.x + board->gridRect.w,
