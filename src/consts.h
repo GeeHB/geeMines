@@ -9,8 +9,6 @@
 #ifndef __GEE_MINES_CONSTS_h__
 #define __GEE_MINES_CONSTS_h__    1
 
-#define _DEBUG_
-
 // Application infos
 //
 #define APP_NAME            "geeMines"
@@ -24,7 +22,7 @@
 
 #define BKGROUND_COLOUR     C_RGB(26,26,26)
 //#define BKGROUND_COLOUR     COLOUR_LT_GREY
-#define WINDOW_COLOUR       C_RGB(19,24,27)
+#define WINDOW_COLOUR       COLOUR_WHITE //C_RGB(19,24,27)
 
 // Main menu
 //

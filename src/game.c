@@ -537,7 +537,7 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
     BOOL added = scores_add(scores, level, time);
 
     uint car = KEY_NONE;
-    RECT rect = {0,0,188,94};
+    RECT rect = {0,0,280,94};
     centerRect(&rect, CASIO_WIDTH, CASIO_HEIGHT);
 
 #ifdef DEST_CASIO_CALC
@@ -549,7 +549,7 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
     dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 40, COLOUR_BLACK, "Congratulations !!!");
 
     if (added){
-        char out[100], score[10];    // Should be enough !
+        char out[100], score[10];
         strcpy(out, "New score : ");
         strcat(out, scores_time2a(time, score));
         strcat(out,"s");
@@ -558,7 +558,7 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
 
     dupdate();
 
-    while (car == KEY_NONE){
+    while (car == KEY_CODE_EXIT){
         car = getKey();
     }
 

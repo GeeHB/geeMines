@@ -35,7 +35,7 @@ PSCORE scores_load(){
                 // set default values
                 for (uint8_t id=0; id < SCORE_COUNT; id++){
                     scores[id].level = id / SCORE_LEVEL_COUNT;
-                    scores[id].time = 50 + 150 * scores[id].level;
+                    scores[id].time = 500 + 1500 * scores[id].level;
                 }
             }
         }
