@@ -22,8 +22,8 @@
 #define APP_LOGO_WIDTH      80
 #define APP_LOGO_HEIGHT     APP_LOGO_WIDTH
 
-//#define BKGROUND_COLOUR     C_RGB(24,24,24)
-#define BKGROUND_COLOUR     COLOUR_LT_GREY
+#define BKGROUND_COLOUR     C_RGB(26,26,26)
+//#define BKGROUND_COLOUR     COLOUR_LT_GREY
 #define WINDOW_COLOUR       C_RGB(19,24,27)
 
 // Main menu

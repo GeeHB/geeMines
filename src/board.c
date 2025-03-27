@@ -8,7 +8,6 @@
 
 #include "board.h"
 #include "grid.h"
-#include <cstdint>
 #include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
@@ -489,8 +488,8 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
         deflateRect(&rect, 1, 1);
 
         dimension = rect.w * board->viewPort.dimensions.col / board->viewPort.visibleFrame.w;
-        ptFrom = (POINT){.x = rect.w * board->viewPort.dimensions.col / board->viewPort.visibleFrame.w, .y = rect.y};
-        ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptTo.y + rect.h - 1};
+        ptFrom = (POINT){.x = rect.w * board->viewPort.visibleFrame.x / board->viewPort.visibleFrame.w, .y = rect.y};
+        ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptFrom.y + rect.h - 1};
 
 #ifdef DEST_CASIO_CALC
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
@@ -509,8 +508,8 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
         deflateRect(&rect, 1, 1);
 
         dimension = rect.h * board->viewPort.dimensions.row / board->viewPort.visibleFrame.h;
-        ptFrom = (POINT){.x = rect.x , .y = rect.h * board->viewPort.dimensions.row / board->viewPort.visibleFrame.h};
-        ptTo = (POINT){.x = ptTo.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
+        ptFrom = (POINT){.x = rect.x , .y = rect.h * board->viewPort.visibleFrame.y / board->viewPort.visibleFrame.h};
+        ptTo = (POINT){.x = ptFrom.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
 
 #ifdef DEST_CASIO_CALC
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);

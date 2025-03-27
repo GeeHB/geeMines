@@ -35,12 +35,13 @@ extern "C" {
 #define BOX_WIDTH           0x0010  // 16
 #define BOX_HEIGHT          BOX_WIDTH
 
-#define SMILEY_WIDTH        0x0018  // 24
-#define SMILEY_HEIGHT       SMILEY_WIDTH
-
 #define LED_WIDTH           0x000D  // 13
 #define LED_HEIGHT          0x0017  // 23
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
+
+//#define SMILEY_WIDTH        0x0018  // 24
+#define SMILEY_WIDTH        LED_HEIGHT       
+#define SMILEY_HEIGHT       SMILEY_WIDTH
 
 // Counts of buttons when scrollbars are in place
 //
@@ -96,7 +97,7 @@ typedef enum {
 #define SCROLL_HEIGHT   SCROLL_WIDTH
 
 #define SCROLL_COLOUR           C_RGB(19,24,27)
-#define SCROLL_COLOUR_HILITE    C_RGB(13, 16, 18)
+#define SCROLL_COLOUR_HILITE    C_RGB(23, 29, 31)
 
 // A viewport - defines visible part of the grid
 //
