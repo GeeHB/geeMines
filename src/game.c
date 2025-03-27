@@ -208,6 +208,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                 }
                 else{
                     board_setGameState(board, STATE_LOST);
+                    redraw = REDRAW_UPDATE;
                 }
 
                 break;

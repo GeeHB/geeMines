@@ -480,15 +480,15 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
     uint16_t dimension;
 
     // Horz. scroll. bar
-    if (board->viewPort.scrolls & HORZ_SCROLL){
+    if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
         copyRect(&rect, &board->viewPort.scrollBars[0]);
         if (board->orientation == CALC_HORIZONTAL){
             rotateRect(&rect);
         }
         deflateRect(&rect, 1, 1);
 
-        dimension = rect.w * board->viewPort.dimensions.col / board->viewPort.visibleFrame.w;
-        ptFrom = (POINT){.x = rect.w * board->viewPort.visibleFrame.x / board->viewPort.visibleFrame.w, .y = rect.y};
+        dimension = rect.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
+        ptFrom = (POINT){.x = rect.x + rect.w * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col, .y = rect.y};
         ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptFrom.y + rect.h - 1};
 
 #ifdef DEST_CASIO_CALC
@@ -497,18 +497,18 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
 
        drect(ptFrom.x + SCROLL_RADIUS, ptFrom.y, ptTo.x - SCROLL_RADIUS, ptTo.y, colour);
 #endif // #ifdef DEST_CASIO_CALC
-    } // if HORZ_SCROLL
+    } // if SCROLL_HORIZONTAL
 
     // Vert. scroll. bar
-    if (board->viewPort.scrolls & VERT_SCROLL){
+    if (board->viewPort.scrolls & SCROLL_VERTICAL){
         copyRect(&rect, &board->viewPort.scrollBars[1]);
         if (board->orientation == CALC_HORIZONTAL){
             rotateRect(&rect);
         }
         deflateRect(&rect, 1, 1);
 
-        dimension = rect.h * board->viewPort.dimensions.row / board->viewPort.visibleFrame.h;
-        ptFrom = (POINT){.x = rect.x , .y = rect.h * board->viewPort.visibleFrame.y / board->viewPort.visibleFrame.h};
+        dimension = rect.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
+        ptFrom = (POINT){.x = rect.x , .y = rect.y + rect.h * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row};
         ptTo = (POINT){.x = ptFrom.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
 
 #ifdef DEST_CASIO_CALC
@@ -517,7 +517,7 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
 
        drect(ptFrom.x, ptFrom.y + SCROLL_RADIUS, ptTo.x, ptTo.y - SCROLL_RADIUS, colour);
 #endif // #ifdef DEST_CASIO_CALC
-    } // if VERT_SCROLL
+    } // if SCROLL_VERTICAL
 }
 
 // board_drawLed() : Draw a led digit
@@ -599,14 +599,14 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 break;
 
             case LEVEL_MEDIUM:
-                board->viewPort.scrolls = (board->orientation==CALC_HORIZONTAL?VERT_SCROLL:HORZ_SCROLL);
+                board->viewPort.scrolls = (board->orientation==CALC_HORIZONTAL?SCROLL_HORIZONTAL:SCROLL_VERTICAL);
                 setRect(&board->viewPort.visibleFrame, 0, 0,
                     MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
                     MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
                 break;
 
             case LEVEL_EXPERT:
-                board->viewPort.scrolls = BOTH_SCROLL;
+                board->viewPort.scrolls = SCROLL_BOTH;
                 setRect(&board->viewPort.visibleFrame, 0, 0,
                     MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
                     MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
@@ -634,7 +634,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         copyRect(&board->gridRect, &board->playgroundRect);
 
         // 3 - Viewport scrollbars
-        if (HORZ_SCROLL == (board->viewPort.scrolls & HORZ_SCROLL)){
+        if (SCROLL_HORIZONTAL == (board->viewPort.scrolls & SCROLL_HORIZONTAL)){
             board->playgroundRect.h += SCROLL_HEIGHT;
             setRect(&board->viewPort.scrollBars[0],
                 board->gridRect.x,
@@ -642,7 +642,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 board->gridRect.w, SCROLL_HEIGHT);
         }
 
-        if (VERT_SCROLL == (board->viewPort.scrolls & VERT_SCROLL)){
+        if (SCROLL_VERTICAL == (board->viewPort.scrolls & SCROLL_VERTICAL)){
             board->playgroundRect.w += SCROLL_WIDTH;
             setRect(&board->viewPort.scrollBars[1],
                 board->gridRect.x + board->gridRect.w,

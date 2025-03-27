@@ -188,47 +188,30 @@ int main()
         // Affichage du menu
         menu_update(menu);
 
+        PBOARD board = board_create();
+
         while (!end){
             validKey = menu_handleKeyboard(menu, &action);
 
             if (validKey){
                 switch (action.value){
-                    case IDM_GAME_BEGINNER :{
-                        PBOARD board = board_create();
-                        COORD pos;
-                        //uint16_t redraw = 0;
-                        board_init(board, LEVEL_BEGINNER);
+                    case IDM_GAME_BEGINNER :
+                    case IDM_GAME_MEDIUM :
+                    case IDM_GAME_EXPERT :{
 
-                        grid_display(board->grid);
-                        printf("\n\n");
+                        board_init(board, action.value - IDM_GAME_BEGINNER);
+                        board->viewPort.visibleFrame.y+=5;
+                        board_drawScrollBars(board, FALSE);
 
-                        pos.col = 6;
-                        pos.row = 4;
-                        pos.col++;
-                        //_onStep(board, &pos, &redraw);
-                        board_drawGridEx(board, FALSE);
-
-                        board_free(board, TRUE);
+                        //grid_display(board->grid);
+                        //printf("\n\n");
 
                         menu_showParentBar(menu, TRUE);
                         break;
                     }
 
-                    case IDM_GAME_MEDIUM :
-                        printf("Moyen\n");
-                        menu_showParentBar(menu, TRUE);
-                        break;
-
-                    case IDM_GAME_EXPERT:
-                        printf("Expert\n");
-                        menu_showParentBar(menu, TRUE);
-                        break;
-
-                    case IDM_CHECK :
-                        printf("check\n");
-                        break;
-
                     case IDM_QUIT :
+                        board_free(board, TRUE);
                         end = TRUE;
                         break;
 

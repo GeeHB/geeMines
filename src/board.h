@@ -40,7 +40,7 @@ extern "C" {
 #define LED_ZONE_WIDTH      3 * LED_WIDTH
 
 //#define SMILEY_WIDTH        0x0018  // 24
-#define SMILEY_WIDTH        LED_HEIGHT       
+#define SMILEY_WIDTH        LED_HEIGHT
 #define SMILEY_HEIGHT       SMILEY_WIDTH
 
 // Counts of buttons when scrollbars are in place
@@ -87,10 +87,10 @@ typedef enum {
 
 // Scrollbar management
 //
-#define NO_SCROLL       0
-#define HORZ_SCROLL     1
-#define VERT_SCROLL     2
-#define BOTH_SCROLL     (HORZ_SCROLL | VERT_SCROLL)
+#define NO_SCROLL           0
+#define SCROLL_HORIZONTAL   1
+#define SCROLL_VERTICAL     2
+#define SCROLL_BOTH         SCROLL_HORIZONTAL | SCROLL_VERTICAL
 
 #define SCROLL_RADIUS   0x0002
 #define SCROLL_WIDTH    2*(SCROLL_RADIUS+1)      // 12
