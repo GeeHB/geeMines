@@ -558,7 +558,7 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
 
     dupdate();
 
-    while (car == KEY_CODE_EXIT){
+    while (car != KEY_CODE_EXIT){
         car = getKey();
     }
 

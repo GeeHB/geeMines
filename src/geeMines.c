@@ -36,7 +36,7 @@ POWNMENU _createMenu(){
 #ifdef _DEBUG_
             menubar_appendItem(bar, IDM_DEBUG, IDS_DEBUG, ITEM_STATE_UNCHECKED, ITEM_STATUS_CHECKBOX);
 #endif // #ifdef _DEBUG_
-            menubar_addItem(bar, MENU_POS_RIGHT - 1, IDM_START, IDS_START, ITEM_STATE_INACTIVE, ITEM_STATUS_DEFAULT);
+            menubar_addItem(bar, MENU_POS_RIGHT - 1, IDM_SCORES, IDS_SCORES, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
             menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
         }
         else{

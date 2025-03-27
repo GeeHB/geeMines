@@ -2,18 +2,21 @@
 - [x] Affichages en mode horizontal
 - [x] Copies d'écrans
 - [ ] Gestion des scores
-    - [ ] Duréee par niveau
+    - [x] Duréee par niveau
     - [ ] Ecran + menu
 - [ ] Barre(s) de défilement
-    - [ ] none, vert, horz, both
-    - [ ] Largeur | hauteur prop.
-    - [ ] [col. foncé] / [col claire]
-    - [ ] Gestion de la position
-    - [ ] Gestion de la taille
-    - [ ] Clignottement ?
+    - [x] none, vert, horz, both
+    - [x] Largeur | hauteur prop.
+    - [x] [col. foncé] / [col claire]
+    - [x] Gestion de la position
+    - [x] Gestion de la taille
+    - [x] Clignotement ?
+    - [x] Calc vert
+    - [ ] calc horz
 
 #### Corrections
-- [ ] Tailles max. des grilles selon l'orientation
+- [x] Tailles max. des grilles selon l'orientation
+- [ ] Couleur de fond du logo => geeTetris => WINDOW_COLOUR
 - [ ] keyboard
     - [ ] Remontée des touches de contrôle
     - [ ] Capture avec [Alt] 7
