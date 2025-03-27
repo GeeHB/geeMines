@@ -35,7 +35,7 @@
 #define REDRAW_BOX              8       // Redraw current box and menu
 #define REDRAW_SELECTION        16
 //#define REDRAW_SCROLLBARS       32
-#define REDRAW_GRID             32
+#define REDRAW_GRID             64
 
 #define REDRAW_UPDATE           128     // Just update
 

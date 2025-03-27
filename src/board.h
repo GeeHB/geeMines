@@ -29,7 +29,7 @@ extern "C" {
 //
 
 #define EMPTY_SPACE         0x0005
-#define PLAYGROUND_BORDER   0x0002
+#define GRID_BORDER         0x0002
 #define STAT_BORDER         0x0003
 
 #define BOX_WIDTH           0x0010  // 16
@@ -120,7 +120,6 @@ typedef struct __board{
     int8_t minesLeft;   // could be < 0 !
     uint8_t steps;
     uint16_t time;
-    RECT playgroundRect;
     RECT gridRect;
     RECT statRect;
 #ifdef _DEBUG_

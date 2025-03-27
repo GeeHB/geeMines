@@ -129,7 +129,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
 
     uint key = KEY_NONE;
     COORD pos = {0,0}, oPos = {0, 0};
-    //BOOL showScroll = FALSE;
+    //BOOL blinkScroll = FALSE;
     BOOL hightLighted = FALSE;
     uint16_t redraw = REDRAW_SELECTION;
 
@@ -210,8 +210,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                     }
                 }
                 else{
-                    board_setGameState(board, STATE_LOST);
-                    redraw = REDRAW_UPDATE;
+                    board_setGameStateEx(board, STATE_LOST, TRUE);
                 }
 
                 break;
@@ -282,8 +281,8 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
 
             /*
             if (redraw & REDRAW_SCROLLBARS){
-                showScroll = !showScroll;
-                board_drawScrollBars(board, showScroll); // Blink scroll buttons
+                blinkScroll = !blinkScroll;
+                board_drawScrollBars(board, blinkScroll); // Blink scroll buttons
             }
             */
 

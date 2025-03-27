@@ -218,7 +218,7 @@ void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
         board_drawTimeEx(board, FALSE);
 
         // Grid
-        board_drawBorder(board->orientation, &board->playgroundRect, PLAYGROUND_BORDER);
+        board_drawBorder(board->orientation, &board->gridRect, GRID_BORDER);
         board_drawGridEx(board, update);  // + update
     }
 }
@@ -245,7 +245,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         rotateRect(&rect);
 
         offsetCol.x = 0;
-        offsetCol.y = -1 * BOX_WIDTH;
+        offsetCol.y = -1 * BOX_HEIGHT;
 
         offsetRow.x = BOX_WIDTH;
         offsetRow.y = 0;
@@ -257,7 +257,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         offsetCol.y = 0;
 
         offsetRow.x = 0;
-        offsetRow.y = BOX_WIDTH;
+        offsetRow.y = BOX_HEIGHT;
 
         origin =rect.x;
     }
@@ -496,10 +496,13 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
         ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptFrom.y + rect.h - 1};
 
 #ifdef DEST_CASIO_CALC
+        /*
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
         dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
-
        drect(ptFrom.x + SCROLL_RADIUS, ptFrom.y, ptTo.x - SCROLL_RADIUS, ptTo.y, colour);
+       */
+
+       drect(ptFrom.x, ptFrom.y, ptTo.x, ptTo.y, colour);
 #endif // #ifdef DEST_CASIO_CALC
     } // if SCROLL_HORIZONTAL
 
@@ -509,17 +512,23 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
         if (board->orientation == CALC_HORIZONTAL){
             rotateRect(&rect);
         }
-        deflateRect(&rect, 1, 1);
 
+#ifdef DEST_CASIO_CALC
+        drect(rect.x, rect.y, rect.x + rect.w -1, rect.y + rect.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
+#endif // #ifdef DEST_CASIO_CALC
+
+        deflateRect(&rect, SCROLL_SPACE, SCROLL_SPACE);
         dimension = rect.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
         ptFrom = (POINT){.x = rect.x , .y = rect.y + rect.h * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row};
         ptTo = (POINT){.x = ptFrom.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
 
 #ifdef DEST_CASIO_CALC
+        /*
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
         dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
-
-       drect(ptFrom.x, ptFrom.y + SCROLL_RADIUS, ptTo.x, ptTo.y - SCROLL_RADIUS, colour);
+        drect(ptFrom.x, ptFrom.y + SCROLL_RADIUS, ptTo.x, ptTo.y - SCROLL_RADIUS, colour);
+        */
+        drect(ptFrom.x, ptFrom.y, ptTo.x, ptTo.y, colour);
 #endif // #ifdef DEST_CASIO_CALC
     } // if SCROLL_VERTICAL
 }
@@ -627,29 +636,26 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             EMPTY_SPACE + STAT_BORDER,
             STAT_WIDTH, STAT_HEIGHT);
 
-        // 2 - Dimensions of playground and grid rects
+        // 2 - Dimensions of grid rect
         gridWidth = BOX_WIDTH * board->viewPort.visibleFrame.w;
         gridHeight = BOX_HEIGHT * board->viewPort.visibleFrame.h;
-        setRect(&board->playgroundRect,
+        setRect(&board->gridRect,
             ((board->orientation==CALC_VERTICAL?CASIO_WIDTH:CASIO_HEIGHT)
-               - gridWidth -2*PLAYGROUND_BORDER) / 2,
-            board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + PLAYGROUND_BORDER + EMPTY_SPACE,
+               - gridWidth -2*GRID_BORDER) / 2,
+            board->statRect.y + STAT_HEIGHT + 2 * STAT_BORDER + GRID_BORDER + EMPTY_SPACE,
             gridWidth, gridHeight);
-        copyRect(&board->gridRect, &board->playgroundRect);
-
+        
         // 3 - Viewport scrollbars
         if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
-            board->playgroundRect.h += SCROLL_HEIGHT;
             setRect(&board->viewPort.scrollBars[0],
                 board->gridRect.x,
-                board->gridRect.y + board->gridRect.h,
+                board->gridRect.y + board->gridRect.h + GRID_BORDER,
                 board->gridRect.w, SCROLL_HEIGHT);
         }
 
         if (board->viewPort.scrolls & SCROLL_VERTICAL){
-            board->playgroundRect.w += SCROLL_WIDTH;
             setRect(&board->viewPort.scrollBars[1],
-                board->gridRect.x + board->gridRect.w,
+                board->gridRect.x + board->gridRect.w + GRID_BORDER,
                 board->gridRect.y,
                 SCROLL_WIDTH, board->gridRect.h);
         }

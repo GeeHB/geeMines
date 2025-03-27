@@ -79,9 +79,8 @@ typedef struct __grid{
 
 // Helpers for box access in the grid
 //
-#define BOX_AT(grid, r, c) (&grid->boxes[r * grid->size.col + c])
-#define BOX_AT_POS(grid, pos) (&grid->boxes[pos->row * grid->size.col + pos->col])
-//#define GRID_IS_VALID_POS(grid, r, c) (r < (int8_t)grid->size.col && c < (int8_t)grid->size.col)
+#define BOX_AT(grid, r, c) (&grid->boxes[(int)r * (int)grid->size.col + (int)c])
+#define BOX_AT_POS(grid, pos) (&grid->boxes[(int)pos->row * (int)grid->size.col + (int)pos->col])
 
 //  grid_create() :Create a grid
 //
