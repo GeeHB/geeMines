@@ -21,7 +21,7 @@
 // Internal consts
 //
 
-//  grid_create() :Create a grid
+//  grid_create() : Create a grid
 //
 //  @return : pointer to the new created grid
 //

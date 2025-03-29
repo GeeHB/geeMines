@@ -541,10 +541,12 @@ void _gameWon(PBOARD const board, PSCORE scores, uint8_t level, int time){
     centerRect(&rect, CASIO_WIDTH, CASIO_HEIGHT);
 
 #ifdef DEST_CASIO_CALC
-
     drect(rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1, WINDOW_COLOUR);
-    dimage(rect.x + 7, rect.y + 7, &g_mine);
     board_drawBorder(CALC_VERTICAL, &rect, 2);
+
+    dimage(rect.x + 7, rect.y + 7, &g_mine);
+    setRect(&rect, rect.x + 7, rect.y + 7, APP_LOGO_WIDTH, APP_LOGO_WIDTH);
+    board_drawBorder(CALC_VERTICAL, &rect, 1);
 
     dtext(rect.x + APP_LOGO_WIDTH + 20 , rect.y + 40, COLOUR_BLACK, "Congratulations !!!");
 

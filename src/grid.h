@@ -82,7 +82,7 @@ typedef struct __grid{
 #define BOX_AT(grid, r, c) (&grid->boxes[(int)r * (int)grid->size.col + (int)c])
 #define BOX_AT_POS(grid, pos) (&grid->boxes[(int)pos->row * (int)grid->size.col + (int)pos->col])
 
-//  grid_create() :Create a grid
+//  grid_create() : Create a grid
 //
 //  @return : pointer to the new created grid
 //

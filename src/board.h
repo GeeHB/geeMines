@@ -94,7 +94,7 @@ typedef enum {
 
 #define SCROLL_SPACE        2
 #define SCROLL_RADIUS       0x0002
-#define SCROLL_WIDTH        2*(SCROLL_RADIUS + SCROLL_SPACE)
+#define SCROLL_WIDTH        (2*(SCROLL_RADIUS + SCROLL_SPACE) + 1)  // Odd value for dcircle
 #define SCROLL_HEIGHT       SCROLL_WIDTH
 
 #define SCROLL_COLOUR       C_RGB(19,24,27)

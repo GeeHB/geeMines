@@ -91,13 +91,13 @@ void board_setSmileyEx(PBOARD const board, SMILEY_STATE smiley, BOOL redraw){
 void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
     uint8_t r,c;
     BOOL redrawGrid = FALSE;
+    PBOX box = NULL;
 
     board->gameState = state;
 
     switch (state){
         case STATE_WON:
         {
-            PBOX box;
             board->minesLeft = 0;
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
             for (r = 0; r < board->viewPort.dimensions.row; r++)
@@ -115,7 +115,6 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         case STATE_LOST:
         case STATE_CANCELLED:
         {
-            PBOX box;
             board_setSmileyEx(board, SMILEY_LOSE, FALSE);
             for (r = 0; r < board->viewPort.dimensions.row; r++)
                 for (c = 0; c < board->viewPort.dimensions.col; c++){
@@ -259,7 +258,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
         offsetRow.x = 0;
         offsetRow.y = BOX_HEIGHT;
 
-        origin =rect.x;
+        origin = rect.x;
     }
 
     for (r = 0; r < board->viewPort.visibleFrame.h; r++){
@@ -474,25 +473,26 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //  @highLight : Highlight scroll bars ?
 //
 void board_drawScrollBars(PBOARD board, BOOL highLight){
-#ifdef DEST_CASIO_CALC
-    RECT rect;
-    POINT ptFrom, ptTo;
+    RECT rectBk, rectBar;
     int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
     uint16_t dimension;
 
     // Horz. scroll. bar
     if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
-        copyRect(&rect, &board->viewPort.scrollBars[0]);
+        copyRect(&rectBk, &board->viewPort.scrollBars[0]);
+        copyRect(&rectBar, &board->viewPort.scrollBars[0]);
+        deflateRect(&rectBar, SCROLL_SPACE, SCROLL_SPACE);
+
+        dimension = rectBar.w;  // = 100%
+        rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
+        rectBar.x += dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col;
+
         if (board->orientation == CALC_HORIZONTAL){
-            rotateRect(&rect);
+            rotateRect(&rectBk);
+            rotateRect(&rectBar);
         }
-
-        drect(rect.x, rect.y, rect.x + rect.w -1, rect.y + rect.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
-
-        deflateRect(&rect, SCROLL_SPACE, SCROLL_SPACE);
-        dimension = rect.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
-        ptFrom = (POINT){.x = rect.x + rect.w * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col, .y = rect.y};
-        ptTo = (POINT){.x= ptFrom.x + dimension - 1, .y = ptFrom.y + rect.h - 1};
+    #ifdef DEST_CASIO_CALC
+        drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
 
         /*
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
@@ -500,31 +500,38 @@ void board_drawScrollBars(PBOARD board, BOOL highLight){
        drect(ptFrom.x + SCROLL_RADIUS, ptFrom.y, ptTo.x - SCROLL_RADIUS, ptTo.y, colour);
        */
 
-       drect(ptFrom.x, ptFrom.y, ptTo.x, ptTo.y, colour);
+        drect(rectBar.x, rectBar.y, rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
+#endif // #ifdef DEST_CASIO_CALC
     } // if SCROLL_HORIZONTAL
 
     // Vert. scroll. bar
     if (board->viewPort.scrolls & SCROLL_VERTICAL){
-        copyRect(&rect, &board->viewPort.scrollBars[1]);
+        copyRect(&rectBk, &board->viewPort.scrollBars[1]);
+
+        copyRect(&rectBar, &board->viewPort.scrollBars[1]);
+        deflateRect(&rectBar, SCROLL_SPACE, SCROLL_SPACE);
+
+        dimension = rectBar.h;  // = 100%
+        rectBar.h = rectBar.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
+        rectBar.y += dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row;
+
         if (board->orientation == CALC_HORIZONTAL){
-            rotateRect(&rect);
+            rotateRect(&rectBk);
+            rotateRect(&rectBar);
         }
 
-        drect(rect.x, rect.y, rect.x + rect.w -1, rect.y + rect.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
-
-        deflateRect(&rect, SCROLL_SPACE, SCROLL_SPACE);
-        dimension = rect.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
-        ptFrom = (POINT){.x = rect.x , .y = rect.y + rect.h * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row};
-        ptTo = (POINT){.x = ptFrom.x + rect.w - 1 , .y= ptFrom.y + dimension - 1};
+#ifdef DEST_CASIO_CALC
+        drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
 
         /*
         dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
         dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
         drect(ptFrom.x, ptFrom.y + SCROLL_RADIUS, ptTo.x, ptTo.y - SCROLL_RADIUS, colour);
         */
-        drect(ptFrom.x, ptFrom.y, ptTo.x, ptTo.y, colour);
-    } // if SCROLL_VERTICAL
+
+        drect(rectBar.x, rectBar.y, rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
 #endif // #ifdef DEST_CASIO_CALC
+    } // if SCROLL_VERTICAL
 }
 
 // board_drawLed() : Draw a led digit
