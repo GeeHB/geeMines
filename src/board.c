@@ -477,6 +477,7 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
     if (sID < SCROLL_BOTH){
         RECT rectBk, rectBar;
+        POINT ptFrom, ptTo;
         uint16_t dimension;
 
         copyRect(&rectBk, &board->viewPort.scrollBars[sID - 1]);
@@ -489,6 +490,8 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
             rectBar.x += dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col;
 
             deflateRect(&rectBar, SCROLL_RADIUS, 0);
+            ptFrom = (POINT){.x=rectBar.x,.y=rectBar.y+SCROLL_RADIUS};
+            ptTo = (POINT){.x=rectBar.x + rectBar.w - 1,.y=rectBar.y+SCROLL_RADIUS};
         }
         else{
             dimension = rectBar.h;  // = 100%
@@ -496,11 +499,16 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
             rectBar.y += dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row;
 
             deflateRect(&rectBar, 0, SCROLL_RADIUS);
+            ptFrom = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y};
+            ptTo = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y+rectBar.w-1};
         }
 
         if (CALC_HORIZONTAL == board->orientation){
             rotateRect(&rectBk);
             rotateRect(&rectBar);
+
+            rotatePoint(&ptFrom);   // centers of circles
+            rotatePoint(&ptTo);
         }
 
 #ifdef DEST_CASIO_CALC
