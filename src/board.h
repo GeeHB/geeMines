@@ -90,7 +90,7 @@ typedef enum {
 #define NO_SCROLL           0
 #define SCROLL_HORIZONTAL   1
 #define SCROLL_VERTICAL     2
-#define SCROLL_BOTH         SCROLL_HORIZONTAL | SCROLL_VERTICAL
+#define SCROLL_BOTH         (SCROLL_HORIZONTAL | SCROLL_VERTICAL)
 
 #define SCROLL_SPACE        2
 #define SCROLL_RADIUS       0x0002
@@ -260,6 +260,15 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //  @pos : Box coordinates in the grid
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
+
+// board_drawScrollBar() : Draw a viewport's scrollbar
+//
+//  @board : pointer to the board
+//  @sOrientation : SCROLL_HORIZONTAL if horizontal,
+//                  SCROLL_VERTICAL for vertical scrollbar
+//  @highLight : Highlight scroll bars ?
+//
+void board_drawScrollBar(PBOARD board, uint8_t sOrientation, BOOL highLight);
 
 // board_drawScrollBarsEx() : Draw viewport's scrollbars
 //
