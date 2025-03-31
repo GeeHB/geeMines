@@ -264,11 +264,11 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 // board_drawScrollBar() : Draw a viewport's scrollbar
 //
 //  @board : pointer to the board
-//  @sOrientation : SCROLL_HORIZONTAL if horizontal,
+//  @sID   : SCROLL_HORIZONTAL if horizontal,
 //                  SCROLL_VERTICAL for vertical scrollbar
 //  @highLight : Highlight scroll bars ?
 //
-void board_drawScrollBar(PBOARD board, uint8_t sOrientation, BOOL highLight);
+void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight);
 
 // board_drawScrollBarsEx() : Draw viewport's scrollbars
 //

@@ -470,21 +470,20 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 // board_drawScrollBar() : Draw a viewport's scrollbar
 //
 //  @board : pointer to the board
-//  @sOrientation : SCROLL_HORIZONTAL if horizontal,
+//  @sID   : SCROLL_HORIZONTAL if horizontal,
 //                  SCROLL_VERTICAL for vertical scrollbar
 //  @highLight : Highlight scroll bars ?
 //
-void board_drawScrollBar(PBOARD board, uint8_t sOrientation, BOOL highLight){
-    if (sOrientation < SCROLL_BOTH){
+void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
+    if (sID < SCROLL_BOTH){
         RECT rectBk, rectBar;
-        int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
         uint16_t dimension;
 
-        copyRect(&rectBk, &board->viewPort.scrollBars[sOrientation - 1]);
-        copyRect(&rectBar, &board->viewPort.scrollBars[sOrientation - 1]);
+        copyRect(&rectBk, &board->viewPort.scrollBars[sID - 1]);
+        copyRect(&rectBar, &board->viewPort.scrollBars[sID - 1]);
         deflateRect(&rectBar, SCROLL_SPACE, SCROLL_SPACE);
 
-        if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
+        if (SCROLL_HORIZONTAL == sID){
             dimension = rectBar.w;  // = 100%
             rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
             rectBar.x += dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col;
@@ -502,6 +501,8 @@ void board_drawScrollBar(PBOARD board, uint8_t sOrientation, BOOL highLight){
 
 
 #ifdef DEST_CASIO_CALC
+        int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
+
         drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
         drect(rectBar.x, rectBar.y, rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
 
@@ -645,16 +646,18 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
         // 3 - Viewport scrollbars
         if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
             setRect(&board->viewPort.scrollBars[0],
-                board->gridRect.x,
+                board->gridRect.x - GRID_BORDER,
                 board->gridRect.y + board->gridRect.h + GRID_BORDER,
-                board->gridRect.w, SCROLL_HEIGHT);
+                board->gridRect.w + 2 * GRID_BORDER,
+                SCROLL_HEIGHT);
         }
 
         if (board->viewPort.scrolls & SCROLL_VERTICAL){
             setRect(&board->viewPort.scrollBars[1],
                 board->gridRect.x + board->gridRect.w + GRID_BORDER,
-                board->gridRect.y,
-                SCROLL_WIDTH, board->gridRect.h);
+                board->gridRect.y - GRID_BORDER,
+                SCROLL_WIDTH,
+                board->gridRect.h + 2 * GRID_BORDER);
         }
     } // if (grid)
 }

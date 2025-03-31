@@ -83,13 +83,6 @@ int main_basic()
 
 int main()
 {
-    PSCORE scores = scores_load();
-    scores_add(scores, 0, 44);
-    scores_display(scores);
-    scores_free(scores);
-
-    return 90;
-
     // Création d'un menu
     //
     POWNMENU menu = menu_create();
