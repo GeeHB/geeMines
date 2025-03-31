@@ -97,8 +97,8 @@ typedef enum {
 #define SCROLL_WIDTH        (2*(SCROLL_RADIUS + SCROLL_SPACE) + 1)  // Odd value for dcircle
 #define SCROLL_HEIGHT       SCROLL_WIDTH
 
-#define SCROLL_COLOUR       C_RGB(19,24,27)
-#define SCROLL_COLOUR_HI    C_RGB(23, 29, 31)
+#define SCROLL_COLOUR           C_RGB(19,24,27)
+#define SCROLL_COLOUR_BLINK     C_RGB(23, 29, 31)
 
 // A viewport - defines visible part of the grid
 //
@@ -266,16 +266,16 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 //  @board : pointer to the board
 //  @sID   : SCROLL_HORIZONTAL if horizontal,
 //                  SCROLL_VERTICAL for vertical scrollbar
-//  @highLight : Highlight scroll bars ?
+//  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight);
+void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL blink);
 
 // board_drawScrollBarsEx() : Draw viewport's scrollbars
 //
 //  @board : pointer to the board
-//  @highLight : Highlight scroll bars ?
+//  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBars(PBOARD board, BOOL highLight);
+void board_drawScrollBars(PBOARD board, BOOL blink);
 
 // board_drawLed() : Draw a led digit
 //

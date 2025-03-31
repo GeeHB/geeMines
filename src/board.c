@@ -472,13 +472,16 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //  @board : pointer to the board
 //  @sID   : SCROLL_HORIZONTAL if horizontal,
 //                  SCROLL_VERTICAL for vertical scrollbar
-//  @highLight : Highlight scroll bars ?
+//  @blink : Make the scroll bars blink ?
 //
 void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
     if (sID < SCROLL_BOTH){
         RECT rectBk, rectBar;
-        POINT ptFrom, ptTo;
+        POINT ptBegin, ptEnd;
         uint16_t dimension;
+#ifdef DEST_CASIO_CALC
+        int colour = (blink?SCROLL_COLOUR_BLINK:SCROLL_COLOUR);
+#endif // #ifdef DEST_CASIO_CALC
 
         copyRect(&rectBk, &board->viewPort.scrollBars[sID - 1]);
         copyRect(&rectBar, &board->viewPort.scrollBars[sID - 1]);
@@ -487,33 +490,31 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
         if (SCROLL_HORIZONTAL == sID){
             dimension = rectBar.w;  // = 100%
             rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
-            rectBar.x += dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col;
+            rectBar.x += (dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col + SCROLL_RADIUS);
+            rectBar.w -= 2*SCROLL_RADIUS;
 
-            deflateRect(&rectBar, SCROLL_RADIUS, 0);
-            ptFrom = (POINT){.x=rectBar.x,.y=rectBar.y+SCROLL_RADIUS};
-            ptTo = (POINT){.x=rectBar.x + rectBar.w - 1,.y=rectBar.y+SCROLL_RADIUS};
+            ptBegin = (POINT){.x=rectBar.x,.y=rectBar.y+SCROLL_RADIUS};
+            ptEnd = (POINT){.x=rectBar.x + rectBar.w - 1,.y=rectBar.y+SCROLL_RADIUS};
         }
         else{
             dimension = rectBar.h;  // = 100%
             rectBar.h = rectBar.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
-            rectBar.y += dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row;
+            rectBar.y += (dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row + SCROLL_RADIUS);
+            rectBar.h -= 2*SCROLL_RADIUS;
 
-            deflateRect(&rectBar, 0, SCROLL_RADIUS);
-            ptFrom = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y};
-            ptTo = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y+rectBar.w-1};
+            ptBegin = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y};
+            ptEnd = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y+rectBar.w-1};
         }
 
         if (CALC_HORIZONTAL == board->orientation){
             rotateRect(&rectBk);
             rotateRect(&rectBar);
 
-            rotatePoint(&ptFrom);   // centers of circles
-            rotatePoint(&ptTo);
+            rotatePoint(&ptBegin);   // centers of circles
+            rotatePoint(&ptEnd);
         }
 
 #ifdef DEST_CASIO_CALC
-        int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
-
         drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
 
         // Rounded rectangle
@@ -530,16 +531,18 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
 
 // board_drawScrollBars() : Draw viewport's scrollbars
 //
-//  @board : pointer to the board
-//  @highLight : Highlight scroll bars ?
+//  Draw any of viewport's scrollbars, or both, or none ...
 //
-void board_drawScrollBars(PBOARD board, BOOL highLight){
+//  @board : pointer to the board
+//  @blink : Make the scroll bars blink ?
+//
+void board_drawScrollBars(PBOARD board, BOOL blink){
     if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
-        board_drawScrollBar(board, SCROLL_HORIZONTAL, highLight);
+        board_drawScrollBar(board, SCROLL_HORIZONTAL, blink);
     }
 
     if (board->viewPort.scrolls & SCROLL_VERTICAL){
-        board_drawScrollBar(board, SCROLL_VERTICAL, highLight);
+        board_drawScrollBar(board, SCROLL_VERTICAL, blink);
     }
 }
 
