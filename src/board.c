@@ -478,6 +478,7 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
     if (sID < SCROLL_BOTH){
         RECT rectBk, rectBar;
         uint16_t dimension;
+        POINT offset;
 
         copyRect(&rectBk, &board->viewPort.scrollBars[sID - 1]);
         copyRect(&rectBar, &board->viewPort.scrollBars[sID - 1]);
@@ -487,11 +488,13 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
             dimension = rectBar.w;  // = 100%
             rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
             rectBar.x += dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col;
+            offset = (POINT){.x = SCROLL_RADIUS, .y = 0};
         }
         else{
             dimension = rectBar.h;  // = 100%
             rectBar.h = rectBar.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
             rectBar.y += dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row;
+            offset = (POINT){.x = 0, .y = SCROLL_RADIUS};
         }
 
         if (board->orientation == CALC_HORIZONTAL){
@@ -499,18 +502,22 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
             rotateRect(&rectBar);
         }
 
-
 #ifdef DEST_CASIO_CALC
         int colour = (highLight?SCROLL_COLOUR_HI:SCROLL_COLOUR);
 
         drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
-        drect(rectBar.x, rectBar.y, rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
 
-            /*
-            dcircle(ptFrom.x + SCROLL_RADIUS, ptFrom.y + SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
-            dcircle(ptTo.x - SCROLL_RADIUS , ptTo.y - SCROLL_RADIUS, SCROLL_RADIUS, colour, colour);
-        drect(ptFrom.x + SCROLL_RADIUS, ptFrom.y, ptTo.x - SCROLL_RADIUS, ptTo.y, colour);
-        */
+        // Rounded rectangle
+        dcircle(rectBar.x + SCROLL_RADIUS,
+                rectBar.y + SCROLL_RADIUS,
+                SCROLL_RADIUS, colour, colour);
+        dcircle(rectBar.x + rectBar.w - 1 - SCROLL_RADIUS ,
+                rectBar.y + rectBar.h - 1 - SCROLL_RADIUS,
+                SCROLL_RADIUS, colour, colour);
+
+        drect(rectBar.x + offset.x, rectBar.y + offset.y,
+                rectBar.x + rectBar.w - 1 - 2 * offset.x,
+                rectBar.y + rectBar.h - 1 - 2 * offset.y, colour);
 #endif // #ifdef DEST_CASIO_CALC
 
     } // if (sOrientation < SCROLL_BOTH){
