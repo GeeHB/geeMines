@@ -126,6 +126,8 @@ int main()
 
                         box = BOX_AT(board->grid, 10, 17);
                         box->state=BS_FLAG;
+                        board->viewPort.visibleFrame.x= 5;
+                        board->viewPort.visibleFrame.y= 5;
 
                         board_setGameStateEx(board, STATE_LOST, TRUE);
                         printf("\n\n");

@@ -12,6 +12,7 @@
     * Couleur du board
     * BUG : pas d'affichage du msg en cas de victoire
     * BUG : Affichage partiel de la grille en fin de jeu
+    * BUG : board_setGameStateEx : inversion col & row
 
 #### v0.1.2
 * 21 mars 2025

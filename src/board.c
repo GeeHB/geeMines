@@ -102,7 +102,7 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
             for (r = 0; r < board->grid->size.row; r++)
                 for (c = 0; c < board->grid->size.col; c++){
-                    box = BOX_AT(board->grid, c, r);
+                    box = BOX_AT(board->grid, r, c);
                     if (box->mine && box->state != BS_FLAG){
                         box->state = BS_FLAG;
                     }
@@ -118,7 +118,7 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
             board_setSmileyEx(board, SMILEY_LOSE, FALSE);
             for (r = 0; r < board->grid->size.row; r++)
                 for (c = 0; c < board->grid->size.col; c++){
-                    box = BOX_AT(board->grid, c, r);
+                    box = BOX_AT(board->grid, r, c);
                     if (box->mine && box->state != BS_BLAST){
                         box->state = BS_MINE;
                     }
@@ -474,7 +474,7 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 //                SCROLL_VERTICAL for a vertical scrollbar
 //  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBar(PBOARD board, uint8_t scrollID, BOOL highLight){
+void board_drawScrollBar(PBOARD board, uint8_t scrollID, BOOL blink){
     if (scrollID && scrollID < SCROLL_BOTH){
         RECT rectBk, rectBar;
         POINT ptBegin, ptEnd;
@@ -518,10 +518,9 @@ void board_drawScrollBar(PBOARD board, uint8_t scrollID, BOOL highLight){
         drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
 
         // Rounded rectangle
-        dcircle(rectBar.x, rectBar.y, SCROLL_RADIUS, colour, colour);
-        dcircle(rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, SCROLL_RADIUS, colour, colour);
-        drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1,
-                colour);
+        dcircle(ptBegin.x, ptBegin.y, SCROLL_RADIUS, colour, colour);
+        dcircle(ptEnd.x, ptEnd.y, SCROLL_RADIUS, colour, colour);
+        drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
 #endif // #ifdef DEST_CASIO_CALC
     } // if (scrollID < SCROLL_BOTH){
 }

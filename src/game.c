@@ -210,7 +210,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                     }
                 }
                 else{
-                    board_setGameStateEx(board, STATE_LOST, TRUE);
+                    board_setGameState(board, STATE_LOST);
                 }
 
                 break;

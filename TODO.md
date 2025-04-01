@@ -12,7 +12,7 @@
     - [x] Gestion de la taille
     - [x] Clignotement ?
     - [x] Calc vert
-    - [ ] calc horz
+    - [x] calc horz
 
 #### Corrections
 - [x] Tailles max. des grilles selon l'orientation
