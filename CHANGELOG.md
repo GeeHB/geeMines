@@ -6,13 +6,16 @@
     * Chargement / Enregistrement / increment
     * Affichage
   * Message si partie gagnée
+  * Réorganisation des sources
+    * casioCalcs : ajout des fonctions de rotation
+    * Suppression des macros non utilisées
 
 * Corrections
-    * Réorganisation des sources
     * Couleur du board
     * BUG : pas d'affichage du msg en cas de victoire
     * BUG : Affichage partiel de la grille en fin de jeu
-    * BUG : board_setGameStateEx : inversion col & row
+      * BUG : board_setGameStateEx - Modification que des 'box' visibles
+      * BUG : board_setGameStateEx - inversion col & row
 
 #### v0.1.2
 * 21 mars 2025

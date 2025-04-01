@@ -29,6 +29,17 @@ typedef struct __score{
 
 #define SCORE_SIZE          2//  sizeof(SCORE)
 
+// Positions
+//
+
+#define SCORES_TITLE_Y      25
+
+#define SCORES_TOP          60
+#define SCORES_HEIGHT       20
+
+#define SCORES_COL_ID       100
+#define SCORES_COL_SCORE    160
+
 #ifdef __cplusplus
 extern "C" {
 #endif // #ifdef __cplusplus
@@ -61,12 +72,6 @@ void scores_free(PSCORE const scores);
 //  @return TRUE if added (ie. the score is in the high-scores list)
 //
 BOOL scores_add(PSCORE const scores, uint8_t level, uint16_t time);
-
-//  scores_display() : Display the scores
-//
-//  @scores : Pointer to the scores list
-//
-void scores_display(PSCORE const scores);
 
 // scores_time2a() : Convert a game duration val to a string
 //

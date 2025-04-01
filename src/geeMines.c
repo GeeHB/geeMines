@@ -110,7 +110,7 @@ int main(void){
 
                     // Show high scores
                     case IDM_SCORES:
-                        scores_display(scores);
+                        _onShowScores(scores, LEVEL_BEGINNER);
                         break;
 
                     // End app.

@@ -58,6 +58,20 @@ void _onAbout();
 //
 void _onPause();
 
+// _onShowScores() : Show best scores
+//
+//  @scores : Array of scores
+//  @level : Category of scores
+//
+void _onShowScores(PSCORE scores, uint8_t level);
+
+// _showScores() : Show best scores for the given level
+//
+//  @scores : Array of scores
+//  @level : Category of scores to display
+//
+void _showScores(PSCORE scores, uint8_t level);
+
 // _onStartGame() : Start a new game
 //
 //  @board : pointer to the game board

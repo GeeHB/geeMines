@@ -118,21 +118,6 @@ BOOL scores_add(PSCORE const scores, uint8_t level, uint16_t time){
     return TRUE;
 }
 
-//  scores_display() : Display the scores
-//
-//  @scores : Pointer to the scores list
-//
-void scores_display(PSCORE scores){
-    if (scores){
-#ifdef DEST_CASIO_CALC
-#else
-        for (uint8_t id=0; id<SCORE_COUNT; id++){
-            printf("\t- %d : %d\n", scores[id].level, scores[id].time);
-        }
-#endif // #ifdef DEST_CASIO_CALC
-    }
-}
-
 // scores_time2a() : Convert a game duration val to a string
 //
 //  @num : Time to convert

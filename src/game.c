@@ -8,7 +8,10 @@
 
 #include "game.h"
 #include "board.h"
+#include "consts.h"
+#include "scores.h"
 #include "shared/keys.h"
+#include "shared/menu.h"
 
 #include <stdint.h>
 
@@ -98,6 +101,94 @@ void _onPause(){
         gint_osmenu();
     }
 #endif // #ifdef DEST_CASIO_CALC
+}
+
+// _onShowScores() : Show best scores
+//
+//  @scores : Array of scores
+//  @level : Category of scores
+//
+void _onShowScores(PSCORE scores, uint8_t level){
+    if (!scores || level > LEVEL_EXPERT){
+        return;
+    }
+
+    POWNMENU menu = menu_create();
+    if (menu){
+        PMENUBAR bar = menu_getMenuBar(menu);
+        BOOL end = FALSE;
+        MENUACTION action;
+
+        menubar_appendItem(bar, IDM_NEW_BEGINNER, IDS_NEW_BEGINNER, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
+        menubar_appendItem(bar, IDM_NEW_MEDIUM, IDS_NEW_MEDIUM, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
+        menubar_appendItem(bar, IDM_NEW_EXPERT, IDS_NEW_EXPERT, ITEM_STATE_DEFAULT, ITEM_STATUS_TEXT);
+        menubar_addItem(bar, MENU_POS_RIGHT, IDM_QUIT, IDS_QUIT, ITEM_STATE_DEFAULT, ITEM_STATUS_DEFAULT);
+
+        menubar_activateItem(bar, (IDM_NEW_BEGINNER + level), SEARCH_BY_ID, TRUE);
+
+        menu_update(menu);
+
+        _showScores(scores, level);
+
+        while (!end){
+            if (menu_handleKeyboard(menu, &action)){
+                switch (action.value){
+                    // Start a new game
+                    case IDM_NEW_BEGINNER :
+                    case IDM_NEW_MEDIUM :
+                    case IDM_NEW_EXPERT:
+                        menubar_activateItem(bar, (IDM_NEW_BEGINNER + action.value), SEARCH_BY_ID, TRUE);
+                        menu_update(menu);
+
+                        _showScores(scores, IDM_NEW_BEGINNER + action.value);
+                        break;
+
+                    case IDM_QUIT:
+                        end = TRUE;
+                        break;
+                }
+            }
+        }
+
+        menu_free(menu);    // Error while allocating submenu => no more menu
+    }
+}
+
+// _showScores() : Show best scores for the given level
+//
+//  @scores : Array of scores
+//  @level : Category of scores
+//
+void _showScores(PSCORE scores, uint8_t level){
+#ifdef DEST_CASIO_CALC
+    if (!scores){
+        return;
+    }
+
+    int y, w, h;
+    char line[255];
+    PSCORE current;
+
+    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, BKGROUND_COLOUR);
+
+    strcpy(line, "Best scores for level '");
+    strcat(line, (level?(level==1?IDS_NEW_MEDIUM:IDS_NEW_EXPERT):IDS_NEW_BEGINNER));
+    strcat(line,"'");
+    dsize(line, NULL, &w, &h);
+    dtext((CASIO_WIDTH - w) / 2, SCORES_TITLE_Y, COLOUR_BLACK, line);
+
+    y = SCORES_TOP;
+    for (uint id=0; id < SCORE_LEVEL_COUNT; id++){
+        line[0] = '1' + id;
+        line[1] = 0;
+        dtext(SCORES_COL_ID, y, COLOUR_BLACK, line);
+        dtext(SCORES_COL_SCORE, y, scores_time2a(scores[level*SCORE_LEVEL_COUNT + id].time, line));
+
+        y += SCORES_HEIGHT;
+    }
+
+    dupdate();
+#endif // DEST_CASIO_CALC
 }
 
 // __callbackTick() : Callback function for timer
