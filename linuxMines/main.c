@@ -121,11 +121,13 @@ int main()
                     case IDM_GAME_BEGINNER :
                     case IDM_GAME_MEDIUM :
                     case IDM_GAME_EXPERT :{
-
+                        PBOX box;
                         board_init(board, action.value - IDM_GAME_BEGINNER);
-                        board_setGameStateEx(board, STATE_LOST, TRUE);
 
-                        //grid_display(board->grid);
+                        box = BOX_AT(board->grid, 10, 17);
+                        box->state=BS_FLAG;
+
+                        board_setGameStateEx(board, STATE_LOST, TRUE);
                         printf("\n\n");
 
                         menu_showParentBar(menu, TRUE);

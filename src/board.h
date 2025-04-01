@@ -264,8 +264,8 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 // board_drawScrollBar() : Draw a viewport's scrollbar
 //
 //  @board : pointer to the board
-//  @sID   : SCROLL_HORIZONTAL if horizontal,
-//                  SCROLL_VERTICAL for vertical scrollbar
+//  @scrollID   : SCROLL_HORIZONTAL if scrollbar is horizontal,
+//                SCROLL_VERTICAL for a vertical scrollbar
 //  @blink : Make the scroll bars blink ?
 //
 void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL blink);
@@ -314,22 +314,6 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation);
 void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select);
 #define  board_selectBox(board, pos) board_selectBoxEx(board, pos, TRUE)
 #define  board_unselectBox(board, pos) board_selectBoxEx(board, pos, FALSE)
-
-//
-//  tools
-//
-
-//  rotatePoint() : Rotate (trig. 90°) and translate a single point
-//
-//  @pos : Pointer to point coordinates
-//
-void rotatePoint(PPOINT const pos);
-
-//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
-//
-//  @rect : Pointer to the rect
-//
-void rotateRect(PRECT const rect);
 
 #ifdef __cplusplus
 }

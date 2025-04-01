@@ -156,6 +156,22 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 void centerRect(PRECT const rect, int width, int height);
 
 //
+// Display rotation
+//
+
+//  rotatePoint() : Rotate (trig. 90°) and translate a single point
+//
+//  @pos : Pointer to point coordinates
+//
+void rotatePoint(PPOINT const pos);
+
+//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
+//
+//  @rect : Pointer to the rect
+//
+void rotateRect(PRECT const rect);
+
+//
 // Screen capture functions for casio calculator : if  SCREEN_CAPTURE defined
 //
 //      using as root fxlink command : fxlink -iw

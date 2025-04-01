@@ -100,8 +100,8 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         {
             board->minesLeft = 0;
             board_setSmileyEx(board, SMILEY_WIN, FALSE);
-            for (r = 0; r < board->viewPort.dimensions.row; r++)
-                for (c = 0; c < board->viewPort.dimensions.col; c++){
+            for (r = 0; r < board->grid->size.row; r++)
+                for (c = 0; c < board->grid->size.col; c++){
                     box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_FLAG){
                         box->state = BS_FLAG;
@@ -116,8 +116,8 @@ void board_setGameStateEx(PBOARD const board, GAME_STATE state, BOOL redraw){
         case STATE_CANCELLED:
         {
             board_setSmileyEx(board, SMILEY_LOSE, FALSE);
-            for (r = 0; r < board->viewPort.dimensions.row; r++)
-                for (c = 0; c < board->viewPort.dimensions.col; c++){
+            for (r = 0; r < board->grid->size.row; r++)
+                for (c = 0; c < board->grid->size.col; c++){
                     box = BOX_AT(board->grid, c, r);
                     if (box->mine && box->state != BS_BLAST){
                         box->state = BS_MINE;
@@ -451,7 +451,7 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
         printf("| x ");
     }
     else{
-        printf("| %c ", box->state>BS_DICEY_DOWN?'0' + (15 - box->state):' ');
+        printf("| %c ", box->state>BS_DICEY_DOWN?'0' + (BS_DOWN - box->state):'A' + box->state);
     }
 #endif // #ifdef DEST_CASIO_CALC
 }
@@ -470,12 +470,12 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
 // board_drawScrollBar() : Draw a viewport's scrollbar
 //
 //  @board : pointer to the board
-//  @sID   : SCROLL_HORIZONTAL if horizontal,
-//                  SCROLL_VERTICAL for vertical scrollbar
+//  @scrollID   : SCROLL_HORIZONTAL if scrollbar is horizontal,
+//                SCROLL_VERTICAL for a vertical scrollbar
 //  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
-    if (sID < SCROLL_BOTH){
+void board_drawScrollBar(PBOARD board, uint8_t scrollID, BOOL highLight){
+    if (scrollID && scrollID < SCROLL_BOTH){
         RECT rectBk, rectBar;
         POINT ptBegin, ptEnd;
         uint16_t dimension;
@@ -483,11 +483,11 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
         int colour = (blink?SCROLL_COLOUR_BLINK:SCROLL_COLOUR);
 #endif // #ifdef DEST_CASIO_CALC
 
-        copyRect(&rectBk, &board->viewPort.scrollBars[sID - 1]);
-        copyRect(&rectBar, &board->viewPort.scrollBars[sID - 1]);
+        copyRect(&rectBk, &board->viewPort.scrollBars[scrollID - 1]);
+        copyRect(&rectBar, &board->viewPort.scrollBars[scrollID - 1]);
         deflateRect(&rectBar, SCROLL_SPACE, SCROLL_SPACE);
 
-        if (SCROLL_HORIZONTAL == sID){
+        if (SCROLL_HORIZONTAL == scrollID){
             dimension = rectBar.w;  // = 100%
             rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
             rectBar.x += (dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col + SCROLL_RADIUS);
@@ -520,13 +520,10 @@ void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL highLight){
         // Rounded rectangle
         dcircle(rectBar.x, rectBar.y, SCROLL_RADIUS, colour, colour);
         dcircle(rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, SCROLL_RADIUS, colour, colour);
-
-        drect(rectBar.x, rectBar.y ,
-                rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1,
+        drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1,
                 colour);
 #endif // #ifdef DEST_CASIO_CALC
-
-    } // if (sOrientation < SCROLL_BOTH){
+    } // if (scrollID < SCROLL_BOTH){
 }
 
 // board_drawScrollBars() : Draw viewport's scrollbars
@@ -708,38 +705,6 @@ void board_selectBoxEx(PBOARD const board, PCOORD const pos, BOOL select){
         __coordtoa(select?"Sel : ":"Uns : ", base.x, base.y, trace);
         TRACE(trace, C_BLACK, BKGROUND_COLOUR);
 #endif // TRACE_MODE
-}
-
-//
-// Tools
-//
-
-//  rotatePoint() : Rotate (trig. 90°) and translate a single point
-//
-//  @pos : Pointer to point coordinates
-//
-void rotatePoint(PPOINT const pos){
-    int16_t ny = CASIO_HEIGHT - pos->x;
-    pos->x = pos->y;
-    pos->y = ny;
-}
-
-//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
-//
-//  @rect : Pointer to the rect
-//
-void rotateRect(PRECT const rect){
-    POINT topLeft = {rect->x, rect->y};
-    POINT bottomRight = {rect->x + rect->w - 1, rect->y + rect->h - 1};
-    int16_t ow = rect->w;
-
-    rotatePoint(&topLeft);
-    rotatePoint(&bottomRight);
-
-    rect->x = topLeft.x;
-    rect->y = bottomRight.y;
-    rect->w = rect->h;
-    rect->h = ow;
 }
 
 // EOF

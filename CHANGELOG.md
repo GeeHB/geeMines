@@ -1,16 +1,17 @@
 #### v0.2.1
-* ww mars 2025
+* ww avril 2025
 * Ajouts
   * Remplacement des boutons de navigation par des barres de défilement
   * Gestion des scores
     * Chargement / Enregistrement / increment
-    * affichage
+    * Affichage
   * Message si partie gagnée
 
 * Corrections
     * Réorganisation des sources
     * Couleur du board
     * BUG : pas d'affichage du msg en cas de victoire
+    * BUG : Affichage partiel de la grille en fin de jeu
 
 #### v0.1.2
 * 21 mars 2025

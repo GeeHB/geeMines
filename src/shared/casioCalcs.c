@@ -124,6 +124,39 @@ void centerRect(PRECT const rect, int width, int height){
     }
 }
 
+//
+// Display rotation
+//
+
+//  rotatePoint() : Rotate (trig. 90°) and translate a single point
+//
+//  @pos : Pointer to point coordinates
+//
+void rotatePoint(PPOINT const pos){
+    int16_t ny = CASIO_HEIGHT - pos->x;
+    pos->x = pos->y;
+    pos->y = ny;
+}
+
+//  rotateRect() : Rotate (trig. 90°) and translate a rectangle
+//
+//  @rect : Pointer to the rect
+//
+void rotateRect(PRECT const rect){
+    POINT topLeft = {rect->x, rect->y};
+    POINT bottomRight = {rect->x + rect->w - 1, rect->y + rect->h - 1};
+    int16_t ow = rect->w;
+
+    rotatePoint(&topLeft);
+    rotatePoint(&bottomRight);
+
+    rect->x = topLeft.x;
+    rect->y = bottomRight.y;
+    rect->w = rect->h;
+    rect->h = ow;
+}
+
+
 #ifdef SCREEN_CAPTURE
 #ifdef DEST_CASIO_CALC
 //
