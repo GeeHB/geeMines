@@ -128,7 +128,7 @@ BOOL scores_add(PSCORE const scores, uint8_t level, uint16_t time){
 char* scores_time2a(int num, char *str){
     if (str){
         size_t len;
-        __itoa((num<10?10:num), str);   // not less than 1 sec.
+        __itoa((num<10?10:num), FALSE, str);   // not less than 1 sec.
 
         if ((len = strlen(str))>1){
             str[len] = str[len-1];

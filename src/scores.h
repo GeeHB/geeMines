@@ -37,8 +37,8 @@ typedef struct __score{
 #define SCORES_TOP          60
 #define SCORES_HEIGHT       20
 
-#define SCORES_COL_ID       100
-#define SCORES_COL_SCORE    160
+#define SCORES_COL_ID       160
+#define SCORES_COL_SCORE    210
 
 #ifdef __cplusplus
 extern "C" {

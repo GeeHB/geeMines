@@ -236,18 +236,19 @@ char* __coordtoa(const char* name, uint8_t x, uint8_t y, char* str){
 // __itoa() : Convert a num. val to a string
 //
 //  @num : Numeric value to convert
+//  @format : format numbers
 //  @str : destination buffer
 //
 //  @return : a pointer to the string
 //
-char* __itoa(int num, char *str){
+char* __itoa(int num, BOOL format, char *str){
     char* strVal = str;
     int sum= ((num < 0)?-1*num:num);
     uint8_t i = 0, digit, dCount = 0;
     do{
         digit = sum % 10;
         strVal[i++] = '0' + digit;
-        if (!(++dCount % 3)){
+        if (format && !(++dCount % 3)){
             strVal[i++] = ' ';  // for large numbers lisibility
         }
 

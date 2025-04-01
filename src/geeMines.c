@@ -111,6 +111,8 @@ int main(void){
                     // Show high scores
                     case IDM_SCORES:
                         _onShowScores(scores, LEVEL_BEGINNER);
+                        _onAbout();
+                        menu_update(menu);
                         break;
 
                     // End app.

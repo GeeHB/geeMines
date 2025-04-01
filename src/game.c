@@ -137,10 +137,9 @@ void _onShowScores(PSCORE scores, uint8_t level){
                     case IDM_NEW_BEGINNER :
                     case IDM_NEW_MEDIUM :
                     case IDM_NEW_EXPERT:
-                        menubar_activateItem(bar, (IDM_NEW_BEGINNER + action.value), SEARCH_BY_ID, TRUE);
+                        menubar_activateItem(bar, action.value, SEARCH_BY_ID, TRUE);
+                        _showScores(scores, action.value - IDM_NEW_BEGINNER);
                         menu_update(menu);
-
-                        _showScores(scores, IDM_NEW_BEGINNER + action.value);
                         break;
 
                     case IDM_QUIT:
@@ -160,35 +159,42 @@ void _onShowScores(PSCORE scores, uint8_t level){
 //  @level : Category of scores
 //
 void _showScores(PSCORE scores, uint8_t level){
+    if (scores){
 #ifdef DEST_CASIO_CALC
-    if (!scores){
-        return;
-    }
+        int y, w, h;
+        char line[255];
+        RECT rect;
 
-    int y, w, h;
-    char line[255];
-    PSCORE current;
+        strcpy(line, "Level '");
+        strcat(line, (level?(level==1?IDS_NEW_MEDIUM:IDS_NEW_EXPERT):IDS_NEW_BEGINNER));
+        strcat(line,"' 's scores");
+        dsize(line, NULL, &w, &h);
 
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, BKGROUND_COLOUR);
+        setRect(&rect, 70, 15, 250, SCORES_HEIGHT * SCORE_LEVEL_COUNT + 2 * SCORES_TITLE_Y);
+        
+        drect_border(rect.x, rect.y, rect.x + rect.w - 1,  rect.y + rect.h - 1,
+                BKGROUND_COLOUR, 2, COLOUR_RED);
 
-    strcpy(line, "Best scores for level '");
-    strcat(line, (level?(level==1?IDS_NEW_MEDIUM:IDS_NEW_EXPERT):IDS_NEW_BEGINNER));
-    strcat(line,"'");
-    dsize(line, NULL, &w, &h);
-    dtext((CASIO_WIDTH - w) / 2, SCORES_TITLE_Y, COLOUR_BLACK, line);
+        inflateRect(&rect, 4 , 4);
 
-    y = SCORES_TOP;
-    for (uint id=0; id < SCORE_LEVEL_COUNT; id++){
-        line[0] = '1' + id;
-        line[1] = 0;
-        dtext(SCORES_COL_ID, y, COLOUR_BLACK, line);
-        dtext(SCORES_COL_SCORE, y, scores_time2a(scores[level*SCORE_LEVEL_COUNT + id].time, line));
+        drect_border(rect.x, rect.y, rect.x + rect.w - 1,  rect.y + rect.h - 1,
+            C_NONE, 2, COLOUR_RED);
+        
+        dtext((CASIO_WIDTH - w) / 2, SCORES_TITLE_Y, COLOUR_BLACK, line);
 
-        y += SCORES_HEIGHT;
-    }
+        y = SCORES_TOP;
+        for (uint id=0; id < SCORE_LEVEL_COUNT; id++){
+            line[0] = '1' + id;
+            line[1] = 0;
+            dtext(SCORES_COL_ID, y, COLOUR_BLACK, line);
+            dtext(SCORES_COL_SCORE, y, COLOUR_BLACK, scores_time2a(scores[level*SCORE_LEVEL_COUNT + id].time, line));
 
-    dupdate();
+            y += SCORES_HEIGHT;
+        }
+
+        dupdate();
 #endif // DEST_CASIO_CALC
+    }
 }
 
 // __callbackTick() : Callback function for timer
