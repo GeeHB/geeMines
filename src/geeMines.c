@@ -56,6 +56,9 @@ int main(void){
         BOOL end = FALSE;
         MENUACTION action;
         PSCORE scores = NULL;
+#ifdef SCREEN_CAPTURE
+        BOOL captureOn = FALSE;
+#endif // #ifdef SCREEN_CAPTURE
 
         _onAbout();
 
@@ -81,7 +84,11 @@ int main(void){
 
                     // Start the game
                     case IDM_START:
+#ifdef SCREEN_CAPTURE
+                        _onStartGame(board, scores, captureOn);
+#else
                         _onStartGame(board, scores);
+#endif // #ifdef SCREEN_CAPTURE
                         menubar_activateItem(menu_getMenuBar(menu), IDM_START, SEARCH_BY_ID, FALSE);
                         menu_update(menu);  // back to current menu
                         break;
@@ -95,6 +102,20 @@ int main(void){
                         menu_update(menu);
                         break;
 #endif // #ifdef _DEBUG_
+
+#ifdef SCREEN_CAPTURE
+                    case KEY_CODE_CAPTURE:
+                        if (captureOn){
+                            capture_remove();
+                        }
+                        else{
+                            capture_install();
+                      		menu_update(menu);
+                        }
+
+                        captureOn = !captureOn;
+                        break;
+#endif // #ifdef SCREEN_CAPTURE
 
                     case KEY_CODE_PAUSE:
                         _onPause();

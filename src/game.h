@@ -79,7 +79,11 @@ void _showScores(PSCORE scores, uint8_t level);
 //
 //  @return : FALSE on error
 //
+#ifdef SCREEN_CAPTURE
+BOOL _onStartGame(PBOARD const board, PSCORE scores, BOOL capture);
+#else
 BOOL _onStartGame(PBOARD const board, PSCORE scores);
+#endif // #ifdef SCREEN_CAPTURE
 
 //  _onStep : User steps on a box
 //

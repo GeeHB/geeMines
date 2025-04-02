@@ -219,7 +219,11 @@ static int __callbackTick(volatile int *pTick){
 //
 //  @return : FALSE on error
 //
+#ifdef SCREEN_CAPTURE
+BOOL _onStartGame(PBOARD const board, PSCORE scores, BOOL capture){
+#else
 BOOL _onStartGame(PBOARD const board, PSCORE scores){
+#endif // #ifdef SCREEN_CAPTURE
     if (!board){
         return FALSE;
     }
@@ -231,7 +235,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
     uint16_t redraw = REDRAW_SELECTION;
 
 #ifdef SCREEN_CAPTURE
-    BOOL captureOn = FALSE;
+    BOOL captureOn = capture;
 #endif // #ifdef SCREEN_CAPTURE
 
     board_setGameStateEx(board, STATE_PLAYING, FALSE);
