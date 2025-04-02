@@ -1,10 +1,10 @@
 #### v0.2.1
-* ww avril 2025
+* 2 avril 2025
 * Ajouts
   * Remplacement des boutons de navigation par des barres de défilement
   * Gestion des scores
-    * Chargement / Enregistrement / increment
-    * Affichage
+    * Chargement / Enregistrement / Increment
+    * Affichage / Intégration au menu principal
   * Message si partie gagnée
   * Réorganisation des sources
     * casioCalcs : ajout des fonctions de rotation

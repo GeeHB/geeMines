@@ -205,11 +205,11 @@ BOOL board_isBoxVisible(PBOARD const board, PCOORD const pos){
 //  @update : update the screen ?
 //
 void board_drawEx(PBOARD const board, BOOL menu, BOOL update){
+    if (board->grid && board->grid->boxes){
 #ifdef DEST_CASIO_CALC
-    drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), BKGROUND_COLOUR);
+        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - 1 - (menu?MENUBAR_DEF_HEIGHT:0), BKGROUND_COLOUR);
 #endif // #ifdef DEST_CASIO_CALC
 
-    if (board->grid && board->grid->boxes){
         // Stats
         board_drawBorder(board->orientation, &board->statRect, STAT_BORDER);
         board_drawMinesLeftEx(board, FALSE);

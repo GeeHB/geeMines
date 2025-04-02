@@ -18,11 +18,11 @@ Ecran d'accueil :
 
 | Dépôt          | https://gitea.planet-casio.com/Jhb/geeMines     |
 |----------------|--------------------------------------------------|
-| **Date**           | xx avril 2025                                      |
+| **Date**           | 2 avril 2025                                      |
 | **Version stable** | **0.2.1** - branche `main`                             |
 | **Dépendances**    | **Casio / gint**                                     |
 | **Testé sur**      | *Linux* (Fedora 41) avec `code::blocks` et *Zed*              |
-|                | *Casio Graph90+E*  et Casio Grapg35+E ii avec `gint` |
+|                | *Casio Graph90+E* |
 
 ### Copies d'écran
 

@@ -165,21 +165,19 @@ void _showScores(PSCORE scores, uint8_t level){
         char line[255];
         RECT rect;
 
-        strcpy(line, "Level '");
+        strcpy(line, "Best scores - '");
         strcat(line, (level?(level==1?IDS_NEW_MEDIUM:IDS_NEW_EXPERT):IDS_NEW_BEGINNER));
-        strcat(line,"' 's scores");
+        strcat(line,"'");
         dsize(line, NULL, &w, &h);
 
         setRect(&rect, 70, 15, 250, SCORES_HEIGHT * SCORE_LEVEL_COUNT + 2 * SCORES_TITLE_Y);
-        
         drect_border(rect.x, rect.y, rect.x + rect.w - 1,  rect.y + rect.h - 1,
                 BKGROUND_COLOUR, 2, COLOUR_RED);
 
         inflateRect(&rect, 4 , 4);
-
         drect_border(rect.x, rect.y, rect.x + rect.w - 1,  rect.y + rect.h - 1,
             C_NONE, 2, COLOUR_RED);
-        
+
         dtext((CASIO_WIDTH - w) / 2, SCORES_TITLE_Y, COLOUR_BLACK, line);
 
         y = SCORES_TOP;
@@ -187,7 +185,9 @@ void _showScores(PSCORE scores, uint8_t level){
             line[0] = '1' + id;
             line[1] = 0;
             dtext(SCORES_COL_ID, y, COLOUR_BLACK, line);
-            dtext(SCORES_COL_SCORE, y, COLOUR_BLACK, scores_time2a(scores[level*SCORE_LEVEL_COUNT + id].time, line));
+            scores_time2a(scores[level*SCORE_LEVEL_COUNT + id].time, line);
+            strcat(line, " s");
+            dtext(SCORES_COL_SCORE, y, COLOUR_BLACK, line);
 
             y += SCORES_HEIGHT;
         }
