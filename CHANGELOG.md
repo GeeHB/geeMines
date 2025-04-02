@@ -1,15 +1,14 @@
-#### v0.2.1
+#### v0.2.1 - Première version complète (à tester !!!)
 * 2 avril 2025
 * Ajouts
   * Remplacement des boutons de navigation par des barres de défilement
   * Gestion des scores
-    * Chargement / Enregistrement / Increment
+    * Chargement / Enregistrement / Incrément
     * Affichage / Intégration au menu principal
   * Message si partie gagnée
   * Réorganisation des sources
     * casioCalcs : ajout des fonctions de rotation
     * Suppression des macros non utilisées
-
 * Corrections
     * Couleur du board
     * BUG : pas d'affichage du msg en cas de victoire

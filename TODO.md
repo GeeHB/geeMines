@@ -4,7 +4,7 @@
 - [x] Gestion des scores
     - [x] Duréee par niveau
     - [x] Ecran + menu
-- [ ] Barre(s) de défilement
+- [x] Barre(s) de défilement
     - [x] none, vert, horz, both
     - [x] Largeur | hauteur prop.
     - [x] [col. foncé] / [col claire]
