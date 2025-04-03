@@ -12,13 +12,14 @@
 // Application infos
 //
 #define APP_NAME            "geeMines"
-#define APP_VERSION         "0.2.1"
+#define APP_VERSION         "0.2.2"
 #define APP_AUTHOR          "GeeHB"
 
 // "About" / Splash screen
 //
 #define APP_LOGO_WIDTH      80
 #define APP_LOGO_HEIGHT     APP_LOGO_WIDTH
+#define APP_LOGO_OFFSET     30
 
 #define BKGROUND_COLOUR     C_RGB(26,26,26)
 //#define BKGROUND_COLOUR     COLOUR_LT_GREY

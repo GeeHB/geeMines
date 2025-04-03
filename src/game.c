@@ -44,13 +44,13 @@ void _onAbout(){
     drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - 1, C_WHITE);
 
     // Draw the logo
-    dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2,
-            (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2,
+    dimage((CASIO_WIDTH - APP_LOGO_WIDTH) / 2 - APP_LOGO_OFFSET,
+            (CASIO_HEIGHT - MENUBAR_DEF_HEIGHT - APP_LOGO_WIDTH) / 2 - APP_LOGO_OFFSET,
             &g_mine);
 
     // Copyright
     strcpy(copyright, APP_NAME);
-    strcat(copyright, " par ");
+    strcat(copyright, " by ");
     strcat(copyright, APP_AUTHOR);
     strcat(copyright, " v");
     strcat(copyright, APP_VERSION);

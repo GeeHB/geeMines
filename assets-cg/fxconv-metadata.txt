@@ -22,6 +22,3 @@ leds.png:
   type: bopti-image
   name: g_leds
 
-scroll.png:
-  type: bopti-image
-  name: g_scroll

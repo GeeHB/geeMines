@@ -24,7 +24,6 @@
     extern bopti_image_t g_boxes;
     extern bopti_image_t g_smileys;
     extern bopti_image_t g_leds;
-    extern bopti_image_t g_scroll;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_create() : Create an empty board
@@ -628,6 +627,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
                 break;
 
             case LEVEL_EXPERT:
+                board->viewPort.scrolls = (board->orientation==CALC_HORIZONTAL?SCROLL_HORIZONTAL:SCROLL_BOTH);
                 board->viewPort.scrolls = SCROLL_BOTH;
                 setRect(&board->viewPort.visibleFrame, 0, 0,
                     MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),

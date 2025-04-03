@@ -1,3 +1,10 @@
+#### v0.2.2
+* xxx avril 2025
+* Ajouts
+* Corrections
+  * Retrait de scroll.png (oubli dans la v0.2.1)
+  * Pas besoin de scroll vertical en mode expert::horizontal
+
 #### v0.2.1 - Première version complète (à tester !!!)
 * 2 avril 2025
 * Ajouts

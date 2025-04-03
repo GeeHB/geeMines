@@ -26,13 +26,12 @@ set(ASSETS_cg
   assets-cg/boxes.png
   assets-cg/smileys.png
   assets-cg/leds.png
-  assets-cg/scroll.png
 )
 
 fxconv_declare_assets(${ASSETS} ${ASSETS_cg} WITH_METADATA)
 
 add_executable(geeMines ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
-target_compile_options(geeMines PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC)
+target_compile_options(geeMines PRIVATE -Wall -Wextra -Os -D=DEST_CASIO_CALC -D=SCREEN_CAPTURE)
 target_link_libraries(geeMines Gint::Gint)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
