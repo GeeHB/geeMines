@@ -66,7 +66,7 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     scrollBar_init(&board->viewPort.horzScroll, SCROLL_HORIZONTAL);
     scrollBar_init(&board->viewPort.vertScroll, SCROLL_VERTICAL);
 
-    grid_layMines(board->grid); // Put mines
+    grid_layMines(board->grid); // Dispatch mines
     board_setOrientation(board, board->orientation);
 
     // New game !
@@ -629,7 +629,7 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
             scrollBar_setRect(&board->viewPort.vertScroll,
                 board->gridRect.x + board->gridRect.w + GRID_BORDER,
                 board->gridRect.y - GRID_BORDER,
-                -1,
+                SCROLLBAR_HEIGHT,
                 board->gridRect.h + 2 * GRID_BORDER);
         }
     } // if (grid)
