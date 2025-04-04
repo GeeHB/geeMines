@@ -57,6 +57,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/shared/menu.h" />
+		<Unit filename="../src/shared/scrollBar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/shared/scrollBar.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

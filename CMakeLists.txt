@@ -14,6 +14,7 @@ set(SOURCES
   src/shared/casioCalcs.c
   src/shared/keys.c
   src/shared/menu.c
+  src/scrollBar.c
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS

@@ -6,12 +6,14 @@
 //--
 //----------------------------------------------------------------------
 
+#include "shared/keys.h"
+#include "shared/menu.h"
+#include "shared/scrollBar.h"
+
 #include "game.h"
 #include "board.h"
 #include "consts.h"
 #include "scores.h"
-#include "shared/keys.h"
-#include "shared/menu.h"
 
 #include <stdint.h>
 
@@ -268,18 +270,12 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
         tickCount++;
 
         if (0 == (tickCount % BLINK_CURSOR)){
-            redraw |= REDRAW_SELECTION; // Time to blink ?
+            redraw |= REDRAW_SELECTION; // Time to make cursor blink
         }
 
         if (0 == (tickCount % TIMER_SECOND)){
             redraw |= REDRAW_TIME;  // One more second
         }
-
-        /*
-        if (board->viewPort.scrolls && 0 == (tickCount % BLINK_SCROLLBARS)){
-            redraw |= REDRAW_SCROLLBARS;
-        }
-        */
 
         // A keyboard event ?
         key = getKeyEx(NULL);
@@ -311,7 +307,7 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                     }
                 }
                 else{
-                    board_setGameState(board, STATE_LOST);
+                    board_setGameState(board, STATE_LOST);  // on a mine !
                 }
 
                 break;
@@ -379,13 +375,6 @@ BOOL _onStartGame(PBOARD const board, PSCORE scores){
                 hightLighted = !hightLighted;// Blink selected box
                 board_selectBoxEx(board, &pos, hightLighted);
             }
-
-            /*
-            if (redraw & REDRAW_SCROLLBARS){
-                blinkScroll = !blinkScroll;
-                board_drawScrollBars(board, blinkScroll); // Blink scroll buttons
-            }
-            */
 
             if (redraw & REDRAW_MINES_LEFT){
                 board_drawMinesLeftEx(board, FALSE);
@@ -478,7 +467,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw){
 //  @board : pointer to the current board
 //  @pos : Current position in the grid
 //
-//  @return drawing action to perform or NO_DRAWING
+//  @return : Drawing action to perform or NO_DRAWING
 //
 uint16_t _onFlag(PBOARD const board, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
@@ -499,7 +488,7 @@ uint16_t _onFlag(PBOARD const board, PCOORD const pos){
 //  @board : pointer to the current board
 //  @pos : Current position in the grid
 //
-//  @return drawing action to perform or NO_DRAWING
+//  @return : Drawing action to perform or NO_DRAWING
 //
 uint16_t _onQuestion(PBOARD const board, PCOORD const pos){
     PBOX box = BOX_AT_POS(board->grid, pos);
@@ -520,7 +509,7 @@ uint16_t _onQuestion(PBOARD const board, PCOORD const pos){
 //  @pos : position of cursor
 //  @check : if TRUE check display orientation
 //
-//  @return : TDrawing action(s) to perform or NO_REDRAW
+//  @return : Drawing action(s) to perform or NO_REDRAW
 //
 uint8_t _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
 
@@ -532,7 +521,7 @@ uint8_t _onKeyLeftEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (pos->col){
         if (board->viewPort.visibleFrame.x == pos->col){
-            board->viewPort.visibleFrame.x--;
+            scrollBar_moveTo(&board->viewPort.horzScroll,--board->viewPort.visibleFrame.x);
             action = REDRAW_GRID;
         }
 
@@ -561,7 +550,7 @@ uint8_t _onKeyDownEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (pos->row < (board->viewPort.dimensions.row - 1)){
         if ((board->viewPort.visibleFrame.y + board->viewPort.visibleFrame.h - 1) == pos->row){
-            board->viewPort.visibleFrame.y++;
+            scrollBar_moveTo(&board->viewPort.vertScroll,++board->viewPort.visibleFrame.y);
             action = REDRAW_GRID;
         }
 
@@ -589,7 +578,7 @@ uint8_t _onKeyRightEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (pos->col < (board->viewPort.dimensions.col - 1)){
         if ((board->viewPort.visibleFrame.x + board->viewPort.visibleFrame.w - 1) == pos->col){
-            board->viewPort.visibleFrame.x++;
+            scrollBar_moveTo(&board->viewPort.horzScroll,++board->viewPort.visibleFrame.x);
             action = REDRAW_GRID;
         }
 
@@ -617,7 +606,7 @@ uint8_t _onKeyUpEx(PBOARD const board, PCOORD pos, BOOL check){
 
     if (pos->row){
         if (board->viewPort.visibleFrame.y == pos->row){
-            board->viewPort.visibleFrame.y--;
+            scrollBar_moveTo(&board->viewPort.vertScroll,--board->viewPort.visibleFrame.y);
             action = REDRAW_GRID;
         }
 

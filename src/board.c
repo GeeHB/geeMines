@@ -6,9 +6,10 @@
 //--
 //----------------------------------------------------------------------
 
+#include <stdint.h>
+#include "shared/scrollBar.h"
 #include "board.h"
 #include "grid.h"
-#include <stdint.h>
 
 #ifdef DEST_CASIO_CALC
 #include "consts.h"
@@ -20,15 +21,15 @@
 #include <string.h>
 
 #ifdef DEST_CASIO_CALC
-    // Images
-    extern bopti_image_t g_boxes;
-    extern bopti_image_t g_smileys;
-    extern bopti_image_t g_leds;
+// Images
+extern bopti_image_t g_boxes;
+extern bopti_image_t g_smileys;
+extern bopti_image_t g_leds;
 #endif // #ifndef DEST_CASIO_CALC
 
 //  board_create() : Create an empty board
 //
-//  @return : Pointer to the board
+//  @return : Pointer to the board or NULL if error
 //
 PBOARD board_create(){
     size_t size = sizeof(BOARD);
@@ -41,6 +42,7 @@ PBOARD board_create(){
     memset(board, 0, size);
     board->grid = grid_create();
     board_setGameStateEx(board, STATE_WAITING, TRUE);
+
     return board;
 }
 
@@ -55,6 +57,14 @@ BOOL board_init(PBOARD const board, GAME_LEVEL level){
     if (!board || !grid_init(board->grid, level)){
         return FALSE;
     }
+
+    // Init. viewport and scrollbars (even if not visible)
+    scroll_init();
+    scroll_setColour(COLOUR_BKGRND, BKGROUND_COLOUR);
+    scroll_setBarThickness(SCROLLBAR_THICKNESS, TRUE);
+
+    scrollBar_init(&board->viewPort.horzScroll, SCROLL_HORIZONTAL);
+    scrollBar_init(&board->viewPort.vertScroll, SCROLL_VERTICAL);
 
     grid_layMines(board->grid); // Put mines
     board_setOrientation(board, board->orientation);
@@ -282,7 +292,7 @@ void board_drawGridEx(PBOARD const board, BOOL update){
     }
 
     if (board->viewPort.scrolls != NO_SCROLL){
-        board_drawScrollBars(board, FALSE);
+        board_drawViewPortScrollBars(board, FALSE);
     }
 
     if (update){
@@ -466,78 +476,20 @@ void board_drawBoxAtPos(PBOARD const board, PCOORD const pos){
     board_drawBox(board, pos, scrPos.x, scrPos.y);
 }
 
-// board_drawScrollBar() : Draw a viewport's scrollbar
-//
-//  @board : pointer to the board
-//  @scrollID   : SCROLL_HORIZONTAL if scrollbar is horizontal,
-//                SCROLL_VERTICAL for a vertical scrollbar
-//  @blink : Make the scroll bars blink ?
-//
-void board_drawScrollBar(PBOARD board, uint8_t scrollID, BOOL blink){
-    if (scrollID && scrollID < SCROLL_BOTH){
-        RECT rectBk, rectBar;
-        POINT ptBegin, ptEnd;
-        uint16_t dimension;
-#ifdef DEST_CASIO_CALC
-        int colour = (blink?SCROLL_COLOUR_BLINK:SCROLL_COLOUR);
-#endif // #ifdef DEST_CASIO_CALC
-
-        copyRect(&rectBk, &board->viewPort.scrollBars[scrollID - 1]);
-        copyRect(&rectBar, &board->viewPort.scrollBars[scrollID - 1]);
-        deflateRect(&rectBar, SCROLL_SPACE, SCROLL_SPACE);
-
-        if (SCROLL_HORIZONTAL == scrollID){
-            dimension = rectBar.w;  // = 100%
-            rectBar.w = rectBar.w * board->viewPort.visibleFrame.w / board->viewPort.dimensions.col;
-            rectBar.x += (dimension * board->viewPort.visibleFrame.x / board->viewPort.dimensions.col + SCROLL_RADIUS);
-            rectBar.w -= 2*SCROLL_RADIUS;
-
-            ptBegin = (POINT){.x=rectBar.x,.y=rectBar.y+SCROLL_RADIUS};
-            ptEnd = (POINT){.x=rectBar.x + rectBar.w - 1,.y=rectBar.y+SCROLL_RADIUS};
-        }
-        else{
-            dimension = rectBar.h;  // = 100%
-            rectBar.h = rectBar.h * board->viewPort.visibleFrame.h /  board->viewPort.dimensions.row;
-            rectBar.y += (dimension * board->viewPort.visibleFrame.y / board->viewPort.dimensions.row + SCROLL_RADIUS);
-            rectBar.h -= 2*SCROLL_RADIUS;
-
-            ptBegin = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y};
-            ptEnd = (POINT){.x=rectBar.x+SCROLL_RADIUS,.y=rectBar.y+rectBar.w-1};
-        }
-
-        if (CALC_HORIZONTAL == board->orientation){
-            rotateRect(&rectBk);
-            rotateRect(&rectBar);
-
-            rotatePoint(&ptBegin);   // centers of circles
-            rotatePoint(&ptEnd);
-        }
-
-#ifdef DEST_CASIO_CALC
-        drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, BKGROUND_COLOUR);     // Erase scroll. bckgrnd
-
-        // Rounded rectangle
-        dcircle(ptBegin.x, ptBegin.y, SCROLL_RADIUS, colour, colour);
-        dcircle(ptEnd.x, ptEnd.y, SCROLL_RADIUS, colour, colour);
-        drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
-#endif // #ifdef DEST_CASIO_CALC
-    } // if (scrollID < SCROLL_BOTH){
-}
-
-// board_drawScrollBars() : Draw viewport's scrollbars
+// board_drawViewPortScrollBars() : Draw viewport's scrollbars
 //
 //  Draw any of viewport's scrollbars, or both, or none ...
 //
 //  @board : pointer to the board
 //  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBars(PBOARD board, BOOL blink){
+void board_drawViewPortScrollBars(PBOARD board, BOOL blink){
     if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
-        board_drawScrollBar(board, SCROLL_HORIZONTAL, blink);
+        scrollBar_drawEx(&board->viewPort.horzScroll, blink, FALSE);
     }
 
     if (board->viewPort.scrolls & SCROLL_VERTICAL){
-        board_drawScrollBar(board, SCROLL_VERTICAL, blink);
+        scrollBar_drawEx(&board->viewPort.vertScroll, blink, FALSE);
     }
 }
 
@@ -600,6 +552,9 @@ void board_drawBorder(CALC_ORIENTATION orientation, PRECT const rect, uint8_t th
 
 //  board_setOrientation() : Set drawing orientation
 //
+//  When orientation changedfrom vert. to horz or horz. to vert,
+//  objects pos and dims. are updated
+//
 //  @board : Pointer to the board
 //  @orientation : Drawing orientation
 //
@@ -609,8 +564,9 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         board->orientation = orientation;
 
-        board->viewPort.dimensions.col = board->grid->size.col;     // Real dims of the grid
-        board->viewPort.dimensions.row = board->grid->size.row;
+        // Real dims of the grid
+        scrollBar_setMaxLength(&board->viewPort.horzScroll, board->viewPort.dimensions.col = board->grid->size.col);
+        scrollBar_setMaxLength(&board->viewPort.vertScroll, board->viewPort.dimensions.row = board->grid->size.row);
 
         // Count of visible boxes
         switch (board->grid->level){
@@ -628,12 +584,18 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
             case LEVEL_EXPERT:
                 board->viewPort.scrolls = (board->orientation==CALC_HORIZONTAL?SCROLL_HORIZONTAL:SCROLL_BOTH);
-                board->viewPort.scrolls = SCROLL_BOTH;
                 setRect(&board->viewPort.visibleFrame, 0, 0,
                     MIN_VAL(board->grid->size.col, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_COL_MAX:BUTTON_VERT_COL_MAX)),
                     MIN_VAL(board->grid->size.row, (board->orientation==CALC_HORIZONTAL?BUTTON_HORZ_ROW_MAX:BUTTON_VERT_ROW_MAX)));
                 break;
         }
+
+        scrollBar_moveTo(&board->viewPort.horzScroll, 0);
+        scrollBar_setLength(&board->viewPort.horzScroll, board->viewPort.visibleFrame.w);
+
+        scrollBar_moveTo(&board->viewPort.vertScroll, 0);
+        scrollBar_setLength(&board->viewPort.vertScroll, board->viewPort.visibleFrame.h);
+
 
         // Rectangles positions
         //
@@ -656,18 +618,18 @@ void board_setOrientation(PBOARD const board, CALC_ORIENTATION orientation){
 
         // 3 - Viewport scrollbars
         if (board->viewPort.scrolls & SCROLL_HORIZONTAL){
-            setRect(&board->viewPort.scrollBars[0],
+            scrollBar_setRect(&board->viewPort.horzScroll,
                 board->gridRect.x - GRID_BORDER,
                 board->gridRect.y + board->gridRect.h + GRID_BORDER,
                 board->gridRect.w + 2 * GRID_BORDER,
-                SCROLL_HEIGHT);
+                SCROLLBAR_HEIGHT);
         }
 
         if (board->viewPort.scrolls & SCROLL_VERTICAL){
-            setRect(&board->viewPort.scrollBars[1],
+            scrollBar_setRect(&board->viewPort.vertScroll,
                 board->gridRect.x + board->gridRect.w + GRID_BORDER,
                 board->gridRect.y - GRID_BORDER,
-                SCROLL_WIDTH,
+                -1,
                 board->gridRect.h + 2 * GRID_BORDER);
         }
     } // if (grid)

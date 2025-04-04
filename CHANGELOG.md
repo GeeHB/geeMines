@@ -1,6 +1,9 @@
 #### v0.2.2
 * xxx avril 2025
 * Ajouts
+  * shared/scrollBar.c + shared/scrollBar.h
+    * Ttes les fonctions et constantes relatives à la gestion des barres de défilement
+
 * Corrections
   * Retrait de scroll.png (oubli dans la v0.2.1)
   * Pas besoin de scroll vertical en mode expert::horizontal
@@ -16,6 +19,7 @@
   * Réorganisation des sources
     * casioCalcs : ajout des fonctions de rotation
     * Suppression des macros non utilisées
+
 * Corrections
     * Couleur du board
     * BUG : pas d'affichage du msg en cas de victoire

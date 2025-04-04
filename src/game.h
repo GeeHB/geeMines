@@ -34,8 +34,7 @@
 #define REDRAW_TIME             4
 #define REDRAW_BOX              8       // Redraw current box and menu
 #define REDRAW_SELECTION        16
-//#define REDRAW_SCROLLBARS       32
-#define REDRAW_GRID             64
+#define REDRAW_GRID             32
 
 #define REDRAW_UPDATE           128     // Just update
 
@@ -100,7 +99,7 @@ BOOL _onStep(PBOARD const board, PCOORD const pos, uint16_t* redraw);
 //  @board : pointer to the current board
 //  @pos : Current position in the grid
 //
-//  @return drawing action to perform or NO_DRAWING
+//  @return : Drawing action to perform or NO_DRAWING
 //
 uint16_t _onFlag(PBOARD const board, PCOORD const pos);
 
@@ -109,7 +108,7 @@ uint16_t _onFlag(PBOARD const board, PCOORD const pos);
 //  @board : pointer to the current board
 //  @pos : Current position in the grid
 //
-//  @return drawing action to perform or NO_DRAWING
+//  @return : Drawing action to perform or NO_DRAWING
 //
 uint16_t _onQuestion(PBOARD const board, PCOORD const pos);
 

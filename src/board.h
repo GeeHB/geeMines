@@ -10,6 +10,7 @@
 #define __GEE_MINES_BOARD_h__    1
 
 #include "shared/casioCalcs.h"
+#include "shared/scrollBar.h"
 #include "consts.h"
 #include "grid.h"
 
@@ -64,7 +65,6 @@ extern "C" {
 // Time
 //
 #define TIMER_OFFSET_V      LED_ZONE_WIDTH + SMILEY_WIDTH
-
 #define TIMER_MAX_VALUE     999      // Max. game duration in sec.
 
 // Game state
@@ -73,40 +73,25 @@ typedef enum {
     STATE_WAITING, STATE_PLAYING, STATE_WON, STATE_LOST, STATE_CANCELLED
 } GAME_STATE;
 
-// Orientation
-//
-typedef enum {
-    CALC_VERTICAL = 0, CALC_HORIZONTAL
-} CALC_ORIENTATION;
-
 // Smiley state
 //
 typedef enum {
     SMILEY_WIN, SMILEY_LOSE, SMILEY_CAUTION, SMILEY_HAPPY
 } SMILEY_STATE;
 
-// Scrollbar management
+// Scollbars dimensions
 //
-#define NO_SCROLL           0
-#define SCROLL_HORIZONTAL   1
-#define SCROLL_VERTICAL     2
-#define SCROLL_BOTH         (SCROLL_HORIZONTAL | SCROLL_VERTICAL)
-
-#define SCROLL_SPACE        2
-#define SCROLL_RADIUS       0x0002
-#define SCROLL_WIDTH        (2*(SCROLL_RADIUS + SCROLL_SPACE) + 1)  // Odd value for dcircle
-#define SCROLL_HEIGHT       SCROLL_WIDTH
-
-#define SCROLL_COLOUR           C_RGB(19,24,27)
-#define SCROLL_COLOUR_BLINK     C_RGB(23, 29, 31)
+#define SCROLLBAR_THICKNESS     0x0005
+#define SCROLLBAR_HEIGHT        0x0009
 
 // A viewport - defines visible part of the grid
 //
 typedef struct __viewPort{
     DIMS dimensions;        // max. box count (w x h)
     RECT visibleFrame;      // current visible boxes IDs
-    uint8_t scrolls:2;
-    RECT scrollBars[2];     // 0=>horz , 1=>vert
+    SCROLLBAR_TYPE scrolls; // count and type of visible scrollbars
+    SCROLLBAR vertScroll;
+    SCROLLBAR horzScroll;
 }VIEWPORT, * PVIEWPORT;
 
 // Game board
@@ -133,7 +118,7 @@ typedef struct __board{
 
 //  board_create() : Create an empty board
 //
-//  @return : Pointer to the board
+//  @return : Pointer to the board or NULL if error
 //
 PBOARD board_create();
 
@@ -261,21 +246,12 @@ void board_directDrawBox(PBOARD const board, PCOORD const pos, uint16_t dx, uint
 //
 void board_drawBoxAtPos(PBOARD const board, PCOORD const pos);
 
-// board_drawScrollBar() : Draw a viewport's scrollbar
-//
-//  @board : pointer to the board
-//  @scrollID   : SCROLL_HORIZONTAL if scrollbar is horizontal,
-//                SCROLL_VERTICAL for a vertical scrollbar
-//  @blink : Make the scroll bars blink ?
-//
-void board_drawScrollBar(PBOARD board, uint8_t sID, BOOL blink);
-
-// board_drawScrollBarsEx() : Draw viewport's scrollbars
+// board_drawViewPortScrollBars() : Draw viewport's scrollbars
 //
 //  @board : pointer to the board
 //  @blink : Make the scroll bars blink ?
 //
-void board_drawScrollBars(PBOARD board, BOOL blink);
+void board_drawViewPortScrollBars(PBOARD board, BOOL blink);
 
 // board_drawLed() : Draw a led digit
 //

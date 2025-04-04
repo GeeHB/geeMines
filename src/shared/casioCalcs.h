@@ -156,8 +156,14 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 void centerRect(PRECT const rect, int width, int height);
 
 //
-// Display rotation
+// Display / Calculator rotation
 //
+
+// Orientation
+//
+typedef enum {
+    CALC_VERTICAL = 0, CALC_HORIZONTAL
+} CALC_ORIENTATION;
 
 //  rotatePoint() : Rotate (trig. 90°) and translate a single point
 //
