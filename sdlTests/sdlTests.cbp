@@ -35,6 +35,31 @@
 		<Linker>
 			<Add option="`sdl2-config --libs`" />
 		</Linker>
+		<Unit filename="../src/board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/board.h" />
+		<Unit filename="../src/consts.h" />
+		<Unit filename="../src/grid.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/grid.h" />
+		<Unit filename="../src/shared/casioCalcs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/shared/casioCalcs.h" />
+		<Unit filename="../src/shared/keys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/shared/keys.h" />
+		<Unit filename="../src/shared/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/shared/menu.h" />
+		<Unit filename="../src/shared/scrollBar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/shared/scrollBar.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>
