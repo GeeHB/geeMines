@@ -81,13 +81,8 @@ typedef enum {
 
 // Scollbars dimensions
 //
-#ifdef DEST_CASIO_CALC
 #define SCROLLBAR_THICKNESS     0x0005
 #define SCROLLBAR_HEIGHT        0x0009
-#else
-#define SCROLLBAR_THICKNESS     0x0035
-#define SCROLLBAR_HEIGHT        0x0039
-#endif // #ifdef DEST_CASIO_CALC
 
 // A viewport - defines visible part of the grid
 //

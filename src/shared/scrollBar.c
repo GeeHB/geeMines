@@ -8,6 +8,7 @@
 
 #include "scrollBar.h"
 #include "casioCalcs.h"
+#include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
 
@@ -129,12 +130,30 @@ BOOL scrollBar_setRect(PSCROLLBAR const scroll, uint16_t left, uint16_t top, uin
         return FALSE;
     }
 
-    uint16_t maxThickness = ((SCROLL_VERTICAL == scroll->type)?width:height);
-    if (!(maxThickness%2) || maxThickness < g_scrollParameters.thickness){
+    uint16_t maxThickness, w, h;
+
+    if (SCROLL_VERTICAL == scroll->type){
+        maxThickness = width;
+        if (!(maxThickness%2)){
+            maxThickness++;
+        }
+        w = maxThickness;
+        h = height;
+    }
+    else{
+        maxThickness = height;
+        if (!(maxThickness%2)){
+            maxThickness++;
+        }
+        w = width;
+        h = maxThickness;
+    }
+
+    if (maxThickness < g_scrollParameters.thickness){
         return FALSE;   // Invalid dim.
     }
 
-    setRect(&scroll->position, left, top, width, height);
+    setRect(&scroll->position, left, top, w, h);
     scroll->space = (maxThickness - g_scrollParameters.thickness) / 2;
     return TRUE;
 }

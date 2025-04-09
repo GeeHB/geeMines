@@ -67,13 +67,13 @@ SDL::SDL( Uint32 flags )
     scroll_setBarThickness(41, TRUE);
 
     scrollBar_init(&m_vert, SCROLL_VERTICAL);
-    scrollBar_setRect(&m_vert, 580, 10, 51, 500);
+    scrollBar_setRect(&m_vert, 580, 10, 50, 500);
     scrollBar_setMaxLength(&m_vert, 100);
     scrollBar_setLength(&m_vert, 18);
     scrollBar_moveTo(&m_vert, 80);
 
     scrollBar_init(&m_horz, SCROLL_HORIZONTAL);
-    scrollBar_setRect(&m_horz, 10, 580, 500, 51);
+    scrollBar_setRect(&m_horz, 10, 580, 500, 50);
     scrollBar_setMaxLength(&m_horz, 100);
     scrollBar_setLength(&m_horz, 75);
     scrollBar_moveTo(&m_horz, 12);
