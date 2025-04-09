@@ -157,7 +157,7 @@ int main(void){
     }   // if (menu)
 
     if (board){
-        board_free(board, TRUE);
+        board_freeAll(board);
     }
 
 #ifdef DEST_CASIO_CALC

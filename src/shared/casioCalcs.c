@@ -124,6 +124,16 @@ void centerRect(PRECT const rect, int width, int height){
     }
 }
 
+// isEmptyRect() : Is the rect empty ?
+//
+//  @rect : pointer to the rect.
+//
+//  @return : TRUE if the rect is empty
+//
+BOOL isEmptyRect(PRECT const rect){
+    return (rect && (!rect->w || !rect->h));
+}
+
 //
 // Display rotation
 //

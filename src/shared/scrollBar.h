@@ -11,6 +11,10 @@
 
 #include "casioCalcs.h"
 
+#ifndef DEST_CASIO_CALC
+#include <SDL2/SDL.h>       // sudo apt|dnf install SDL2-devel
+#endif //   #ifndef DEST_CASIO_CALC
+
 // Colours IDs
 //
 typedef enum {
@@ -147,6 +151,17 @@ BOOL scrollBar_setLength(PSCROLLBAR const scroll, uint16_t length);
 //  @return : TRUE if done
 //
 BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update);
+
+//
+// Internal use
+//
+
+#ifndef DEST_CASIO_CALC
+int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius);
+int SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius);
+
+#define TO_SDL_RECT(dst, src)   {dst.x = src.x; dst.y = src.y; dst.w = src.w; dst.h = src.h;}
+#endif // #ifndef DEST_CASIO_CALC
 
 #ifdef __cplusplus
 }

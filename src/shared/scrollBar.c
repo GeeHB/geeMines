@@ -11,6 +11,11 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifndef DEST_CASIO_CALC
+extern SDL_Window* g_window;
+extern SDL_Renderer* g_renderer;
+#endif //   #ifndef DEST_CASIO_CALC
+
 // Gobal variables
 //
 SCROLLBAR_PARAMS g_scrollParameters;
@@ -26,7 +31,6 @@ BOOL g_initDone = FALSE;
 
 #define MIN_SCROLLBAR_THICKNESS     3
 #define MAX_SCROLLBAR_THICKNESS     (CASIO_HEIGHT / 2 - 1)
-
 
 // scroll_init() : Initializes scrollbars
 //
@@ -125,8 +129,8 @@ BOOL scrollBar_setRect(PSCROLLBAR const scroll, uint16_t left, uint16_t top, uin
         return FALSE;
     }
 
-    uint16_t maxThickness = ((CALC_VERTICAL == g_scrollParameters.orientation)?width:height);
-    if (!(maxThickness%2) || maxThickness > g_scrollParameters.thickness){
+    uint16_t maxThickness = ((SCROLL_VERTICAL == scroll->type)?width:height);
+    if (!(maxThickness%2) || maxThickness < g_scrollParameters.thickness){
         return FALSE;   // Invalid dim.
     }
 
@@ -206,7 +210,7 @@ BOOL scrollBar_setLength(PSCROLLBAR const scroll, uint16_t length){
 //  @return : TRUE if done
 //
 BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
-    if (!g_initDone || !scroll){
+    if (!g_initDone || !scroll || isEmptyRect(&scroll->position)){
         return FALSE;
     }
 
@@ -259,6 +263,22 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
     }
 
     drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
+#else
+    SDL_Rect sRect;
+
+    SDL_SetRenderDrawColor(g_renderer, 192, 192, 192, 255);
+
+    TO_SDL_RECT(sRect, rectBk);
+    SDL_RenderDrawRect(g_renderer, &sRect);
+	SDL_RenderFillRect(g_renderer, &sRect);
+
+    SDL_SetRenderDrawColor(g_renderer, 128, 128, 128, 255);
+    SDL_RenderFillCircle(g_renderer, ptBegin.x, ptBegin.y, g_scrollParameters.radius);
+    SDL_RenderFillCircle(g_renderer, ptEnd.x, ptEnd.y, g_scrollParameters.radius);
+
+    TO_SDL_RECT(sRect, rectBar);
+    SDL_RenderDrawRect(g_renderer, &sRect);
+	SDL_RenderFillRect(g_renderer, &sRect);
 #endif // #ifdef DEST_CASIO_CALC
 
     if (update){
@@ -269,5 +289,98 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
 
     return TRUE;
 }
+
+//
+// Internal use
+//
+
+#ifndef DEST_CASIO_CALC
+
+int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius){
+    int offsetx, offsety, d;
+    int status;
+
+    offsetx = 0;
+    offsety = radius;
+    d = radius -1;
+    status = 0;
+
+    while (offsety >= offsetx) {
+        status += SDL_RenderDrawPoint(renderer, x + offsetx, y + offsety);
+        status += SDL_RenderDrawPoint(renderer, x + offsety, y + offsetx);
+        status += SDL_RenderDrawPoint(renderer, x - offsetx, y + offsety);
+        status += SDL_RenderDrawPoint(renderer, x - offsety, y + offsetx);
+        status += SDL_RenderDrawPoint(renderer, x + offsetx, y - offsety);
+        status += SDL_RenderDrawPoint(renderer, x + offsety, y - offsetx);
+        status += SDL_RenderDrawPoint(renderer, x - offsetx, y - offsety);
+        status += SDL_RenderDrawPoint(renderer, x - offsety, y - offsetx);
+
+        if (status < 0) {
+            status = -1;
+            break;
+        }
+
+        if (d >= 2*offsetx) {
+            d -= 2*offsetx + 1;
+            offsetx +=1;
+        }
+        else if (d < 2 * (radius - offsety)) {
+            d += 2 * offsety - 1;
+            offsety -= 1;
+        }
+        else {
+            d += 2 * (offsety - offsetx - 1);
+            offsety -= 1;
+            offsetx += 1;
+        }
+    }
+
+    return status;
+}
+
+int SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius){
+    int offsetx, offsety, d;
+    int status;
+
+    offsetx = 0;
+    offsety = radius;
+    d = radius -1;
+    status = 0;
+
+    while (offsety >= offsetx) {
+
+        status += SDL_RenderDrawLine(renderer, x - offsety, y + offsetx,
+                                     x + offsety, y + offsetx);
+        status += SDL_RenderDrawLine(renderer, x - offsetx, y + offsety,
+                                     x + offsetx, y + offsety);
+        status += SDL_RenderDrawLine(renderer, x - offsetx, y - offsety,
+                                     x + offsetx, y - offsety);
+        status += SDL_RenderDrawLine(renderer, x - offsety, y - offsetx,
+                                     x + offsety, y - offsetx);
+
+        if (status < 0) {
+            status = -1;
+            break;
+        }
+
+        if (d >= 2*offsetx) {
+            d -= 2*offsetx + 1;
+            offsetx +=1;
+        }
+        else if (d < 2 * (radius - offsety)) {
+            d += 2 * offsety - 1;
+            offsety -= 1;
+        }
+        else {
+            d += 2 * (offsety - offsetx - 1);
+            offsety -= 1;
+            offsetx += 1;
+        }
+    }
+
+    return status;
+}
+
+#endif // #ifndef DEST_CASIO_CALC
 
 // EOF

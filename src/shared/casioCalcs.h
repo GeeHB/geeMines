@@ -95,7 +95,7 @@ typedef struct __point{
 //
 typedef struct __rect{
     int    x,y;    // top left
-    int    w, h;   // width and height
+    uint    w, h;  // width and height
 } RECT, * PRECT;
 
 //
@@ -154,6 +154,14 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 //  @width, @height : Screen dimensions
 //
 void centerRect(PRECT const rect, int width, int height);
+
+// isEmptyRect() : Is the rect empty ?
+//
+//  @rect : pointer to the rect.
+//
+//  @return : TRUE if the rect is empty
+//
+BOOL isEmptyRect(PRECT const rect);
 
 //
 // Display / Calculator rotation
