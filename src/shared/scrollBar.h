@@ -153,14 +153,39 @@ BOOL scrollBar_setLength(PSCROLLBAR const scroll, uint16_t length);
 BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update);
 
 //
-// Internal use
+// SDL utilities for Linux tests
 //
 
 #ifndef DEST_CASIO_CALC
+
+//  SDL_RenderDrawCircle() : Draw a circle
+//
+//   Draw a circle using midpoint circle - Bresenham  algo.
+//
+//  @renderer : Pointer to the SDL renderer
+//  @x,@y : circle's center coordinates
+//  @radius : Circle's radius
+//
+//  @return : status
+//
 int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius);
+
+//  SDL_RenderFillCircle() : Fill a circle
+//
+//   Fill a circle using midpoint circle - Bresenham  algo.
+//
+//  @renderer : Pointer to the SDL renderer
+//  @x,@y : circle's center coordinates
+//  @radius : Circle's radius
+//
+//  @return : status
+//
 int SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius);
 
+// Convert RECT struct. to SDL_RECT struct.
+//
 #define TO_SDL_RECT(dst, src)   {dst.x = src.x; dst.y = src.y; dst.w = src.w; dst.h = src.h;}
+
 #endif // #ifndef DEST_CASIO_CALC
 
 #ifdef __cplusplus

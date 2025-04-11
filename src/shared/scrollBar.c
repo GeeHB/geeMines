@@ -291,9 +291,11 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
     SDL_RenderDrawRect(g_renderer, &sRect);
 	SDL_RenderFillRect(g_renderer, &sRect);
 
-    SDL_SetRenderDrawColor(g_renderer, 128, 128, 128, 255);
-    SDL_RenderFillCircle(g_renderer, ptBegin.x, ptBegin.y, g_scrollParameters.radius);
-    SDL_RenderFillCircle(g_renderer, ptEnd.x, ptEnd.y, g_scrollParameters.radius);
+    if (g_scrollParameters.radius){
+    	SDL_SetRenderDrawColor(g_renderer, 128, 128, 128, 255);
+        SDL_RenderFillCircle(g_renderer, ptBegin.x, ptBegin.y, g_scrollParameters.radius);
+        SDL_RenderFillCircle(g_renderer, ptEnd.x, ptEnd.y, g_scrollParameters.radius);
+    }
 
     TO_SDL_RECT(sRect, rectBar);
     SDL_RenderDrawRect(g_renderer, &sRect);
@@ -310,11 +312,21 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
 }
 
 //
-// Internal use
+// SDL utilities for Linux tests
 //
 
 #ifndef DEST_CASIO_CALC
 
+//  SDL_RenderDrawCircle() : Draw a circle
+//
+//   Draw a circle using midpoint circle - Bresenham  algo.
+//
+//  @renderer : Pointer to the SDL renderer
+//  @x,@y : circle's center coordinates
+//  @radius : Circle's radius
+//
+//  @return : status
+//
 int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius){
     int offsetx, offsety, d;
     int status;
@@ -357,6 +369,16 @@ int SDL_RenderDrawCircle(SDL_Renderer * renderer, int x, int y, int radius){
     return status;
 }
 
+//  SDL_RenderFillCircle() : Fill a circle
+//
+//   Fill a circle using midpoint circle - Bresenham  algo.
+//
+//  @renderer : Pointer to the SDL renderer
+//  @x,@y : circle's center coordinates
+//  @radius : Circle's radius
+//
+//  @return : status
+//
 int SDL_RenderFillCircle(SDL_Renderer * renderer, int x, int y, int radius){
     int offsetx, offsety, d;
     int status;

@@ -95,7 +95,7 @@ typedef struct __point{
 //
 typedef struct __rect{
     int    x,y;    // top left
-    uint    w, h;  // width and height
+    uint   w, h;  // width and height
 } RECT, * PRECT;
 
 //
@@ -151,11 +151,15 @@ BOOL deflateRect(PRECT const rect, int dx, int dy);
 // centerRect() : center a rect
 //
 //  @rect : pointer to the rect.
-//  @width, @height : Screen dimensions
+//  @width, @height : The width and height with which
+//                    the rectangle should center
 //
-void centerRect(PRECT const rect, int width, int height);
+void centerRect(PRECT const rect, uint width, uint height);
 
 // isEmptyRect() : Is the rect empty ?
+//
+//  A rectangle is empty when either its
+//  length or width is zero.
 //
 //  @rect : pointer to the rect.
 //
@@ -164,7 +168,7 @@ void centerRect(PRECT const rect, int width, int height);
 BOOL isEmptyRect(PRECT const rect);
 
 //
-// Display / Calculator rotation
+// Rotation of the screen
 //
 
 // Orientation

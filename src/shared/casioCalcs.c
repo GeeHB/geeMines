@@ -13,8 +13,7 @@
 
 //
 // Rect. manipulation functions
-//
-
+//7074
 
 // setRect() : Set rect dims & pos
 //
@@ -110,9 +109,10 @@ BOOL deflateRect(PRECT const rect, int dx, int dy){
 // centerRect() : center a rect
 //
 //  @rect : pointer to the rect.
-//  @width, @height : Screen dimensions
+//  @width, @height : The width and height with which
+//                    the rectangle should center
 //
-void centerRect(PRECT const rect, int width, int height){
+void centerRect(PRECT const rect, uint width, uint height){
     if (rect){
         if (rect->w < width){
             rect->x =(width - rect->w)/2;
@@ -125,6 +125,9 @@ void centerRect(PRECT const rect, int width, int height){
 }
 
 // isEmptyRect() : Is the rect empty ?
+//
+//  A rectangle is empty when either its
+//  length or width is zero.
 //
 //  @rect : pointer to the rect.
 //
