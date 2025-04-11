@@ -2,8 +2,8 @@
 //--
 //--    casioCalcs.h
 //--
-//--            Types and defines specific to the casio targets
-//--            & shared functions
+//--            Types, defines & shared functions
+//--            specific to the casio targets
 //--
 //----------------------------------------------------------------------
 
@@ -71,8 +71,8 @@
 // BOOLEANS
 //
 #ifndef FALSE
-    #define FALSE   0
-    #define TRUE    !FALSE
+#define FALSE   0
+#define TRUE    !FALSE
 #endif // #ifndef FALSE
 
 typedef uint8_t BOOL;
@@ -110,7 +110,7 @@ typedef struct __rect{
 //
 //  @return : TRUE if values set
 //
-BOOL setRect(PRECT const rect, int x, int y, int w, int h);
+BOOL setRect(PRECT const rect, int x, int y, uint w, uint h);
 
 // offsetRect() : Translate a rect
 //

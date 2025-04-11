@@ -2,8 +2,8 @@
 //--
 //--    casioCalcs.c
 //--
-//--            Types and defines specific to the casio targets
-//--            & shared functions
+//--            Types, defines & shared functions
+//--            specific to the casio targets
 //--
 //----------------------------------------------------------------------
 
@@ -11,9 +11,15 @@
 
 #include <string.h>
 
+#ifdef SCREEN_CAPTURE
+#ifdef DEST_CASIO_CALC
+BOOL g_captureOn = FALSE;
+#endif  // #ifdef DEST_CASIO_CALC
+#endif  // #ifdef SCREEN_CAPTURE
+
 //
 // Rect. manipulation functions
-//7074
+//
 
 // setRect() : Set rect dims & pos
 //
@@ -23,7 +29,7 @@
 //
 //  @return : TRUE if values set
 //
-BOOL setRect(PRECT const rect, int x, int y, int w, int h){
+BOOL setRect(PRECT const rect, int x, int y, uint w, uint h){
     if (rect){
         rect->x=x;
         rect->y=y;
@@ -138,7 +144,7 @@ BOOL isEmptyRect(PRECT const rect){
 }
 
 //
-// Display rotation
+// Rotation of the screen
 //
 
 //  rotatePoint() : Rotate (trig. 90°) and translate a single point
@@ -181,21 +187,28 @@ void rotateRect(PRECT const rect){
 // capture_install() : Set/install screen capture
 //
 void capture_install(){
-    // List of interfaces
-    usb_interface_t const *intf[] = { &usb_ff_bulk, NULL };
+    if (!g_captureOn){
+        g_captureOn = TRUE;
 
-    // Waiting for connexion
-    usb_open((usb_interface_t const **)&intf, GINT_CALL_NULL);
-    usb_open_wait();
+        // List of interfaces
+        usb_interface_t const *intf[] = { &usb_ff_bulk, NULL };
 
-    // Set the hook
-    dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
+        // Waiting for connexion
+        usb_open((usb_interface_t const **)&intf, GINT_CALL_NULL);
+        usb_open_wait();
+
+        // Set the hook
+        dupdate_set_hook(GINT_CALL(usb_fxlink_videocapture, 0));
+    }
 }
 
 // capture_remove() : Remove screen capture
 //
 void capture_remove(){
-    dupdate_set_hook(GINT_CALL_NULL);
+    if (g_captureOn){
+        dupdate_set_hook(GINT_CALL_NULL);
+        g_captureOn = FALSE;
+    }
 }
 
 #endif // #ifdef DEST_CASIO_CALC

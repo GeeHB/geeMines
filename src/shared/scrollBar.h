@@ -15,11 +15,18 @@
 #include <SDL2/SDL.h>       // sudo apt|dnf install SDL2-devel
 #endif //   #ifndef DEST_CASIO_CALC
 
-// Colours IDs
+// Colours and Colour IDs
 //
 typedef enum {
-    COLOUR_BKGRND, COLOUR_BAR, COLOUR_BAR_BLINK, COLOUR_MAX
+    COLOUR_BKGRND, COLOUR_BORDER,
+    COLOUR_BAR, COLOUR_BAR_BLINK,
+    COLOUR_MAX
 }SCROLL_COLOUR_ID;
+
+#define DEF_SCROLL_BK_COLOUR        COLOUR_WHITE
+#define DEF_SCROLL_BORDER_COLOUR    DEF_SCROLL_BK_COLOUR
+#define DEF_SCROLL_BAR_COLOUR       C_RGB(19,24,27)
+#define DEF_SCROLL_BLINK_COLOUR     C_RGB(23, 29, 31)
 
 // Scrollbars shared parameters
 //
@@ -29,6 +36,14 @@ typedef struct __scrollBarParams{
     uint8_t thickness;
     uint8_t radius;
 }SCROLLBAR_PARAMS, * PSCROLLBAR_PARAMS;
+
+// Default values
+//
+#define DEF_SCROLL_THICKNESS        0x09
+
+#define MIN_SCROLLBAR_THICKNESS     3
+#define MAX_SCROLLBAR_THICKNESS     (CASIO_HEIGHT / 2 - 1)
+
 
 // Types of scrollbars
 //

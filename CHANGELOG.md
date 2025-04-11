@@ -3,6 +3,10 @@
 * Ajouts
   * shared/scrollBar.c + shared/scrollBar.h
     * Ttes les fonctions et constantes relatives à la gestion des barres de défilement
+    * Paramètres communs à 'tous' les scrollbars
+  * Vérification que la capture n'est pas déja en place
+  * Commentaire des sources
+  * Linux::scrollBar : Affichage avec SDL2
 
 * Corrections
   * Retrait de scroll.png (oubli dans la v0.2.1)

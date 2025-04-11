@@ -22,17 +22,6 @@ extern SDL_Renderer* g_renderer;
 SCROLLBAR_PARAMS g_scrollParameters;
 BOOL g_initDone = FALSE;
 
-// Default values
-//
-#define DEF_SCROLL_THICKNESS        0x09
-
-#define DEF_SCROLL_BK_COLOUR        COLOUR_WHITE
-#define DEF_SCROLL_BAR_COLOUR       C_RGB(19,24,27)
-#define DEF_SCROLL_BLINK_COLOUR     C_RGB(23, 29, 31)
-
-#define MIN_SCROLLBAR_THICKNESS     3
-#define MAX_SCROLLBAR_THICKNESS     (CASIO_HEIGHT / 2 - 1)
-
 // scroll_init() : Initializes scrollbars
 //
 //  Must be called before any other scrollbar function call
@@ -41,9 +30,10 @@ void scroll_init(){
     g_scrollParameters.orientation = CALC_VERTICAL;
     g_scrollParameters.thickness = MIN_SCROLLBAR_THICKNESS;
     g_scrollParameters.radius = 0;
-    g_scrollParameters.colours[0] = DEF_SCROLL_BK_COLOUR;
-    g_scrollParameters.colours[1] = DEF_SCROLL_BAR_COLOUR;
-    g_scrollParameters.colours[2] = DEF_SCROLL_BLINK_COLOUR;
+    g_scrollParameters.colours[COLOUR_BKGRND] = DEF_SCROLL_BK_COLOUR;
+    g_scrollParameters.colours[COLOUR_BORDER] = DEF_SCROLL_BORDER_COLOUR;
+    g_scrollParameters.colours[COLOUR_BAR] = DEF_SCROLL_BAR_COLOUR;
+    g_scrollParameters.colours[COLOUR_BAR_BLINK] = DEF_SCROLL_BLINK_COLOUR;
     g_initDone = TRUE;
 };
 
@@ -273,7 +263,8 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
     }
 
 #ifdef DEST_CASIO_CALC
-    drect(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, g_scrollParameters.colours[COLOUR_BKGRND]);     // Erase scroll. bckgrnd
+    drect_border(rectBk.x, rectBk.y, rectBk.x + rectBk.w -1, rectBk.y + rectBk.h -1, g_scrollParameters.colours[COLOUR_BKGRND],
+        1, g_scrollParameters.colours[COLOUR_BORDER]);     // Erase scroll. bckgrnd
 
     if (g_scrollParameters.radius){
         // Rounded rectangle
@@ -281,7 +272,7 @@ BOOL scrollBar_drawEx(PSCROLLBAR const scroll, BOOL blink, BOOL update){
         dcircle(ptEnd.x, ptEnd.y, g_scrollParameters.radius, colour, colour);
     }
 
-    drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour);
+    drect(rectBar.x, rectBar.y , rectBar.x + rectBar.w - 1, rectBar.y + rectBar.h - 1, colour); // Bar
 #else
     SDL_Rect sRect;
 
