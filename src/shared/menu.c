@@ -64,16 +64,12 @@ PMENUBAR menu_getMenuBar(POWNMENU menu){
 
 //  menu_getHeight() : Get menu height
 //
-//  @menu : Pointer to the menu
+//  @menu : Pointer to the menu if NULL return default height
 //
 //  @return : Height of menu bar in pixels
 //
 uint16_t menu_getHeight(POWNMENU menu){
-    if (menu){
-        return menu->rect_.h;
-    }
-
-    return 0;
+    return (menu?menu->rect_.h:MENUBAR_DEF_HEIGHT);    
 }
 
 //  setHeight() : change menu bar height

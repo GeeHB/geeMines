@@ -471,7 +471,7 @@ PMENUBAR menu_getMenuBar(POWNMENU menu);
 
 //  getHeight() : Get menu bar height
 //
-//  @menu : Pointer to the menu
+//  @menu : Pointer to the menu if NULL return default height
 //
 //  @return : Height of menu bar in pixels
 //

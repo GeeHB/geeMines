@@ -7,8 +7,10 @@
   * Vérification que la capture n'est pas déja en place
   * Commentaire des sources
   * Linux::scrollBar : Affichage avec SDL2
+  * casioCalcs - v1.0.1
 
 * Corrections
+  * Corrections pour geeTetris
   * Retrait de scroll.png (oubli dans la v0.2.1)
   * Pas besoin de scroll vertical en mode expert::horizontal
 

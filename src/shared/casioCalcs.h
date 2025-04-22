@@ -10,6 +10,8 @@
 #ifndef __GEE_CASIO_CALCS_h__
 #define __GEE_CASIO_CALCS_h__    1
 
+#define _GEEHB_CASIO_CALC_VER_  "1.0.1"
+
 #ifdef DEST_CASIO_CALC
 // Specific includes for calculators
 #include <gint/gint.h>
@@ -251,6 +253,27 @@ char* __itoa(int num, BOOL format, char *str);
 //  @str : String to reverse
 //
 void __strrev(char *str);
+
+//
+// State & status - bitwise manips
+//
+
+BOOL isBitSet(int value, int bit);
+int setBit(int value, int bit);
+int removeBit(int value, int bit);
+
+//
+// Utils
+//
+
+// clearScreen() : Clear the whole screen (except menu bar ?)
+//
+//  @bkColour : Background colour
+//  @menuHeight : part of the screen (menu) to be preserved
+//  @update : update screen ?
+//
+void clearScreenEx(int bkColour, uint8_t menuHeight, BOOL update);
+#define clearScreen(bkColour)   clearScreenEx(bkColour, 0, TRUE);
 
 #endif // #ifndef __GEE_CASIO_CALCS_h__
 

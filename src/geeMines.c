@@ -48,6 +48,9 @@ POWNMENU _createMenu(){
     return menu;
 }
 
+//
+// App. entry point
+//
 int main(void){
 //#ifdef DEST_CASIO_CALC
     POWNMENU menu = _createMenu();
